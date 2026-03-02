@@ -60,7 +60,7 @@ export default async function RootLayout({
       <Navbar restaurantDetails={restaurant}></Navbar>
       <div className="flex-1 min-h-screen">{children}</div>
       <Toaster richColors />
-      {/* <Cursor></Cursor> */}
+      <Cursor></Cursor>
       <Footer
         logoUrl={restaurant.logoUrl}
         name={restaurant.name}

@@ -4,6 +4,7 @@ import { to12HourTime } from "@/lib/helpers/timeHelpers";
 import { cartKeyForUI, useCartStore } from "@/lib/store/cart.store";
 import { cn } from "@/lib/utils";
 import { Minus, Plus, ShoppingCart } from "lucide-react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React, { FC } from "react";
 import { toast } from "sonner";
@@ -85,7 +86,7 @@ const AddToCartButton: FC<AddToCartButtonProps> = ({
       <Button
         type="button"
         variant={"elegant"}
-        className={cn("w-full rounded-xl", className)}
+        className={cn("w-full rounded-xl group", className)}
         disabled={!canAdd}
         onClick={() => {
           if (!canAdd) return;
@@ -122,7 +123,18 @@ const AddToCartButton: FC<AddToCartButtonProps> = ({
             { duration: 2500 },
           );
         }}>
-        <ArrowButton direction="right" label="Add to cart"></ArrowButton>
+        <div className="flex items-center justify-center gap-2 ">
+          <div className={`relative h-4 w-[200px] shrink-0 inline-block `}>
+            <Image
+              src="/Arrow.svg"
+              alt="Arrow"
+              fill
+              className={`object-contain }`}
+            />
+          </div>
+          Add to cart
+        </div>
+        {/* <ArrowButton direction="right" label="Add to cart"></ArrowButton> */}
       </Button>
     );
   }

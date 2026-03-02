@@ -22,7 +22,8 @@ const getMenuItemsByCategory = unstable_cache(
       },
     });
   },
-  ["menu-items-by-category"],
+  //   @ts-ignore
+  (categoryId: string) => [`menu-items-by-category:${categoryId}`],
   { revalidate: 30 }, // tune: 30s/60s/300s depending on how often menu changes
 );
 

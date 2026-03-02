@@ -1,13 +1,20 @@
-import MenuItemsList from "@/components/dashboard/menu/menuItem/MenuItemsList";
 import MenuCategoriesPublicToolbar from "@/components/frontend/Menu/MenuCategoriesPublicToolbar";
 import MenuItemsSection from "@/components/frontend/Menu/MenuItemSection";
 import Heading from "@/components/global/Heading";
 import SectionComponent from "@/components/global/SectionComponent";
+import { getMenuById } from "@/lib/actions/frontend/menu/getMenuById";
 import { isMenuOpenNow } from "@/lib/checks/isMenuOpenNow";
-import { prisma } from "@/lib/prisma/db";
+import { unstable_cache } from "next/cache";
 import { redirect } from "next/navigation";
 
 import { FC } from "react";
+
+const getMenuByIdCached = unstable_cache(
+  async (id: string) => getMenuById(id),
+  // @ts-ignore
+  (id) => [`menu-public:${id}`],
+  { revalidate: 60 }, // adjust (seconds)
+);
 
 interface pageProps {
   params: Promise<{
@@ -20,21 +27,17 @@ const page: FC<pageProps> = async ({ params, searchParams }) => {
   const { id } = await params;
   const sp = (await searchParams) ?? {};
 
-  const menu = await prisma.menu.findUnique({
-    where: { id },
-    select: {
-      openingHours: true,
-      categories: {
-        select: { id: true, name: true, slug: true },
-        orderBy: { sortOrder: "asc" }, // if exists
-      },
-    },
-  });
+  const menuFetch = await getMenuByIdCached(id);
 
-  if (!menu) redirect("/");
+  if (!menuFetch.ok || !menuFetch.menu) {
+    redirect("/");
+  }
 
-  const categories = menu.categories;
-  if (!categories.length) return <Heading label="No Categories found" />;
+  const menu = menuFetch.menu;
+
+  const categories = menuFetch.categories;
+  if (!categories || !categories.length)
+    return <Heading label="No Categories found" />;
 
   const requestedSlug =
     typeof sp.category === "string" ? sp.category : undefined;
@@ -66,3 +69,7 @@ const page: FC<pageProps> = async ({ params, searchParams }) => {
 };
 
 export default page;
+
+// export default async function Page({ params }: { params: { id: string } }) {
+//   return <div>Menu {params.id}</div>;
+// }

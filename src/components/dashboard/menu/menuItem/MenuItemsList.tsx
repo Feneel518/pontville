@@ -50,6 +50,7 @@ const MenuItemsList: FC<MenuItemsListProps> = ({
                 categorySlug={categorySlug!}
                 key={item.id}
                 item={item}></MenuItemCardFrontend>
+             
             </div>
           );
         })}
