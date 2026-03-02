@@ -1,4 +1,4 @@
-import SigninForm from "@/components/signin-form";
+import SigninForm from "@/components/auth/signin-form";
 import { FC } from "react";
 
 interface pageProps {}

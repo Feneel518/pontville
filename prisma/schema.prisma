@@ -22,19 +22,51 @@ enum UserRole {
   MANAGER
 }
 
-model Post {
-  id        String   @id @default(uuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  title   String
-  content String?
-
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId String
-
-  @@map("posts")
+enum PublishStatus {
+  ACTIVE
+  INACTIVE
 }
+
+enum PriceType {
+  SIMPLE
+  VARIANT
+}
+
+enum AddOnSelection {
+  SINGLE
+  MULTI
+}
+
+enum OrderStatus {
+  NEW
+  ACCEPTED
+  PREPARING
+  READY
+  COMPLETED
+  CANCELLED
+}
+
+enum PaymentStatus {
+  UNPAID // created but not paid
+  REQUIRES_ACTION // optional
+  PAID // webhook confirmed
+  FAILED
+  REFUNDED
+}
+
+enum Weekday {
+  MONDAY
+  TUESDAY
+  WEDNESDAY
+  THURSDAY
+  FRIDAY
+  SATURDAY
+  SUNDAY
+}
+
+// enums
+
+// models
 
 model User {
   id        String   @id @default(uuid())
@@ -46,10 +78,11 @@ model User {
   emailVerified Boolean
   name          String?
   image         String?
+  phone         String?
 
   accounts Account[]
   sessions Session[]
-  posts    Post[]
+  orders   Order[]
 
   @@map("users")
 }
@@ -101,4 +134,337 @@ model Verification {
   expiresAt  DateTime
 
   @@map("verifications")
+}
+
+model AllowedUser {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  email    String   @unique
+  role     UserRole @default(USER) // or enum if you want
+  isActive Boolean  @default(true)
+
+  @@map("allowed_users")
+}
+
+model Restaurant {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  name String
+  slug String @unique
+
+  tagline     String?
+  phone       String?
+  email       String?
+  whatsapp    String?
+  addressLine String?
+  city        String?
+  state       String?
+  postcode    String?
+
+  // Hours (store as JSON for flexibility)
+  hoursJson Json
+
+  weeklyHolidays Weekday[] @default([])
+
+  // Social / Brand
+  instagramUrl String?
+  facebookUrl  String?
+  logoUrl      String?
+  ogImageUrl   String?
+
+  // SEO
+  metaTitle       String?
+  metaDescription String?
+  allowIndexing   Boolean @default(true)
+
+  // Integrations
+  uberEatsUrl String?
+
+  // ✅ add these
+  mapLat Float?
+  mapLng Float?
+  menus  Menu[]
+  orders Order[]
+
+  @@map("site_settings")
+}
+
+model Menu {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  restaurantId String
+  restaurant   Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+
+  name        String
+  slug        String  @unique
+  description String?
+  imageUrl    String?
+
+  status    PublishStatus @default(ACTIVE)
+  sortOrder Int           @default(0)
+
+  deletedAt DateTime?
+
+  openingHours MenuOpeningHour[]
+
+  categories Category[]
+
+  @@unique([restaurantId, slug])
+  @@index([restaurantId, status, sortOrder])
+  @@index([restaurantId, deletedAt])
+  @@map("menus")
+}
+
+model MenuOpeningHour {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  menuId String
+  menu   Menu   @relation(fields: [menuId], references: [id], onDelete: Cascade)
+
+  day       Weekday
+  slot      Int     @default(0) // 0..n within the day
+  openTime  String // "09:00"
+  closeTime String // "22:00"
+
+  // @@unique([menuId, day, slot])
+  @@index([menuId, day])
+}
+
+model Category {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  menuId String
+  menu   Menu   @relation(fields: [menuId], references: [id], onDelete: Cascade)
+
+  name        String
+  slug        String        @unique
+  status      PublishStatus @default(ACTIVE)
+  sortOrder   Int           @default(0)
+  description String?
+  deletedAt   DateTime?
+
+  items MenuItem[]
+
+  @@unique([menuId, slug])
+  @@index([menuId, status, sortOrder])
+  @@index([menuId, deletedAt])
+  @@map("categories")
+}
+
+model MenuItem {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  categoryId String
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  name        String
+  slug        String
+  description String?
+  imageUrl    String?
+  isVeg       Boolean @default(true)
+  isVegan     Boolean @default(false)
+
+  // SIMPLE => basePrice required
+  // VARIANT => basePrice should be null; use ItemVariant prices
+
+  priceType PriceType @default(SIMPLE)
+  basePrice Int? // store cents (recommended). If you want dollars, switch to Decimal.
+
+  status      PublishStatus @default(ACTIVE)
+  isAvailable Boolean       @default(true)
+  sortOrder   Int           @default(0)
+
+  deletedAt DateTime?
+
+  variants    ItemVariant[]
+  addOnGroups AddOnGroup[]
+  orderItems  OrderItem[]
+
+  @@unique([categoryId, slug])
+  @@index([categoryId, status, sortOrder])
+  @@index([categoryId, isAvailable])
+  @@index([categoryId, deletedAt])
+  @@map("menu_items")
+}
+
+model ItemVariant {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  menuItemId String
+  menuItem   MenuItem @relation(fields: [menuItemId], references: [id], onDelete: Cascade)
+
+  name        String
+  price       Int // store cents (recommended). If you want dollars, switch to Decimal.
+  isAvailable Boolean     @default(true)
+  sortOrder   Int         @default(0)
+  orderItems  OrderItem[]
+
+  @@index([menuItemId, isAvailable, sortOrder])
+  @@map("item_variants")
+}
+
+model AddOnGroup {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  itemId String
+  item   MenuItem @relation(fields: [itemId], references: [id], onDelete: Cascade)
+
+  name      String // e.g. "Upgrade", "Extras"
+  selection AddOnSelection @default(MULTI)
+  minSelect Int            @default(0)
+  maxSelect Int? // null = no explicit max
+  sortOrder Int            @default(0)
+
+  addOns AddOn[]
+
+  @@index([itemId, sortOrder])
+  @@map("addon_groups")
+}
+
+model AddOn {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  groupId String
+  group   AddOnGroup @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
+  name            String // e.g. "Add soft drink + ice cream"
+  price           Int // cents
+  isAvailable     Boolean          @default(true)
+  sortOrder       Int              @default(0)
+  orderItemAddOns OrderItemAddOn[]
+
+  @@index([groupId, isAvailable, sortOrder])
+  @@map("addons")
+}
+
+// /////////////////////////////////////
+// /////////////////////////////////////
+// /////////////////////////////////////
+// /////////////////////////////////////
+// /////////////////////////////////////
+// /////////////////////////////////////
+
+model Order {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  restaurantId String
+  restaurant   Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+
+  // numbering
+  orderNo  Int
+  // optional: day/series key if you want: "TA-2026-02-24"
+  orderKey String?
+
+  status        OrderStatus   @default(NEW)
+  // ✅ payment status
+  paymentStatus PaymentStatus @default(UNPAID)
+
+  // takeaway fields
+  customerName  String
+  customerPhone String
+  pickupTime    DateTime?
+  notes         String?
+
+  // money (cents)
+  subtotal   Int @default(0)
+  tax        Int @default(0)
+  packingFee Int @default(0)
+  total      Int @default(0)
+
+  items OrderItem[]
+
+  // ✅ Stripe references (store to reconcile)
+  stripeCheckoutSessionId String? @unique
+  stripePaymentIntentId   String? @unique
+  stripeCustomerId        String?
+  stripeReceiptUrl        String?
+
+  // optional: store webhook event id to make it idempotent
+  lastStripeEventId String?
+
+  // ...
+  userId String?
+  user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@unique([restaurantId, orderNo])
+  @@index([userId, createdAt])
+  @@index([restaurantId, status, createdAt])
+  @@index([restaurantId, paymentStatus, createdAt])
+  @@map("orders")
+}
+
+model OrderItem {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  orderId String
+  order   Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  // reference (optional, for analytics; snapshot is source of truth)
+  menuItemId String?
+  menuItem   MenuItem? @relation(fields: [menuItemId], references: [id], onDelete: SetNull)
+
+  itemVariantId String?
+  itemVariant   ItemVariant? @relation(fields: [itemVariantId], references: [id], onDelete: SetNull)
+
+  quantity Int @default(1)
+
+  // Snapshot (so renames/price changes don’t affect past orders)
+  snapshotMenuName     String
+  snapshotCategoryName String
+  snapshotItemName     String
+  snapshotVariantName  String?
+
+  // money (cents)
+  unitBasePrice   Int @default(0) // item base/variant price
+  unitAddOnsPrice Int @default(0) // sum of selected addons per unit
+  unitTotalPrice  Int @default(0) // base + addons per unit
+  lineTotal       Int @default(0) // unitTotalPrice * qty
+
+  addOns OrderItemAddOn[]
+
+  @@index([orderId])
+  @@map("order_items")
+}
+
+model OrderItemAddOn {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  orderItemId String
+  orderItem   OrderItem @relation(fields: [orderItemId], references: [id], onDelete: Cascade)
+
+  // reference (optional)
+  addOnId String?
+  addOn   AddOn?  @relation(fields: [addOnId], references: [id], onDelete: SetNull)
+
+  // snapshot
+  snapshotGroupName String
+  snapshotAddOnName String
+  price             Int // cents (per unit)
+
+  @@index([orderItemId])
+  @@map("order_item_addons")
 }

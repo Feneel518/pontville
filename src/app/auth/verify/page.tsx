@@ -1,4 +1,4 @@
-import SendVerificationMail from "@/components/send-verificatopn-mail";
+import SendVerificationMail from "@/components/auth/send-verificatopn-mail";
 import { redirect } from "next/navigation";
 import { FC } from "react";
 
@@ -19,8 +19,8 @@ const page: FC<pageProps> = async ({ searchParams }) => {
         {error === "invalid_token"
           ? "The verification link is invalid or has expired."
           : error === "email_not_verified"
-          ? "Please verify your email address., or resend the verification email."
-          : "Oops! Something went wrong."}
+            ? "Please verify your email address., or resend the verification email."
+            : "Oops! Something went wrong."}
       </div>
 
       <SendVerificationMail></SendVerificationMail>
