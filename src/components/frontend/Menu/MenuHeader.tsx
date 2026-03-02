@@ -54,6 +54,7 @@ const MenuHeader: FC<MenuHeaderProps> = async ({}) => {
           const layout = pattern[layoutIndex];
           return (
             <Link
+              key={me.id}
               href={`/menu/${me.id}`}
               className={`group transition-all duration-200 ease-in-out ${layout.align}`}>
               <div

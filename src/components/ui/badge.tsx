@@ -18,7 +18,34 @@ const badgeVariants = cva(
           "border-border text-foreground [a&]:hover:bg-accent [a&]:hover:text-accent-foreground",
         ghost: "[a&]:hover:bg-accent [a&]:hover:text-accent-foreground",
         link: "text-primary underline-offset-4 [a&]:hover:underline",
-        white: "bg-background text-foreground",
+
+        /* Semantic */
+        success: "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300",
+        info: "bg-blue-500/15 text-blue-700 dark:text-blue-300",
+        warning: "bg-amber-500/15 text-amber-800 dark:text-amber-300",
+        error: "bg-red-500/15 text-red-700 dark:text-red-300",
+
+        /* Solid Semantic */
+        successSolid: "bg-emerald-600 text-white hover:bg-emerald-600/90",
+        infoSolid: "bg-blue-600 text-white hover:bg-blue-600/90",
+        warningSolid: "bg-amber-500 text-black hover:bg-amber-500/90",
+        errorSolid: "bg-red-600 text-white hover:bg-red-600/90",
+
+        /* Status / Workflow */
+        pending: "bg-zinc-500/15 text-zinc-700 dark:text-zinc-300",
+        processing: "bg-indigo-500/15 text-indigo-700 dark:text-indigo-300",
+        completed: "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300",
+        cancelled: "bg-red-500/15 text-red-700 dark:text-red-300",
+
+        /* POS / Orders */
+        new: "bg-sky-500/15 text-sky-700 dark:text-sky-300",
+        accepted: "bg-indigo-500/15 text-indigo-700 dark:text-indigo-300",
+        preparing: "bg-amber-500/15 text-amber-800 dark:text-amber-300",
+        ready: "bg-green-500/15 text-green-700 dark:text-green-300",
+
+        /* Utility */
+        white: "bg-background text-foreground border border-border",
+        muted: "bg-muted text-muted-foreground",
       },
     },
     defaultVariants: {

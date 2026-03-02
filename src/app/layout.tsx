@@ -3,6 +3,7 @@ import { Amarante, Inter } from "next/font/google";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { Toaster } from "sonner";
 import "./globals.css";
+import { CursorRouteReset } from "@/components/global/CursorUnmount";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 const amarante = Amarante({
@@ -25,6 +26,7 @@ export default function RootLayout({
     <html lang="en">
       <body
         className={`${inter.className} ${amarante.variable} font-sans  antialiased flex flex-col min-h-svh`}>
+        <CursorRouteReset />
         <NuqsAdapter>{children}</NuqsAdapter>
         <Toaster richColors />
       </body>

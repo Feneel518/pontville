@@ -1,5 +1,5 @@
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import {
   Sheet,
@@ -11,10 +11,11 @@ import {
 } from "@/components/ui/sheet";
 import { formatUsd } from "@/lib/helpers/formatCurrency";
 import { useCartStore } from "@/lib/store/cart.store";
-import { Minus, Plus, ShoppingCart, Trash2 } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { ArrowLeft, Minus, Plus, ShoppingCart, Trash2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { FC } from "react";
+import { FC, useState } from "react";
 
 interface CartSheetProps {}
 
@@ -27,8 +28,10 @@ const CartSheet: FC<CartSheetProps> = ({}) => {
   const totalQty = useCartStore((s) => s.totalQty());
   const subtotal = useCartStore((s) => s.subtotal());
 
+  const [open, setOpen] = useState(false);
+
   return (
-    <Sheet>
+    <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
         <Button variant="outline" className="relative ">
           <ShoppingCart className="mr-2 h-4 w-4" />
@@ -41,13 +44,13 @@ const CartSheet: FC<CartSheetProps> = ({}) => {
 
       <SheetContent side="right" className="flex w-full flex-col sm:max-w-md">
         <SheetHeader className="mt-8">
-          <SheetTitle className="flex items-center justify-between">
-            <span>Your cart</span>
+          <SheetTitle className="flex items-center justify-between text-3xl font-serif">
+            <span>Selected Dishes</span>
             {items.length > 0 ? (
               <Button
                 variant="ghost"
                 size="sm"
-                className="text-muted-foreground"
+                className="text-muted-foreground font-sans"
                 onClick={clear}>
                 Clear
               </Button>
@@ -65,9 +68,19 @@ const CartSheet: FC<CartSheetProps> = ({}) => {
               <p className="mt-1 text-sm text-muted-foreground">
                 Add some items from the menu.
               </p>
+              <Link
+                href={"/menu"}
+                onClick={() => setOpen(false)}
+                className={cn(
+                  buttonVariants({ variant: "link" }),
+                  "group -ml-2 mt-4",
+                )}>
+                <ArrowLeft className="group-hover:-translate-x-1 transition-all duration-300 ease-in-out"></ArrowLeft>{" "}
+                Menu
+              </Link>
             </div>
           ) : (
-            <div className="space-y-3">
+            <div className="space-y-3 p-4">
               {items.map((line) => (
                 <div
                   key={line.key}
@@ -169,17 +182,10 @@ const CartSheet: FC<CartSheetProps> = ({}) => {
           <div className="grid gap-2">
             <Button
               asChild
+              onClick={() => setOpen(false)}
               className="rounded-xl"
               disabled={items.length === 0}>
               <Link href="/cart">View cart</Link>
-            </Button>
-
-            <Button
-              asChild
-              variant="outline"
-              className="rounded-xl"
-              disabled={items.length === 0}>
-              <Link href="/checkout">Checkout</Link>
             </Button>
           </div>
 

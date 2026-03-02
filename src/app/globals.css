@@ -209,4 +209,20 @@
   ::-webkit-scrollbar-thumb {
     background: transparent;
   }
+
+  @media print {
+    nav,
+    aside,
+    header,
+    .no-print {
+      display: none !important;
+    }
+    body {
+      background: white !important;
+    }
+    .print-card {
+      border: none !important;
+      box-shadow: none !important;
+    }
+  }
 }

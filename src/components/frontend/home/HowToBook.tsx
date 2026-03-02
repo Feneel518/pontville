@@ -1,0 +1,39 @@
+import Heading from "@/components/global/Heading";
+import SectionComponent from "@/components/global/SectionComponent";
+import { Button } from "@/components/ui/button";
+import Image from "next/image";
+import { FC } from "react";
+
+interface HowToBookProps {}
+
+const HowToBook: FC<HowToBookProps> = ({}) => {
+  return (
+    <SectionComponent className="px-0 md:px-0 lg:px-0">
+      <div className="">
+        <div className="w-full max-md:h-screen md:aspect-3/1 relative">
+          <div className="absolute flex items-center justify-center inset-0  z-30">
+            <div className="md:w-[65%] md:h-[60%] h-full bg-background/60 md:bg-background/30 md:backdrop-blur-xs flex items-center justify-center flex-col gap-4 p-2">
+              <Heading
+                label="How to Book a table"
+                className="text-wrap text-center leading-tight w-full "></Heading>
+              <p className="md:text-xl md:w-1/2 text-center">
+                We look forward to creating you a memorable experience just for
+                you, Reserve your table, just by clicking the button below!{" "}
+              </p>
+              <Button variant={"elegant"} className="w-80 mt-8">
+                Book a Table
+              </Button>
+            </div>
+          </div>
+          <Image
+            src={"/Book.jpg"}
+            alt="Book Table"
+            fill
+            className="object-cover origin-bottom"></Image>
+        </div>
+      </div>
+    </SectionComponent>
+  );
+};
+
+export default HowToBook;

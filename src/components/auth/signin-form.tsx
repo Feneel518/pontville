@@ -25,12 +25,22 @@ import { Spinner } from "../ui/spinner";
 import { useRouter } from "next/navigation";
 import { signInEmailAction } from "@/lib/actions/auth/sign-in-email.action";
 
-interface SigninFormProps {}
+interface SigninFormProps {
+  next?: string;
+}
 
-const SigninForm: FC<SigninFormProps> = ({}) => {
+const SigninForm: FC<SigninFormProps> = ({ next }) => {
+  console.log({ next });
+
   const [isPending, setIsPending] = React.useState(false);
 
   const router = useRouter();
+
+  const safeRedirect = (url?: string) => {
+    if (!url) return "/";
+    if (url.startsWith("/")) return url;
+    return "/";
+  };
 
   const form = useForm<LoginValidatorSchema>({
     resolver: zodResolver(loginValidator),
@@ -49,16 +59,20 @@ const SigninForm: FC<SigninFormProps> = ({}) => {
     } else {
       setIsPending(false);
       toast.success("Logged in successfully!");
-      router.push("/");
+      router.push(safeRedirect(next));
     }
   };
 
   const handleClick = async () => {
     await signIn.social({
       provider: "google",
-      callbackURL: "/",
+      callbackURL: safeRedirect(next),
       errorCallbackURL: "/auth/error",
+
       fetchOptions: {
+        onSuccess: () => {
+          router.push(next ? next : "/");
+        },
         onRequest: () => {
           setIsPending(true);
         },

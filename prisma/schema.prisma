@@ -371,9 +371,10 @@ model Order {
   restaurant   Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
 
   // numbering
-  orderNo  Int
+  orderYear Int
+  orderNo   Int
   // optional: day/series key if you want: "TA-2026-02-24"
-  orderKey String?
+  orderKey  String?
 
   status        OrderStatus   @default(NEW)
   // ✅ payment status
@@ -406,6 +407,7 @@ model Order {
   userId String?
   user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
 
+  @@unique([restaurantId, orderYear, orderNo], name: "order_year_number_unique")
   @@unique([restaurantId, orderNo])
   @@index([userId, createdAt])
   @@index([restaurantId, status, createdAt])
@@ -435,6 +437,7 @@ model OrderItem {
   snapshotCategoryName String
   snapshotItemName     String
   snapshotVariantName  String?
+  snapshotMenuId       String
 
   // money (cents)
   unitBasePrice   Int @default(0) // item base/variant price
@@ -467,4 +470,13 @@ model OrderItemAddOn {
 
   @@index([orderItemId])
   @@map("order_item_addons")
+}
+
+model OrderCounter {
+  id           String @id @default(cuid())
+  restaurantId String
+  orderYear    Int
+  nextNumber   Int    @default(1)
+
+  @@unique([restaurantId, orderYear], name: "counter_restaurant_year_unique")
 }

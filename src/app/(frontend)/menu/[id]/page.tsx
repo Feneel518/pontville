@@ -45,10 +45,14 @@ const page: FC<pageProps> = async ({ params, searchParams }) => {
   const activeCategory =
     categories.find((c) => c.slug === activeSlug) ?? categories[0];
 
+  console.log(menu.openingHours);
+
   const open = isMenuOpenNow({
     openingHours: menu.openingHours,
     now: new Date(),
   });
+
+
 
   return (
     <SectionComponent>

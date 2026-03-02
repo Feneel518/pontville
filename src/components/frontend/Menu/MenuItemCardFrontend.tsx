@@ -9,6 +9,12 @@ import { cn } from "@/lib/utils";
 import Image from "next/image";
 import React, { FC } from "react";
 import AddToCartButton from "../cart/AddToCartButton";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
 interface MenuItemCardFrontendProps {
   item: MenuItemCardSelect;
@@ -206,182 +212,304 @@ const MenuItemCardFrontend: FC<MenuItemCardFrontendProps> = ({
               ) : null}
             </div>
           </div>
+        </div>
+      </div>
 
-          {/* Variants */}
-          {hasVariants ? (
-            <div className="rounded-xl border bg-muted/30 p-3">
-              <div className="mb-2 flex items-center justify-between">
-                <div className="text-sm font-medium">Choose variant</div>
-                {!selectedVariant ? (
-                  <Badge variant="destructive" className="rounded-full">
-                    Required
-                  </Badge>
-                ) : null}
-              </div>
+      <div className="flex flex-col gap-2">
+        {hasVariants || groups.length > 0 ? (
+          <Accordion
+            type="single"
+            collapsible
+            className="w-full"
+            // optional: defaultValue="customize"
+          >
+            <AccordionItem value="customize" className="border-none">
+              <AccordionTrigger className="rounded-xl border bg-muted/30 px-3 py-2 text-sm font-medium hover:no-underline">
+                Customize
+              </AccordionTrigger>
 
-              <RadioGroup
-                value={variantId}
-                onValueChange={setVariantId}
-                className="grid gap-2 grid-cols-2">
-                {item.variants
-                  .filter((v) => v.isAvailable)
-                  .map((v) => {
-                    const pricePaise = v.price;
-                    return (
-                      <Label
-                        key={v.id}
-                        htmlFor={`variant-${item.id}-${v.id}`}
-                        className={cn(
-                          "flex cursor-pointer items-center justify-between rounded-lg border bg-background px-3 py-2 text-sm",
-                          variantId === v.id && "border-primary",
-                        )}>
-                        <div className="flex items-center gap-2">
-                          <RadioGroupItem
-                            id={`variant-${item.id}-${v.id}`}
-                            value={v.id}
-                          />
-                          <span>{v.name}</span>
-                        </div>
-                        <span className="font-medium">
-                          {formatUsd(pricePaise)}
-                        </span>
-                      </Label>
-                    );
-                  })}
-              </RadioGroup>
-            </div>
-          ) : null}
-
-          {groups.length > 0 ? (
-            <div className="space-y-4">
-              {groups.map((g) => {
-                const selectedIds = selectedByGroup[g.id] ?? [];
-
-                const max = g.selection === "SINGLE" ? 1 : g.maxSelect;
-
-                return (
-                  <div
-                    key={g.id}
-                    className="rounded-2xl border bg-muted/30 p-4 space-y-3">
-                    {/* Header */}
-                    <div className="flex items-start justify-between gap-3">
-                      <div>
-                        <div className="text-sm font-semibold">{g.name}</div>
-                        <div className="text-xs text-muted-foreground">
-                          {g.selection === "SINGLE"
-                            ? "Choose 1"
-                            : "Choose multiple"}
-                          {g.minSelect > 0 ? ` • min ${g.minSelect}` : ""}
-                          {max != null ? ` • max ${max}` : ""}
-                        </div>
-                      </div>
-
-                      {selectedIds.length > 0 ? (
-                        <Badge variant="secondary" className="rounded-full">
-                          {selectedIds.length} selected
+              <AccordionContent className="pt-3 space-y-4">
+                {/* Variants */}
+                {hasVariants ? (
+                  <div className="rounded-xl border bg-muted/30 p-3">
+                    <div className="mb-2 flex items-center justify-between">
+                      <div className="text-sm font-medium">Choose variant</div>
+                      {!selectedVariant ? (
+                        <Badge variant="destructive" className="rounded-full">
+                          Required
                         </Badge>
                       ) : null}
                     </div>
 
-                    {/* SINGLE selection → RadioGroup */}
-                    {g.selection === "SINGLE" ? (
-                      <RadioGroup
-                        value={selectedIds[0] ?? ""}
-                        onValueChange={(value) => {
-                          toggleAddOn(g.id, value);
-                        }}
-                        className="grid gap-2">
-                        {g.addOns
-                          .filter((a) => a.isAvailable)
-                          .map((a) => (
-                            <Label
-                              key={a.id}
-                              htmlFor={`addon-${g.id}-${a.id}`}
-                              className={cn(
-                                "flex cursor-pointer items-center justify-between rounded-lg border bg-background px-3 py-2 text-sm",
-                                selectedIds.includes(a.id) && "border-primary",
-                              )}>
-                              <div className="flex items-center gap-2">
-                                <RadioGroupItem
-                                  id={`addon-${g.id}-${a.id}`}
-                                  value={a.id}
-                                />
-                                <span>{a.name}</span>
-                              </div>
-
-                              <span className="font-medium">
-                                {formatUsd(a.price)}
-                              </span>
-                            </Label>
-                          ))}
-                      </RadioGroup>
-                    ) : (
-                      /* MULTI selection → Checkbox */
-                      <div className="grid grid-cols-2 gap-2">
-                        {g.addOns
-                          .filter((a) => a.isAvailable)
-                          .map((a) => {
-                            const checked = selectedIds.includes(a.id);
-
-                            return (
-                              <Label
-                                key={a.id}
-                                htmlFor={`addon-${g.id}-${a.id}`}
-                                className={cn(
-                                  "flex cursor-pointer items-center justify-between rounded-lg border bg-background  p-2  text-sm",
-                                  checked && "border-primary",
-                                )}>
-                                <div className="flex items-center gap-2 h">
-                                  <Checkbox
-                                    id={`addon-${g.id}-${a.id}`}
-                                    checked={checked}
-                                    onCheckedChange={() => {
-                                      toggleAddOn(g.id, a.id);
-                                    }}
-                                  />
-                                  <span>{a.name}</span>
-                                </div>
-
-                                <span className="font-medium">
-                                  {formatUsd(a.price)}
-                                </span>
-                              </Label>
-                            );
-                          })}
-                      </div>
-                    )}
+                    <RadioGroup
+                      value={variantId}
+                      onValueChange={setVariantId}
+                      className="grid gap-2 grid-cols-2">
+                      {item.variants
+                        .filter((v) => v.isAvailable)
+                        .map((v) => (
+                          <Label
+                            key={v.id}
+                            htmlFor={`variant-${item.id}-${v.id}`}
+                            className={cn(
+                              "flex cursor-pointer items-center justify-between rounded-lg border bg-background px-3 py-2 text-sm",
+                              variantId === v.id && "border-primary",
+                            )}>
+                            <div className="flex items-center gap-2">
+                              <RadioGroupItem
+                                id={`variant-${item.id}-${v.id}`}
+                                value={v.id}
+                              />
+                              <span>{v.name}</span>
+                            </div>
+                            <span className="font-medium">
+                              {formatUsd(v.price)}
+                            </span>
+                          </Label>
+                        ))}
+                    </RadioGroup>
                   </div>
-                );
-              })}
-            </div>
-          ) : null}
-        </div>
-      </div>
+                ) : null}
 
-      <AddToCartButton
-        addOns={selectedAddOns}
-        itemName={item.name}
-        menuItemId={item.id}
-        imageUrl={item.imageUrl}
-        priceType={item.priceType}
-        unitBasePrice={unitBasePricePaise}
-        categorySlug={categorySlug}
-        menuId={menuId}
-        open={open}
-        variant={
-          item.priceType === "VARIANT" && selectedVariant
-            ? {
-                id: selectedVariant.id,
-                name: selectedVariant.name,
-                price: selectedVariant.price,
-              }
-            : null
-        }></AddToCartButton>
+                {/* Add-ons */}
+                {groups.length > 0 ? (
+                  <div className="space-y-4">
+                    {groups.map((g) => {
+                      const selectedIds = selectedByGroup[g.id] ?? [];
+                      const max = g.selection === "SINGLE" ? 1 : g.maxSelect;
+
+                      return (
+                        <div
+                          key={g.id}
+                          className="rounded-2xl border bg-muted/30 p-4 space-y-3">
+                          <div className="flex items-start justify-between gap-3">
+                            <div>
+                              <div className="text-sm font-semibold">
+                                {g.name}
+                              </div>
+                              <div className="text-xs text-muted-foreground">
+                                {g.selection === "SINGLE"
+                                  ? "Choose 1"
+                                  : "Choose multiple"}
+                                {g.minSelect > 0 ? ` • min ${g.minSelect}` : ""}
+                                {max != null ? ` • max ${max}` : ""}
+                              </div>
+                            </div>
+
+                            {selectedIds.length > 0 ? (
+                              <Badge
+                                variant="secondary"
+                                className="rounded-full">
+                                {selectedIds.length} selected
+                              </Badge>
+                            ) : null}
+                          </div>
+
+                          {g.selection === "SINGLE" ? (
+                            <RadioGroup
+                              value={selectedIds[0] ?? ""}
+                              onValueChange={(value) =>
+                                toggleAddOn(g.id, value)
+                              }
+                              className="grid gap-2">
+                              {g.addOns
+                                .filter((a) => a.isAvailable)
+                                .map((a) => (
+                                  <Label
+                                    key={a.id}
+                                    htmlFor={`addon-${g.id}-${a.id}`}
+                                    className={cn(
+                                      "flex cursor-pointer items-center justify-between rounded-lg border bg-background px-3 py-2 text-sm",
+                                      selectedIds.includes(a.id) &&
+                                        "border-primary",
+                                    )}>
+                                    <div className="flex items-center gap-2">
+                                      <RadioGroupItem
+                                        id={`addon-${g.id}-${a.id}`}
+                                        value={a.id}
+                                      />
+                                      <span>{a.name}</span>
+                                    </div>
+
+                                    <span className="font-medium">
+                                      {formatUsd(a.price)}
+                                    </span>
+                                  </Label>
+                                ))}
+                            </RadioGroup>
+                          ) : (
+                            <div className="grid grid-cols-2 gap-2">
+                              {g.addOns
+                                .filter((a) => a.isAvailable)
+                                .map((a) => {
+                                  const checked = selectedIds.includes(a.id);
+                                  return (
+                                    <Label
+                                      key={a.id}
+                                      htmlFor={`addon-${g.id}-${a.id}`}
+                                      className={cn(
+                                        "flex cursor-pointer items-center justify-between rounded-lg border bg-background p-2 text-sm",
+                                        checked && "border-primary",
+                                      )}>
+                                      <div className="flex items-center gap-2">
+                                        <Checkbox
+                                          id={`addon-${g.id}-${a.id}`}
+                                          checked={checked}
+                                          onCheckedChange={() =>
+                                            toggleAddOn(g.id, a.id)
+                                          }
+                                        />
+                                        <span>{a.name}</span>
+                                      </div>
+
+                                      <span className="font-medium">
+                                        {formatUsd(a.price)}
+                                      </span>
+                                    </Label>
+                                  );
+                                })}
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                ) : null}
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
+        ) : null}
+        <AddToCartButton
+          addOns={selectedAddOns}
+          itemName={item.name}
+          menuItemId={item.id}
+          imageUrl={item.imageUrl}
+          priceType={item.priceType}
+          unitBasePrice={unitBasePricePaise}
+          categorySlug={categorySlug}
+          menuId={menuId}
+          open={open}
+          variant={
+            item.priceType === "VARIANT" && selectedVariant
+              ? {
+                  id: selectedVariant.id,
+                  name: selectedVariant.name,
+                  price: selectedVariant.price,
+                }
+              : null
+          }></AddToCartButton>
+      </div>
     </div>
   );
 };
 
 export default MenuItemCardFrontend;
+
+//  {
+//    groups.length > 0 ? (
+//      <div className="space-y-4">
+//        {groups.map((g) => {
+//          const selectedIds = selectedByGroup[g.id] ?? [];
+
+//          const max = g.selection === "SINGLE" ? 1 : g.maxSelect;
+
+//          return (
+//            <div
+//              key={g.id}
+//              className="rounded-2xl border bg-muted/30 p-4 space-y-3">
+//              {/* Header */}
+//              <div className="flex items-start justify-between gap-3">
+//                <div>
+//                  <div className="text-sm font-semibold">{g.name}</div>
+//                  <div className="text-xs text-muted-foreground">
+//                    {g.selection === "SINGLE"
+//                      ? "Choose 1"
+//                      : "Choose multiple"}
+//                    {g.minSelect > 0 ? ` • min ${g.minSelect}` : ""}
+//                    {max != null ? ` • max ${max}` : ""}
+//                  </div>
+//                </div>
+
+//                {selectedIds.length > 0 ? (
+//                  <Badge variant="secondary" className="rounded-full">
+//                    {selectedIds.length} selected
+//                  </Badge>
+//                ) : null}
+//              </div>
+
+//              {/* SINGLE selection → RadioGroup */}
+//              {g.selection === "SINGLE" ? (
+//                <RadioGroup
+//                  value={selectedIds[0] ?? ""}
+//                  onValueChange={(value) => {
+//                    toggleAddOn(g.id, value);
+//                  }}
+//                  className="grid gap-2">
+//                  {g.addOns
+//                    .filter((a) => a.isAvailable)
+//                    .map((a) => (
+//                      <Label
+//                        key={a.id}
+//                        htmlFor={`addon-${g.id}-${a.id}`}
+//                        className={cn(
+//                          "flex cursor-pointer items-center justify-between rounded-lg border bg-background px-3 py-2 text-sm",
+//                          selectedIds.includes(a.id) && "border-primary",
+//                        )}>
+//                        <div className="flex items-center gap-2">
+//                          <RadioGroupItem
+//                            id={`addon-${g.id}-${a.id}`}
+//                            value={a.id}
+//                          />
+//                          <span>{a.name}</span>
+//                        </div>
+
+//                        <span className="font-medium">
+//                          {formatUsd(a.price)}
+//                        </span>
+//                      </Label>
+//                    ))}
+//                </RadioGroup>
+//              ) : (
+//                /* MULTI selection → Checkbox */
+//                <div className="grid grid-cols-2 gap-2">
+//                  {g.addOns
+//                    .filter((a) => a.isAvailable)
+//                    .map((a) => {
+//                      const checked = selectedIds.includes(a.id);
+
+//                      return (
+//                        <Label
+//                          key={a.id}
+//                          htmlFor={`addon-${g.id}-${a.id}`}
+//                          className={cn(
+//                            "flex cursor-pointer items-center justify-between rounded-lg border bg-background  p-2  text-sm",
+//                            checked && "border-primary",
+//                          )}>
+//                          <div className="flex items-center gap-2 h">
+//                            <Checkbox
+//                              id={`addon-${g.id}-${a.id}`}
+//                              checked={checked}
+//                              onCheckedChange={() => {
+//                                toggleAddOn(g.id, a.id);
+//                              }}
+//                            />
+//                            <span>{a.name}</span>
+//                          </div>
+
+//                          <span className="font-medium">
+//                            {formatUsd(a.price)}
+//                          </span>
+//                        </Label>
+//                      );
+//                    })}
+//                </div>
+//              )}
+//            </div>
+//          );
+//        })}
+//      </div>
+//    ) : null;
+//  }
 
 // "use client";
 

@@ -3,13 +3,21 @@
 import * as React from "react";
 import { useCartStore } from "@/lib/store/cart.store";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import SectionComponent from "@/components/global/SectionComponent";
 import { useSession } from "@/lib/auth/authClient";
 import { useRouter } from "next/navigation";
+import Heading from "@/components/global/Heading";
+import { Separator } from "@/components/ui/separator";
 
 export default function CheckoutComponent({
   user,
@@ -141,61 +149,123 @@ export default function CheckoutComponent({
   }
 
   return (
-    <SectionComponent className="max-w-2xl mx-auto">
-      <Card className="">
-        <CardHeader>
-          <CardTitle>Checkout</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid gap-2">
-            <div className="text-sm font-medium">Name</div>
-            <Input
-              value={details.customerName}
-              onChange={(e) => setDetails({ customerName: e.target.value })}
-              placeholder="Your name"
-            />
-          </div>
+    <Card className=" w-full h-full rounded-sm p-8">
+      <Heading label="Checkout"></Heading>
 
-          <div className="grid gap-2">
-            <div className="text-sm font-medium">Phone</div>
-            <Input
-              value={details.customerPhone}
-              onChange={(e) => setDetails({ customerPhone: e.target.value })}
-              placeholder="04xx xxx xxx"
-            />
-          </div>
+      <Separator></Separator>
 
-          <div className="grid gap-2">
-            <div className="text-sm font-medium">Pickup time (optional)</div>
-            {/* easiest: datetime-local */}
-            <Input
-              type="datetime-local"
-              step={900}
-              value={details.pickupTime || ""}
-              onChange={(e) => setDetails({ pickupTime: e.target.value })}
-            />
-            <p className="text-xs text-muted-foreground">
-              If empty, we’ll treat it as ASAP.
-            </p>
-          </div>
+      <CardContent className="space-y-4 mt-4 flex-1">
+        <div className="grid gap-2">
+          <div className="text-sm font-medium">Name</div>
+          <Input
+            className="border-0  shadow-none border-b font-semibold  "
+            value={details.customerName}
+            onChange={(e) => setDetails({ customerName: e.target.value })}
+            placeholder="Your name"
+          />
+        </div>
 
-          <div className="grid gap-2">
-            <div className="text-sm font-medium">Notes (optional)</div>
-            <Textarea
-              value={details.notes || ""}
-              onChange={(e) => setDetails({ notes: e.target.value })}
-              placeholder="No onions, extra spicy, etc."
-            />
-          </div>
+        <div className="grid gap-2">
+          <div className="text-sm font-medium">Phone</div>
+          <Input
+            className="border-0  shadow-none border-b font-semibold"
+            value={details.customerPhone}
+            onChange={(e) => setDetails({ customerPhone: e.target.value })}
+            placeholder="04xx xxx xxx"
+          />
+        </div>
 
-          <Button
-            className="w-full rounded-xl"
-            onClick={payNow}
-            disabled={loading}>
-            {loading ? "Redirecting..." : "Pay Now"}
-          </Button>
-        </CardContent>
-      </Card>
-    </SectionComponent>
+        <div className="grid gap-2">
+          <div className="text-sm font-medium">Pickup time (optional)</div>
+
+          <Input
+            className="border-0  shadow-none border-b font-semibold"
+            type="datetime-local"
+            step={900}
+            value={details.pickupTime || ""}
+            onChange={(e) => setDetails({ pickupTime: e.target.value })}
+          />
+          <p className="text-xs text-muted-foreground">
+            If empty, we’ll treat it as ASAP.
+          </p>
+        </div>
+
+        <div className="grid gap-2">
+          <div className="text-sm font-medium">Notes (optional)</div>
+          <Textarea
+            className="border-0  shadow-none border-b font-semibold"
+            value={details.notes || ""}
+            onChange={(e) => setDetails({ notes: e.target.value })}
+            placeholder="No onions, extra spicy, etc."
+          />
+        </div>
+      </CardContent>
+
+      <CardFooter className="">
+        <Button
+          className="w-full rounded-xl"
+          onClick={payNow}
+          disabled={loading}>
+          {loading ? "Redirecting..." : "Pay Now"}
+        </Button>
+      </CardFooter>
+    </Card>
+    // <SectionComponent className="w-full">
+    //   <div className="bg-black w-full h-full"></div>
+    //  <Card className="rounded-sm w-full h-full">
+    //   <CardHeader>
+    //     <CardTitle>Checkout</CardTitle>
+    //   </CardHeader>
+    //   <CardContent className="space-y-4">
+    //     <div className="grid gap-2">
+    //       <div className="text-sm font-medium">Name</div>
+    //       <Input
+    //         value={details.customerName}
+    //         onChange={(e) => setDetails({ customerName: e.target.value })}
+    //         placeholder="Your name"
+    //       />
+    //     </div>
+
+    //     <div className="grid gap-2">
+    //       <div className="text-sm font-medium">Phone</div>
+    //       <Input
+    //         value={details.customerPhone}
+    //         onChange={(e) => setDetails({ customerPhone: e.target.value })}
+    //         placeholder="04xx xxx xxx"
+    //       />
+    //     </div>
+
+    //     <div className="grid gap-2">
+    //       <div className="text-sm font-medium">Pickup time (optional)</div>
+
+    //       <Input
+    //         type="datetime-local"
+    //         step={900}
+    //         value={details.pickupTime || ""}
+    //         onChange={(e) => setDetails({ pickupTime: e.target.value })}
+    //       />
+    //       <p className="text-xs text-muted-foreground">
+    //         If empty, we’ll treat it as ASAP.
+    //       </p>
+    //     </div>
+
+    //     <div className="grid gap-2">
+    //       <div className="text-sm font-medium">Notes (optional)</div>
+    //       <Textarea
+    //         value={details.notes || ""}
+    //         onChange={(e) => setDetails({ notes: e.target.value })}
+    //         placeholder="No onions, extra spicy, etc."
+    //       />
+    //     </div>
+
+    //     <Button
+    //       className="w-full rounded-xl"
+    //       onClick={payNow}
+    //       disabled={loading}>
+    //       {loading ? "Redirecting..." : "Pay Now"}
+    //     </Button>
+    //   </CardContent>
+    // </Card> */}
+    // </SectionComponent>
   );
 }

@@ -5,6 +5,7 @@ import Stripe from "stripe";
 import { Prisma } from "@prisma/client";
 import { auth } from "@/lib/auth/auth";
 import { headers } from "next/headers";
+import { getOrderYear } from "@/lib/helpers/OrderYear";
 
 export async function POST(req: Request) {
   const authSession = await auth.api.getSession({
@@ -240,6 +241,7 @@ export async function POST(req: Request) {
       snapshotCategoryName: mi.category.name,
       snapshotItemName: mi.name,
       snapshotVariantName: variantName,
+      snapshotMenuId: mi.category.menuId,
 
       unitBasePrice,
       unitAddOnsPrice,
@@ -301,9 +303,12 @@ export async function POST(req: Request) {
           });
           const nextOrderNo = (last?.orderNo ?? 0) + 1;
 
+          const orderYear = getOrderYear();
+
           return await tx.order.create({
             data: {
               userId: userId,
+              orderYear: orderYear,
               restaurantId: restaurant.id,
               orderNo: nextOrderNo,
               status: "NEW",

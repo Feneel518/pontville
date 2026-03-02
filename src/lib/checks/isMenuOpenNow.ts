@@ -23,6 +23,30 @@ const weekdayToIndex: Record<Weekday, number> = {
   SATURDAY: 6,
 };
 
+function getNextOpenTime(openingHours: OpeningHour[], now: Date) {
+  const dayIdx = now.getDay();
+  const minutesNow = now.getHours() * 60 + now.getMinutes();
+
+  const candidates: { daysAhead: number; openMin: number; openTime: string }[] =
+    [];
+
+  for (const h of openingHours) {
+    const idx = weekdayToIndex[h.day];
+    const openMin = hhmmToMinutes(h.openTime);
+
+    let daysAhead = (idx - dayIdx + 7) % 7;
+
+    // if today, only if it's still upcoming
+    if (daysAhead === 0 && openMin <= minutesNow) continue;
+
+    candidates.push({ daysAhead, openMin, openTime: h.openTime });
+  }
+
+  candidates.sort((a, b) => a.daysAhead - b.daysAhead || a.openMin - b.openMin);
+
+  return candidates[0]?.openTime; // can be undefined if no hours exist
+}
+
 function hhmmToMinutes(hhmm: string) {
   const [h, m] = hhmm.split(":").map((x) => Number(x));
 
@@ -70,6 +94,8 @@ export function isMenuOpenNow(opts: {
     if (openMin === closeMin) continue; // treat as closed (or 24h if you want)
 
     if (openMin < closeMin) {
+      console.log(minutesNow);
+
       // same-day
       if (minutesNow >= openMin && minutesNow < closeMin) {
         return { isOpen: true, closesAt: h.closeTime };
@@ -87,8 +113,14 @@ export function isMenuOpenNow(opts: {
     .filter(({ openMin }) => openMin > minutesNow)
     .sort((a, b) => a.openMin - b.openMin)[0];
 
+  console.log(
+    todayHours
+      .map((h) => ({ h, openMin: hhmmToMinutes(h.openTime) }))
+      .filter((a) => a.openMin > minutesNow),
+  );
+
   return {
     isOpen: false,
-    opensAt: upcomingToday?.h.openTime,
+    opensAt: getNextOpenTime(openingHours, now) ,
   };
 }

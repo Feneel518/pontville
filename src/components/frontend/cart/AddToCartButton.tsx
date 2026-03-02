@@ -81,6 +81,8 @@ const AddToCartButton: FC<AddToCartButtonProps> = ({
     return <Button disabled>Opens at {to12HourTime(open.opensAt!)}</Button>;
   }
 
+  console.log(open);
+
   if (!line) {
     return (
       <Button
