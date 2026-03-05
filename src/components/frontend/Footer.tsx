@@ -134,9 +134,7 @@ export function Footer({
             <h3 className="font-serif text-2xl">CONTACT</h3>
             {contactItems.map((item) => (
               <p key={item.label}>
-                <span className="">{item.label.toUpperCase()}: </span>
-
-                <Link
+                  <Link
                   href={item.href}
                   target={item.external ? "_blank" : undefined}
                   rel={item.external ? "noopener noreferrer" : undefined}

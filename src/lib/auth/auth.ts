@@ -14,6 +14,7 @@ export const auth = betterAuth({
   trustedOrigins: [
     "http://localhost:3000",
     "https://pontvillepub.vercel.app",
+    "https://www.pontvillepub.com",
     "https://pontvillepub.com",
   ],
   socialProviders: {
