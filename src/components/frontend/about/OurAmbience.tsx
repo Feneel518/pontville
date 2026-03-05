@@ -16,21 +16,18 @@ const OurAmbience: FC<OurAmbienceProps> = ({}) => {
             <Heading label="Our Ambience    "></Heading>
             <div className="space-y-4   text-sm md:text-base ">
               <p>
-                Our ambience blends timeless country charm with warm, welcoming
-                comfort. Natural textures, soft lighting, and thoughtfully
-                curated interiors create a space that feels both elegant and
-                relaxed. Whether you’re settling in for a quiet afternoon drink
-                or gathering with friends for dinner, the atmosphere invites you
-                to slow down and truly enjoy the moment.
+                Originally established as the Crown Inn, the venue has long been
+                a landmark along the historic route between Hobart and
+                Launceston. Over the years, it has remained a gathering place
+                where people come together to enjoy great food, refreshing
+                drinks, and genuine Tasmanian hospitality.
               </p>
 
               <p>
-                From lively evenings filled with laughter to calm mornings over
-                coffee and cake, every corner of the venue carries a sense of
-                genuine hospitality. The balance of rustic character and modern
-                comfort ensures that every visit feels effortless — a place
-                where good food, good company, and a warm setting come together
-                naturally.
+                Today, Pontville Pub blends its historic charm with a relaxed
+                and welcoming dining experience. Our menu features classic pub
+                favourites along with delicious meals made with quality
+                ingredients, all served in a warm and friendly atmosphere.
               </p>
             </div>
           </div>

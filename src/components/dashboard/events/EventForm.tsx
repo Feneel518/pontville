@@ -54,8 +54,8 @@ type Props = {
   mode: "create" | "edit";
   initial?: Event;
   setOpen: Dispatch<SetStateAction<boolean>>;
-  setOpenChange: Dispatch<SetStateAction<boolean>>;
-  open: boolean;
+  setOpenChange?: Dispatch<SetStateAction<boolean>>;
+  open?: boolean;
   onCreated?: (b: Event) => void;
   onUpdated?: (b: Event) => void;
 };
@@ -119,7 +119,9 @@ export default function EventForm({
       router.push("/dashboard/events");
       router.refresh();
       setOpen(false);
-      setOpenChange(false);
+      if (setOpenChange) {
+        setOpenChange(false);
+      }
       if (mode === "create") onCreated?.(res.data!);
       if (mode === "edit") onUpdated?.(res.data!);
     });

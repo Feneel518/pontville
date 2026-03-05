@@ -15,18 +15,18 @@ const AboutSection: FC<AboutSectionProps> = ({}) => {
             <Heading label="About Us"></Heading>
             <div className="space-y-4   text-sm md:text-base ">
               <p>
-                Established in 1835, The Crown Inn is a historic country pub in
-                the heart of Pontville, offering genuine hospitality in a
-                relaxed and welcoming setting. Loved by locals and visitors
-                alike, it’s a place to unwind, connect, and enjoy the charm of a
-                true country hotel.
+                Serving travellers since 1835, Pontville Pub is one of the
+                oldest pubs in the Hobart region and a proud part of Tasmania’s
+                rich history. Located in the charming township of Pontville, the
+                pub has been welcoming locals, visitors, and travellers for
+                nearly two centuries.
               </p>
 
               <p>
-                From coffee and cake to hearty bistro meals, relaxed bar
-                service, and Keno, The Crown Inn caters to every occasion. Open
-                seven days a week, we’re proud to continue a long-standing
-                tradition of good food, friendly service, and community spirit.
+                Today, Pontville Pub blends its historic charm with a relaxed
+                and welcoming dining experience. Our menu features classic pub
+                favourites along with delicious meals made with quality
+                ingredients, all served in a warm and friendly atmosphere.
               </p>
             </div>
           </div>
