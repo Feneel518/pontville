@@ -15,9 +15,9 @@ export const getMenuById = async (id: string) => {
       },
     });
 
-     const categories = menu?.categories;
+    const categories = menu?.categories;
 
-    return { ok: true, menu , categories};
+    return { ok: true, menu, categories };
   } catch (error) {
     return { ok: false };
   }

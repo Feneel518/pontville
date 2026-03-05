@@ -21,6 +21,8 @@ import { BookTableButton } from "../global/BookTableButton";
 import HomeUserNavClient from "./home/HomeUserNavClient";
 import { User } from "better-auth";
 import { cn } from "@/lib/utils";
+import { authClient } from "@/lib/auth/authClient";
+import { useRouter } from "next/navigation";
 
 interface NavbarProps {
   restaurantDetails: {
@@ -39,12 +41,21 @@ const nav = [
   { label: "About", href: "/about" },
   { label: "Contact", href: "/contact" },
 ];
+const mobileNav = [
+  { label: "Menu", href: "/menu" },
+  { label: "Events", href: "/events" },
+  { label: "Orders", href: "/orders" },
+  { label: "About", href: "/about" },
+  { label: "Contact", href: "/contact" },
+  { label: "Bookings", href: "/booking" },
+];
 
 const Navbar: FC<NavbarProps> = ({
   restaurantDetails,
   allowedDashboard = false,
   user,
 }) => {
+  const router = useRouter();
   const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
@@ -54,6 +65,13 @@ const Navbar: FC<NavbarProps> = ({
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  async function onLogout() {
+    // ✅ Better Auth sign out
+    await authClient.signOut();
+    router.refresh();
+    router.replace("/");
+  }
   return (
     <header className="sticky inset-0 top-0 z-50   ">
       <div
@@ -137,7 +155,7 @@ const Navbar: FC<NavbarProps> = ({
                   className="w-[88%] max-w-sm bg-background border-l p-0">
                   <SheetHeader className="h-16 px-4 flex-row items-center justify-between border-b">
                     <SheetTitle className="font-serif text-lg font-normal">
-                      The Crown Inn
+                      {restaurantDetails.name}
                     </SheetTitle>
 
                     <SheetClose asChild>
@@ -148,7 +166,7 @@ const Navbar: FC<NavbarProps> = ({
                   </SheetHeader>
 
                   <nav className="grid">
-                    {nav.map((l) => (
+                    {mobileNav.map((l) => (
                       <SheetClose asChild key={l.href}>
                         <Link
                           href={l.href}
@@ -159,12 +177,32 @@ const Navbar: FC<NavbarProps> = ({
                     ))}
                   </nav>
 
-                  <div className="p-4">
+                  <div className="p-4 space-y-2">
                     <Separator className="mb-4" />
-                    <Button variant="outline" className="w-full">
-                      Book a Table
-                    </Button>
-                    <CartSheet></CartSheet>
+                    <BookTableButton
+                      trigger={
+                        <Button variant={"outline"} className="w-full">
+                          Book a Table
+                        </Button>
+                      }></BookTableButton>
+                    <CartSheet className="w-full"></CartSheet>
+                    {user ? (
+                      <Button
+                        variant={"outline"}
+                        className="w-full"
+                        onClick={onLogout}>
+                        Logout{" "}
+                      </Button>
+                    ) : (
+                      <Link
+                        href={"/auth/login"}
+                        className={cn(
+                          buttonVariants({ variant: "outline" }),
+                          "h-10",
+                        )}>
+                        Log In
+                      </Link>
+                    )}
                   </div>
                 </SheetContent>
               </Sheet>

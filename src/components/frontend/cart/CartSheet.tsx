@@ -17,9 +17,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { FC, useState } from "react";
 
-interface CartSheetProps {}
+interface CartSheetProps {
+  className?: string;
+}
 
-const CartSheet: FC<CartSheetProps> = ({}) => {
+const CartSheet: FC<CartSheetProps> = ({ className }) => {
   const items = useCartStore((s) => s.items);
   const setQty = useCartStore((s) => s.setQty);
   const removeItem = useCartStore((s) => s.removeItem);
@@ -33,7 +35,7 @@ const CartSheet: FC<CartSheetProps> = ({}) => {
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
-        <Button variant="outline" className="relative h-10 ">
+        <Button variant="outline" className={cn("relative h-10 ", className)}>
           <ShoppingCart className="mr-2 h-4 w-4" />
           Cart
           {totalQty > 0 ? (

@@ -26,40 +26,40 @@ interface pageProps {
   searchParams?: Promise<Record<string, string | string[] | undefined>>;
 }
 
-export async function generateMetadata({
-  params,
-}: {
-  params: Promise<{ categorySlug: string }>;
-}): Promise<Metadata> {
-  const { categorySlug } = await params;
+// export async function generateMetadata({
+//   params,
+// }: {
+//   params: Promise<{ categorySlug: string }>;
+// }): Promise<Metadata> {
+//   const { categorySlug } = await params;
 
-  const category = await prisma.category.findUnique({
-    where: { slug: categorySlug },
-    select: { name: true, slug: true, description: true, updatedAt: true },
-  });
+//   const category = await prisma.category.findUnique({
+//     where: { slug: categorySlug },
+//     select: { name: true, slug: true, description: true, updatedAt: true },
+//   });
 
-  if (!category)
-    return pageMetadata({ title: "Menu", description: "Menu", path: "/menu" });
+//   if (!category)
+//     return pageMetadata({ title: "Menu", description: "Menu", path: "/menu" });
 
-  const title = category.name;
-  const description =
-    category.description?.trim() ||
-    `Explore ${category.name} at The Pontville Pub — Pontville, Tasmania.`;
+//   const title = category.name;
+//   const description =
+//     category.description?.trim() ||
+//     `Explore ${category.name} at The Pontville Pub — Pontville, Tasmania.`;
 
-  return pageMetadata({
-    title,
-    description,
-    path: `/menu/${category.slug}`,
-    // Optional OG per category (if you have images)
-    // image: `/og?type=menu&title=${encodeURIComponent(title)}`
-  });
-}
+//   return pageMetadata({
+//     title,
+//     description,
+//     path: `/menu/${category.slug}`,
+//     // Optional OG per category (if you have images)
+//     // image: `/og?type=menu&title=${encodeURIComponent(title)}`
+//   });
+// }
 
 const page: FC<pageProps> = async ({ params, searchParams }) => {
   const { id } = await params;
   const sp = (await searchParams) ?? {};
 
-  const menuFetch = await getMenuByIdCached(id);
+  const menuFetch = await getMenuById(id);
 
   if (!menuFetch.ok || !menuFetch.menu) {
     redirect("/");

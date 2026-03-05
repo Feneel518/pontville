@@ -12,7 +12,6 @@ interface HeroSectionProps {
   tagLine: string | undefined | null;
   mainImage: string | undefined | null;
   sideImage: string | undefined | null;
-  
 }
 
 const HeroSection: FC<HeroSectionProps> = ({
@@ -21,7 +20,6 @@ const HeroSection: FC<HeroSectionProps> = ({
   tagLine,
   mainImage,
   sideImage,
-
 }) => {
   const mainTextRef = useRef(null);
   useEffect(() => {
@@ -39,7 +37,7 @@ const HeroSection: FC<HeroSectionProps> = ({
     setCursor({
       label: (
         <Image
-          src={logoUrl ? logoUrl : "/placeholder.png"}
+          src={logoUrl ? logoUrl : "/placeholder.jpg"}
           alt="logo"
           fill
           className="object-cover"></Image>
@@ -54,7 +52,7 @@ const HeroSection: FC<HeroSectionProps> = ({
       {/* Left: Main image */}
       <div className="relative min-h-svh w-full md:min-h-full">
         <Image
-          src={mainImage ?? "mainImage.jpg"}
+          src={mainImage ? mainImage : "/mainImage.jpg"}
           alt="Hero Image"
           fill
           priority
@@ -67,7 +65,7 @@ const HeroSection: FC<HeroSectionProps> = ({
       <div className="relative hidden w-full p-6 md:block md:p-20">
         <div className="absolute right-6 top-24 w-[260px] aspect-5/3 md:right-20 md:top-32 md:w-[450px] rounded-sm">
           <Image
-            src={sideImage ?? "sideImage.jpg"}
+            src={sideImage ?? "/sideImage.jpg"}
             alt="side Image"
             fill
             sizes="(min-width: 768px) 450px, 0px"

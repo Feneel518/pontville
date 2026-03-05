@@ -62,7 +62,7 @@ export default async function Home() {
           <div className="absolute top-40 right-[-120px] h-[420px] w-[420px] rounded-full blur-3xl bg-pink-600/20" />
           <div className="absolute bottom-40 left-[-140px] h-[520px] w-[520px] rounded-full blur-3xl bg-primary/20" />
         </div>
-        <div className="h-svh -mt-16 md:-mt-20 ">
+        <div className="h-svh -mt-20   md:-mt-20 ">
           <HeroSection
             restaurantName={restaurant?.name}
             logoUrl={restaurant?.logoUrl}

@@ -39,6 +39,7 @@ import LoadingButton from "@/components/global/LoadingButton";
 import { FileUpload } from "@/components/global/FileUpload";
 import { buildDefaultSchedules, WEEK_DAYS } from "@/lib/constants/Weekdays";
 import DayScheduleRow from "./DayScheduleRow";
+import MenuQrCard from "./MenuQRCode";
 
 export default function MenuForm({
   mode,
@@ -194,6 +195,8 @@ export default function MenuForm({
               )}
             />
           </div>
+
+          <MenuQrCard slug={form.watch("id")} />
 
           {WEEK_DAYS.map((day, dayIndex) => (
             <DayScheduleRow
