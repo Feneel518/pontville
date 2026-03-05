@@ -59,3 +59,34 @@ export function combineDateAndTime(date: Date, timeHHmm: string) {
   d.setHours(hh, mm, 0, 0);
   return d;
 }
+
+export function getTodayRange(tz = "Australia/Hobart") {
+  // Server-safe “today” range using Intl (good enough for dashboard KPIs)
+  const now = new Date();
+
+  const parts = new Intl.DateTimeFormat("en-CA", {
+    timeZone: tz,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  })
+    .formatToParts(now)
+    .reduce(
+      (acc, p) => {
+        if (p.type !== "literal") acc[p.type] = p.value;
+        return acc;
+      },
+      {} as Record<string, string>,
+    );
+
+  const yyyy = parts.year;
+  const mm = parts.month;
+  const dd = parts.day;
+
+  // Construct a date in UTC for range boundaries by interpreting “local date”
+  // If you want perfect timezone correctness, move to Temporal later.
+  const start = new Date(`${yyyy}-${mm}-${dd}T00:00:00.000Z`);
+  const end = new Date(`${yyyy}-${mm}-${dd}T23:59:59.999Z`);
+
+  return { start, end };
+}
