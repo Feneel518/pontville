@@ -30,7 +30,7 @@ export function Footer({
   city,
   email,
   facebookUrl,
-  address
+  address,
   hoursJson,
   instagramUrl,
   phone,
@@ -41,7 +41,7 @@ export function Footer({
   name: string;
   tagline: string | null;
   logoUrl: string | null;
-  address:string | null;
+  address: string | null;
   city: string | null;
   state: string | null;
   email: string | null;
