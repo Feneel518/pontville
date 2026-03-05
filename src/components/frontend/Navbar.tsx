@@ -20,6 +20,7 @@ import CartSheet from "./cart/CartSheet";
 import { BookTableButton } from "../global/BookTableButton";
 import HomeUserNavClient from "./home/HomeUserNavClient";
 import { User } from "better-auth";
+import { cn } from "@/lib/utils";
 
 interface NavbarProps {
   restaurantDetails: {
@@ -112,7 +113,10 @@ const Navbar: FC<NavbarProps> = ({
               ) : (
                 <Link
                   href={"/auth/login"}
-                  className={buttonVariants({ variant: "outline" })}>
+                  className={cn(
+                    buttonVariants({ variant: "outline" }),
+                    "h-10",
+                  )}>
                   Log In
                 </Link>
               )}
