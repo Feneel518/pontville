@@ -37,6 +37,7 @@ export default async function RootLayout({
       facebookUrl: true,
       hoursJson: true,
       mapLat: true,
+      addressLine: true,
       mapLng: true,
     },
   });
@@ -79,6 +80,7 @@ export default async function RootLayout({
       <Toaster richColors />
       <Cursor></Cursor>
       <Footer
+        address={restaurant.addressLine}
         logoUrl={restaurant.logoUrl}
         name={restaurant.name}
         tagline={restaurant.tagline}

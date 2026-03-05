@@ -30,6 +30,7 @@ export function Footer({
   city,
   email,
   facebookUrl,
+  address
   hoursJson,
   instagramUrl,
   phone,
@@ -40,6 +41,7 @@ export function Footer({
   name: string;
   tagline: string | null;
   logoUrl: string | null;
+  address:string | null;
   city: string | null;
   state: string | null;
   email: string | null;
@@ -59,7 +61,7 @@ export function Footer({
   const contactItems = [
     {
       label: "Address",
-      value: `${city}, ${state}, Australia`,
+      value: `${address}, ${city}, ${state}, Australia`,
       href: `https://www.google.com/maps?q=${lat},${lng}`,
       external: true,
     },
@@ -117,7 +119,7 @@ export function Footer({
           </div>
 
           <div className="flex flex-col gap-2 font-sans">
-            <h3 className="font-serif text-2xl">MENU</h3>
+            <h3 className="font-serif text-2xl">Menu</h3>
             {nav.map((link) => {
               return (
                 <Link
@@ -131,10 +133,10 @@ export function Footer({
           </div>
 
           <div className="flex flex-col gap-2 font-sans">
-            <h3 className="font-serif text-2xl">CONTACT</h3>
+            <h3 className="font-serif text-2xl">Contact</h3>
             {contactItems.map((item) => (
               <p key={item.label}>
-                  <Link
+                <Link
                   href={item.href}
                   target={item.external ? "_blank" : undefined}
                   rel={item.external ? "noopener noreferrer" : undefined}
@@ -146,7 +148,7 @@ export function Footer({
           </div>
 
           <div className="flex flex-col gap-2 font-sans">
-            <h3 className="font-serif text-2xl">SOCIAL LINKS</h3>
+            <h3 className="font-serif text-2xl">Socials</h3>
             {socialLinks.map((item) => {
               return (
                 <Link
@@ -163,7 +165,7 @@ export function Footer({
           </div>
 
           <div className="flex flex-col gap-2 font-sans">
-            <h3 className="font-serif text-2xl">WORK HOURS</h3>
+            <h3 className="font-serif text-2xl">Open Hours</h3>
             {Object.entries(hoursJson).map(([key, value]) => (
               <div key={key} className="flex justify-between text-sm">
                 <span className="font-medium capitalize">
@@ -184,7 +186,7 @@ export function Footer({
           </div>
 
           <div className="col-span-2 flex flex-col gap-2 font-sans">
-            <h3 className="font-serif text-2xl">STAY TUNED</h3>
+            <h3 className="font-serif text-2xl">Stay Tuned</h3>
             <div className="flex  border-b border-secondary-foreground p-2 pl-0 text-base ">
               <Input
                 className="border-none shadow-none font-sans focus:ring-0 pl-0 "
