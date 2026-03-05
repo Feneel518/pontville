@@ -1,0 +1,33 @@
+import ContactHero from "@/components/frontend/contact/ContactHero";
+import OurInstagram from "@/components/frontend/home/OurInstagram";
+import { prisma } from "@/lib/prisma/db";
+import { FC } from "react";
+
+interface pageProps {}
+
+const page: FC<pageProps> = async ({}) => {
+  const restaurant = await prisma.restaurant.findFirst({
+    select: { insta1: true, insta2: true, insta3: true, insta4: true },
+  });
+  return (
+    <main className="min-h-screen bg-background  relative font-sans">
+      {/* Background glow */}
+      <div className="pointer-events-none fixed inset-0 opacity-70">
+        <div className="absolute -top-24 left-1/2 h-[520px] w-[520px] -translate-x-1/2 rounded-full blur-3xl bg-red-700/20" />
+        <div className="absolute top-40 right-[-120px] h-[420px] w-[420px] rounded-full blur-3xl bg-pink-600/20" />
+        <div className="absolute bottom-40 left-[-140px] h-[520px] w-[520px] rounded-full blur-3xl bg-primary/20" />
+      </div>
+
+      <ContactHero></ContactHero>
+      <div className="pb-20">
+        <OurInstagram
+          insta1={restaurant?.insta1!}
+          insta2={restaurant?.insta2!}
+          insta3={restaurant?.insta3!}
+          insta4={restaurant?.insta4!}></OurInstagram>
+      </div>
+    </main>
+  );
+};
+
+export default page;

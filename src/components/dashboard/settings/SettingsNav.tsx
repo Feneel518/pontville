@@ -17,6 +17,8 @@ const items = [
   { key: "brand", label: "Brand & Social" },
   { key: "seo", label: "SEO" },
   { key: "integrations", label: "Integrations" },
+  { key: "homepage", label: "Home Page" },
+  { key: "instagram", label: "Instagram" },
 ] as const;
 
 export function SettingsNav({ active }: { active: string }) {

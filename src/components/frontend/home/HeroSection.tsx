@@ -10,12 +10,18 @@ interface HeroSectionProps {
   restaurantName: string | undefined;
   logoUrl: string | null | undefined;
   tagLine: string | undefined | null;
+  mainImage: string | undefined | null;
+  sideImage: string | undefined | null;
+  
 }
 
 const HeroSection: FC<HeroSectionProps> = ({
   logoUrl,
   restaurantName,
   tagLine,
+  mainImage,
+  sideImage,
+
 }) => {
   const mainTextRef = useRef(null);
   useEffect(() => {
@@ -48,7 +54,7 @@ const HeroSection: FC<HeroSectionProps> = ({
       {/* Left: Main image */}
       <div className="relative min-h-svh w-full md:min-h-full">
         <Image
-          src="/mainImage.jpg"
+          src={mainImage ?? "mainImage.jpg"}
           alt="Hero Image"
           fill
           priority
@@ -59,13 +65,13 @@ const HeroSection: FC<HeroSectionProps> = ({
 
       {/* Right: Side image + button (desktop only) */}
       <div className="relative hidden w-full p-6 md:block md:p-20">
-        <div className="absolute right-6 top-24 w-[260px] aspect-5/3 md:right-20 md:top-32 md:w-[450px]">
+        <div className="absolute right-6 top-24 w-[260px] aspect-5/3 md:right-20 md:top-32 md:w-[450px] rounded-sm">
           <Image
-            src="/sideImage.jpg"
+            src={sideImage ?? "sideImage.jpg"}
             alt="side Image"
             fill
             sizes="(min-width: 768px) 450px, 0px"
-            className="object-cover"
+            className="object-cover rounded-sm"
           />
         </div>
         <div className="flex h-full items-end justify-end gap-4">
@@ -74,7 +80,7 @@ const HeroSection: FC<HeroSectionProps> = ({
       </div>
 
       {/* Overlay: Title content */}
-      <div className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center px-4">
+      <div className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center px-4 ">
         <div className="pointer-events-auto flex flex-col items-start md:items-start">
           <p className="font-sans text-base md:text-2xl  ">{tagLine}</p>
 

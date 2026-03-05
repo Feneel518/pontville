@@ -22,3 +22,40 @@ export function to12HourTime(hhmm: string): string {
 
   return `${hour12}:${minutes} ${period}`;
 }
+
+import { format } from "date-fns";
+
+/**
+ * Example output:
+ * Fri, 13 Feb 2026
+ */
+export function formatEventDateLabel(date: Date) {
+  return format(date, "EEE, dd MMM yyyy");
+}
+
+/**
+ * Example output:
+ * 7:00 PM – 9:00 PM
+ * 7:00 PM – Late
+ */
+export function formatEventTimeLabel(
+  startsAt: Date,
+  endsAt?: Date | null,
+  fallback: string = "Late",
+) {
+  const start = format(startsAt, "h:mm a");
+
+  if (!endsAt) {
+    return `${start} – ${fallback}`;
+  }
+
+  const end = format(endsAt, "h:mm a");
+  return `${start} – ${end}`;
+}
+
+export function combineDateAndTime(date: Date, timeHHmm: string) {
+  const [hh, mm] = timeHHmm.split(":").map(Number);
+  const d = new Date(date);
+  d.setHours(hh, mm, 0, 0);
+  return d;
+}

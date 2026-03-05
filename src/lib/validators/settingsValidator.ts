@@ -71,3 +71,24 @@ export const integrationsSchema = z.object({
 });
 
 export type IntegrationsInput = z.infer<typeof integrationsSchema>;
+
+export const homepageSchema = z.object({
+  homepageMainImage: z.string().url().optional().or(z.literal("")).nullable(),
+  homepageSideImage: z.string().url().optional().or(z.literal("")).nullable(),
+  homePageBookATableImage: z
+    .string()
+    .url()
+    .optional()
+    .or(z.literal(""))
+    .nullable(),
+});
+
+export type HomepageInput = z.infer<typeof homepageSchema>;
+export const instaSchema = z.object({
+  insta1: z.string().url().optional().or(z.literal("")).nullable(),
+  insta2: z.string().url().optional().or(z.literal("")).nullable(),
+  insta3: z.string().url().optional().or(z.literal("")).nullable(),
+  insta4: z.string().url().optional().or(z.literal("")).nullable(),
+});
+
+export type InstaInput = z.infer<typeof instaSchema>;

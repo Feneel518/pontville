@@ -64,6 +64,24 @@ enum Weekday {
   SUNDAY
 }
 
+enum InquiryType {
+  TABLE
+  EVENT
+}
+
+enum InquiryStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+  CANCELLED
+}
+
+enum EventStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
 // enums
 
 // models
@@ -80,9 +98,10 @@ model User {
   image         String?
   phone         String?
 
-  accounts Account[]
-  sessions Session[]
-  orders   Order[]
+  accounts  Account[]
+  sessions  Session[]
+  orders    Order[]
+  inquiries Inquiry[]
 
   @@map("users")
 }
@@ -187,8 +206,19 @@ model Restaurant {
   // ✅ add these
   mapLat Float?
   mapLng Float?
-  menus  Menu[]
-  orders Order[]
+
+  homepageMainImage       String?
+  homepageSideImage       String?
+  homePageBookATableImage String?
+
+  insta1 String?
+  insta2 String?
+  insta3 String?
+  insta4 String?
+
+  menus     Menu[]
+  orders    Order[]
+  inquiries Inquiry[]
 
   @@map("site_settings")
 }
@@ -479,4 +509,151 @@ model OrderCounter {
   nextNumber   Int    @default(1)
 
   @@unique([restaurantId, orderYear], name: "counter_restaurant_year_unique")
+}
+
+model Inquiry {
+  id           String     @id @default(cuid())
+  restaurantId String
+  restaurant   Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+
+  type   InquiryType
+  status InquiryStatus @default(PENDING)
+
+  // Contact
+  name  String
+  email String?
+  phone String?
+  notes String?
+
+  // Handling
+  handledById String?
+  handledBy   User?     @relation(fields: [handledById], references: [id])
+  handledAt   DateTime?
+  staffNote   String?
+
+  // Polymorphic details (1:1)
+  tableInquiry TableInquiry?
+  eventInquiry EventInquiry?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([restaurantId, type, status, createdAt])
+}
+
+model TableInquiry {
+  id        String  @id @default(cuid())
+  inquiryId String  @unique
+  inquiry   Inquiry @relation(fields: [inquiryId], references: [id], onDelete: Cascade)
+
+  bookingAt DateTime
+  guests    Int
+  // optional: seating preference, occasion, etc.
+}
+
+model EventInquiry {
+  id        String  @id @default(cuid())
+  inquiryId String  @unique
+  inquiry   Inquiry @relation(fields: [inquiryId], references: [id], onDelete: Cascade)
+
+  eventType      String // e.g. "Birthday", "Engagement", "Corporate"
+  eventDate      DateTime?
+  expectedGuests Int?
+  budget         Int?
+  // optional: food preference, decor, timing, venue area, etc.
+}
+
+model Event {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  title String
+  type  String
+
+  image String?
+
+  // core schedule
+  startDate DateTime
+  endDate   DateTime?
+
+  description String
+  highlight   String?
+
+  startTime String
+  endTime   String?
+
+  // CTA
+  ctaLabel String?
+  ctaHref  String?
+
+  // Ticketing
+  isTicketed Boolean @default(false)
+  priceLabel String?
+
+  status EventStatus @default(DRAFT)
+
+  // optional: ordering
+  sortOrder Int @default(0)
+
+  @@index([status, startDate])
+  @@index([type, startDate])
+  @@map("events")
+}
+
+model PromoBanner {
+  id String @id @default(uuid())
+
+  title   String
+  message String
+
+  bannerType PromoBannerType
+
+  imageUrl String?
+
+  startAt DateTime?
+  endAt   DateTime?
+
+  linkUrl String?
+
+  showOnHome   Boolean @default(true)
+  showOnMenu   Boolean @default(false)
+  showOnEvents Boolean @default(false)
+
+  isActive Boolean @default(true)
+
+  backgroundColor String?
+  textColor       String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum PromoBannerType {
+  EVENT
+  OFFER
+  ANNOUNCEMENT
+  SPECIAL
+}
+
+model Review {
+  id String @id @default(uuid())
+
+  authorName  String
+  authorPhoto String?
+  rating      Int
+  message     String
+
+  source ReviewSource @default(GOOGLE)
+
+  isFeatured   Boolean @default(true)
+  displayOrder Int     @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum ReviewSource {
+  GOOGLE
+  WEBSITE
 }

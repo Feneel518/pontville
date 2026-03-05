@@ -6,7 +6,11 @@ import { useMemo, useState } from "react";
 import { Button } from "../ui/button";
 import { UploadDropzone } from "@/lib/uploadthing/uploadthing";
 
-type Endpoint = "restaurantImage" | "menuImage" | "menuItemImage";
+type Endpoint =
+  | "restaurantImage"
+  | "menuImage"
+  | "menuItemImage"
+  | "eventImage";
 
 type UploadResItem = {
   url?: string;
@@ -128,6 +132,7 @@ export function FileUpload(props: SingleProps | MultiProps) {
             endpoint={props.endpoint}
             onUploadBegin={() => setBusy(true)}
             onClientUploadComplete={(res) => {
+              console.log({ res });
               const urls = (res as UploadResItem[] | undefined)
                 ?.map((x) => x.ufsUrl ?? x.url)
                 .filter(Boolean) as string[] | undefined;

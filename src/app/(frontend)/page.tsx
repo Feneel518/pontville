@@ -1,10 +1,20 @@
+import PromoBanners from "@/components/dashboard/promotions/PromotionBanner";
 import AboutSection from "@/components/frontend/home/AboutSection";
 import HeroSection from "@/components/frontend/home/HeroSection";
+import HowToBook from "@/components/frontend/home/HowToBook";
+import OurInstagram from "@/components/frontend/home/OurInstagram";
+import OurLocation from "@/components/frontend/home/OurLocation";
 import OurMenu from "@/components/frontend/home/OurMenu";
+import Testimonials from "@/components/frontend/home/Testimonials";
 import { prisma } from "@/lib/prisma/db";
 
 export default async function Home() {
   const restaurant = await prisma.restaurant.findFirst();
+  const reviews = await prisma.review.findMany({
+    where: { isFeatured: true },
+    orderBy: [{ updatedAt: "desc" }],
+    take: 10,
+  });
   return (
     <main className="min-h-screen bg-background  font-sans">
       {/* Background glow */}
@@ -17,15 +27,27 @@ export default async function Home() {
         <HeroSection
           restaurantName={restaurant?.name}
           logoUrl={restaurant?.logoUrl}
-          tagLine={restaurant?.tagline}></HeroSection>
+          tagLine={restaurant?.tagline}
+          mainImage={restaurant?.homepageMainImage}
+          sideImage={restaurant?.homepageSideImage}></HeroSection>
       </div>
       <AboutSection></AboutSection>
+      <PromoBanners placement="HOME" limit={2} />
       <OurMenu></OurMenu>
-      {/*
-      <HowToBook></HowToBook>
-      <Testimonials></Testimonials>
-      <OurInstagram></OurInstagram>
-      <OurLocation></OurLocation> */}
+      <HowToBook tabelImage={restaurant?.homePageBookATableImage}></HowToBook>
+      {reviews.length > 0 && <Testimonials reviews={reviews}></Testimonials>}
+      <OurInstagram
+        insta1={restaurant?.insta1!}
+        insta2={restaurant?.insta2!}
+        insta3={restaurant?.insta3!}
+        insta4={restaurant?.insta4!}></OurInstagram>
+      <OurLocation
+        address={`${restaurant?.addressLine}, ${restaurant?.city}, ${restaurant?.state}} - ${restaurant?.postcode}`}
+        email={restaurant?.email!}
+        hours={restaurant?.hoursJson}
+        lat={restaurant?.mapLat!}
+        lng={restaurant?.mapLng!}
+        phone={restaurant?.phone!}></OurLocation>
     </main>
   );
 }

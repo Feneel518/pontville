@@ -1,8 +1,6 @@
 "use server";
 
 import transporter from "@/lib/email/nodemailer";
-import { link } from "fs";
-import { tr } from "zod/v4/locales";
 
 const styles = {
   container:

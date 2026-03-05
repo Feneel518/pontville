@@ -1,12 +1,15 @@
+import { BookTableButton } from "@/components/global/BookTableButton";
 import Heading from "@/components/global/Heading";
 import SectionComponent from "@/components/global/SectionComponent";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { FC } from "react";
 
-interface HowToBookProps {}
+interface HowToBookProps {
+  tabelImage: string | undefined | null;
+}
 
-const HowToBook: FC<HowToBookProps> = ({}) => {
+const HowToBook: FC<HowToBookProps> = ({ tabelImage }) => {
   return (
     <SectionComponent className="px-0 md:px-0 lg:px-0">
       <div className="">
@@ -20,13 +23,11 @@ const HowToBook: FC<HowToBookProps> = ({}) => {
                 We look forward to creating you a memorable experience just for
                 you, Reserve your table, just by clicking the button below!{" "}
               </p>
-              <Button variant={"elegant"} className="w-80 mt-8">
-                Book a Table
-              </Button>
+              <BookTableButton />
             </div>
           </div>
           <Image
-            src={"/Book.jpg"}
+            src={tabelImage ?? "/Book.jpg"}
             alt="Book Table"
             fill
             className="object-cover origin-bottom"></Image>

@@ -56,6 +56,19 @@ export const ourFileRouter = {
         url: file.url,
       };
     }),
+  eventImage: f({
+    image: {
+      maxFileSize: "4MB",
+      maxFileCount: 1,
+    },
+  })
+    .input(z.object({}))
+    .middleware(async ({ req }) => {
+      return { userId: "user_id" };
+    })
+    .onUploadComplete(async ({ metadata, file }) => {
+      console.log("Upload complete:", file.url);
+    }),
 } satisfies FileRouter;
 
 export type OurFileRouter = typeof ourFileRouter;

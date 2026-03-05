@@ -1,5 +1,7 @@
 import { BrandForm } from "@/components/dashboard/settings/BrandForm";
+import { HomepageForm } from "@/components/dashboard/settings/HomepageForm";
 import { HoursForm } from "@/components/dashboard/settings/HoursForm";
+import { InstagramForm } from "@/components/dashboard/settings/InstagramForm";
 import { IntegrationsForm } from "@/components/dashboard/settings/IntegrationsForm";
 
 import { SeoForm } from "@/components/dashboard/settings/SeoForm";
@@ -105,6 +107,26 @@ const page: FC<pageProps> = async ({ searchParams }) => {
                 ? String((settings as any).mapLng)
                 : "",
             uberEatsUrl: (settings as any).uberEatsUrl ?? "",
+          }}
+        />
+      )}
+
+      {section === "homepage" && (
+        <HomepageForm
+          defaultValues={{
+            homepageMainImage: settings.homepageMainImage,
+            homePageBookATableImage: settings.homePageBookATableImage,
+            homepageSideImage: settings.homepageSideImage,
+          }}
+        />
+      )}
+      {section === "instagram" && (
+        <InstagramForm
+          defaultValues={{
+            insta1: settings.insta1,
+            insta2: settings.insta2,
+            insta3: settings.insta3,
+            insta4: settings.insta4,
           }}
         />
       )}
