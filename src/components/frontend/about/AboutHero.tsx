@@ -16,7 +16,7 @@ const AboutHero: FC<AboutHeroProps> = ({}) => {
       {/* Left: Main image */}
       <div className="relative min-h-svh w-full md:h-screen">
         <Image
-          src="/mainImage.jpg"
+          src="/gallery/10.jpg"
           alt="Hero Image"
           fill
           priority
@@ -60,7 +60,7 @@ const AboutHero: FC<AboutHeroProps> = ({}) => {
         <div className="w-full h-full">
           <div className="absolute right-6 top-24 w-[260px] aspect-5/3 md:right-20 md:top-32 md:w-[450px] max-md:hidden">
             <Image
-              src="/sideImage.jpg"
+              src="/gallery/8.jpg"
               alt="side Image"
               fill
               sizes="(min-width: 768px) 450px, 0px"

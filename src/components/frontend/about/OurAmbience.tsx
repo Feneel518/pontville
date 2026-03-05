@@ -5,7 +5,6 @@ import SectionComponent from "@/components/global/SectionComponent";
 import Heading from "@/components/global/Heading";
 import ArrowButton from "@/components/ui/ArrowButton";
 
-
 interface OurAmbienceProps {}
 
 const OurAmbience: FC<OurAmbienceProps> = ({}) => {
@@ -43,7 +42,7 @@ const OurAmbience: FC<OurAmbienceProps> = ({}) => {
         <aside className="grid grid-cols-2 gap-4 md:items-end md:gap-12">
           <div className="relative aspect-4/5 w-full md:aspect-4/5">
             <Image
-              src="/Book.jpg"
+              src="/gallery/1.jpg"
               alt="About The Crown Inn"
               fill
               className="object-cover rounded-sm"
@@ -52,7 +51,7 @@ const OurAmbience: FC<OurAmbienceProps> = ({}) => {
 
           <div className="relative aspect-square w-full ">
             <Image
-              src="/BookATable.jpg"
+              src="/gallery/11.jpg"
               alt="The Crown Inn interior"
               fill
               className="object-cover rounded-sm"

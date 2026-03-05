@@ -7,7 +7,14 @@ interface pageProps {}
 
 const page: FC<pageProps> = async ({}) => {
   const restaurant = await prisma.restaurant.findFirst({
-    select: { insta1: true, insta2: true, insta3: true, insta4: true },
+    select: {
+      insta1: true,
+      insta2: true,
+      insta3: true,
+      insta4: true,
+      instagramUrl: true,
+      facebookUrl: true,
+    },
   });
   return (
     <main className="min-h-screen bg-background  relative font-sans">
@@ -21,6 +28,8 @@ const page: FC<pageProps> = async ({}) => {
       <ContactHero></ContactHero>
       <div className="pb-20">
         <OurInstagram
+          instaLink={restaurant?.instagramUrl}
+          facebookLink={restaurant?.facebookUrl}
           insta1={restaurant?.insta1!}
           insta2={restaurant?.insta2!}
           insta3={restaurant?.insta3!}

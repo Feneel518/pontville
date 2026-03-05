@@ -8,16 +8,16 @@ interface PentvilleGalleryProps {}
 
 const PentvilleGallery: FC<PentvilleGalleryProps> = ({}) => {
   const images = [
-    { src: "/mainImage.jpg", alt: "Dining room", width: 1600, height: 1067 },
-    { src: "/sideImage.jpg", alt: "Bar", width: 1200, height: 1600 },
-    { src: "/Book.jpg", alt: "Outdoor", width: 1600, height: 900 },
-    { src: "/BookTable.jpg", alt: "Food", width: 1200, height: 900 },
-    { src: "/BookATable.jpg", alt: "Live music", width: 1200, height: 1800 },
-    { src: "/BookTable.jpg", alt: "Food", width: 1200, height: 900 },
-    { src: "/mainImage.jpg", alt: "Dining room", width: 1600, height: 1067 },
-    { src: "/Book.jpg", alt: "Outdoor", width: 1600, height: 900 },
-    { src: "/sideImage.jpg", alt: "Bar", width: 1200, height: 1600 },
-    { src: "/BookATable.jpg", alt: "Live music", width: 1200, height: 1800 },
+    { src: "/gallery/1.jpg", alt: "Dining room", width: 1600, height: 1067 },
+    { src: "/gallery/2.jpg", alt: "Bar", width: 1200, height: 1600 },
+    { src: "/gallery/3.jpg", alt: "Outdoor", width: 1600, height: 900 },
+    { src: "/gallery/4.jpg", alt: "Food", width: 1200, height: 900 },
+    { src: "/gallery/5.jpg", alt: "Live music", width: 1200, height: 1800 },
+    { src: "/gallery/6.jpg", alt: "Food", width: 1200, height: 900 },
+    { src: "/gallery/7.jpg", alt: "Dining room", width: 1600, height: 1067 },
+    { src: "/gallery/8.jpg", alt: "Outdoor", width: 1600, height: 900 },
+    { src: "/gallery/9.jpg", alt: "Bar", width: 1200, height: 1600 },
+    { src: "/gallery/10.jpg", alt: "Live music", width: 1200, height: 1800 },
   ];
   return (
     <SectionComponent>

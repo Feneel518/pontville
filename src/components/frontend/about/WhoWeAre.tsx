@@ -39,7 +39,7 @@ const WhoWeAre: FC<WhoWeAreProps> = ({}) => {
       <div className="grid md:grid-cols-3 gap-12">
         <div className="w-full min-h-[550px] h-full relative max-md:hidden">
           <Image
-            src={"/Book.jpg"}
+            src={"/gallery/2.jpg"}
             alt="image"
             fill
             className="object-cover"></Image>
