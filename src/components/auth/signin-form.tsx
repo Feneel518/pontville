@@ -66,7 +66,7 @@ const SigninForm: FC<SigninFormProps> = ({ next }) => {
   const handleClick = async () => {
     await signIn.social({
       provider: "google",
-      callbackURL: safeRedirect(next),
+      callbackURL: next ? safeRedirect(next) : "/",
       errorCallbackURL: "/auth/error",
 
       fetchOptions: {
