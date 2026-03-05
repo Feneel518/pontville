@@ -1,5 +1,6 @@
+import { SITE } from "@/lib/helpers/seo";
 import { ImageResponse } from "next/og";
-import { SITE } from "@/lib/seo";
+
 
 export const runtime = "edge";
 
