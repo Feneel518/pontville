@@ -10,6 +10,7 @@ import {
   hoursEditorSchema,
 } from "@/lib/validators/settingsValidator";
 import { fail } from "assert";
+import { revalidatePath } from "next/cache";
 
 export async function updateHoursAction(value: HoursEditorInput) {
   await requireAuth();
@@ -31,5 +32,7 @@ export async function updateHoursAction(value: HoursEditorInput) {
       weeklyHolidays: parsed.data.weeklyHolidays,
     },
   });
+
+  revalidatePath("/events");
   return success("Trading hours updated.");
 }

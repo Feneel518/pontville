@@ -11,6 +11,7 @@ interface ArrowButtonProps {
   className?: string;
   showLabel?: boolean;
   href?: string;
+  newTab?: boolean;
 }
 
 const ArrowButton: FC<ArrowButtonProps> = ({
@@ -19,6 +20,7 @@ const ArrowButton: FC<ArrowButtonProps> = ({
   className,
   href,
   showLabel = true,
+  newTab = false,
 }) => {
   const mainTextRef = useRef(null);
   const setCursor = useCursorStore((s) => s.setCursor);
@@ -41,10 +43,18 @@ const ArrowButton: FC<ArrowButtonProps> = ({
       ref={mainTextRef}
       onPointerEnter={onPointerEnter}
       onPointerLeave={onPointerLeave}
+      target={newTab ? "_blank" : undefined}
+      rel={newTab ? "noopener noreferrer" : undefined}
       className={cn(
         `group flex cursor-pointer items-center z-40 gap-2 md:p-2 md:pl-0 max-md:-ml-2`,
         className,
       )}>
+      {direction === "left" && (
+        <div
+          className={`h-4 flex items-center justify-center  translate-x-0 transition-transform duration-300 ${direction === "left" ? "group-hover:-translate-x-2" : "group-hover:translate-x-2"}`}>
+          {showLabel && label}
+        </div>
+      )}
       <div
         className={`relative h-4 w-[200px] shrink-0 inline-block translate-x-0 transition-transform duration-300 ${direction === "left" ? "group-hover:-translate-x-2" : "group-hover:translate-x-2"}`}>
         <Image
@@ -55,10 +65,12 @@ const ArrowButton: FC<ArrowButtonProps> = ({
         />
       </div>
 
-      <div
-        className={`h-4 flex items-center justify-center  translate-x-0 transition-transform duration-300 ${direction === "left" ? "group-hover:-translate-x-2" : "group-hover:translate-x-2"}`}>
-        {showLabel && label}
-      </div>
+      {direction === "right" && (
+        <div
+          className={`h-4 flex items-center justify-center  translate-x-0 transition-transform duration-300 ${direction === "right" ? "group-hover:translate-x-2" : "group-hover:translate-x-2"}`}>
+          {showLabel && label}
+        </div>
+      )}
     </Link>
   );
 };

@@ -17,6 +17,7 @@ import {
 } from "../ui/sheet";
 import { Separator } from "../ui/separator";
 import CartSheet from "./cart/CartSheet";
+import { BookTableButton } from "../global/BookTableButton";
 
 interface NavbarProps {
   restaurantDetails: {
@@ -29,7 +30,7 @@ interface NavbarProps {
 const nav = [
   { label: "Menu", href: "/menu" },
   { label: "Events", href: "/events" },
-  { label: "Functions", href: "/functions" },
+  { label: "Orders", href: "/orders" },
   { label: "About", href: "/about" },
   { label: "Contact", href: "/contact" },
 ];
@@ -92,7 +93,8 @@ const Navbar: FC<NavbarProps> = ({ restaurantDetails }) => {
           <div className="flex items-center gap-2 shrink-0">
             {/* Desktop CTA */}
             <div className="hidden md:flex gap-4">
-              <Button variant="elegant">Book a Table</Button>
+              <BookTableButton variant="elegant" />
+
               <CartSheet></CartSheet>
             </div>
 

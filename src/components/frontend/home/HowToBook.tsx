@@ -17,11 +17,11 @@ const HowToBook: FC<HowToBookProps> = ({ tabelImage }) => {
           <div className="absolute flex items-center justify-center inset-0  z-30">
             <div className="md:w-[65%] md:h-[60%] h-full bg-background/60 md:bg-background/30 md:backdrop-blur-xs flex items-center justify-center flex-col gap-4 p-2">
               <Heading
-                label="How to Book a table"
+                label="Reserve Your Table"
                 className="text-wrap text-center leading-tight w-full "></Heading>
               <p className="md:text-xl md:w-1/2 text-center">
-                We look forward to creating you a memorable experience just for
-                you, Reserve your table, just by clicking the button below!{" "}
+                Ready for a great dining experience? <br />
+                Book your table in seconds and enjoy a memorable time with us.
               </p>
               <BookTableButton />
             </div>

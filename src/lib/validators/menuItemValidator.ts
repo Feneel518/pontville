@@ -81,7 +81,7 @@ export const MenuItemSchema = z
       .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "Slug must be lowercase kebab-case")
       .optional(), // you can generate on server if omitted
     description: z.string().max(2000).optional().nullable(),
-    imageUrl: z.string().url("Invalid URL").optional().nullable(),
+    imageUrl: z.string().optional().nullable(),
 
     priceType: PriceTypeEnum.default("SIMPLE"),
     basePrice: z.coerce

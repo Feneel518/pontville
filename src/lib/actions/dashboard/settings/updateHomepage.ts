@@ -24,7 +24,7 @@ export async function updateHomepage(value: HomepageInput) {
 
   await prisma.restaurant.update({ where: { id }, data: parsed.data });
 
-  revalidatePath("/");
+  revalidatePath("/events");
 
   return success("Home Page updated.");
 }

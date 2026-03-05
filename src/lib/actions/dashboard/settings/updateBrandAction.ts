@@ -7,6 +7,7 @@ import { getSingletonId } from "@/lib/helpers/getSingletonId";
 import { prisma } from "@/lib/prisma/db";
 import { BrandInput, brandSchema } from "@/lib/validators/settingsValidator";
 import { fail } from "assert";
+import { revalidatePath } from "next/cache";
 
 export async function updateBrandAction(value: BrandInput) {
   await requireAuth();
@@ -19,6 +20,8 @@ export async function updateBrandAction(value: BrandInput) {
   const id = await getSingletonId();
 
   await prisma.restaurant.update({ where: { id }, data: parsed.data });
+
+  revalidatePath("/events");
 
   return success("Brand & social updated.");
 }

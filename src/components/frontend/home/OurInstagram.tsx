@@ -9,6 +9,8 @@ interface OurInstagramProps {
   insta2: string;
   insta3: string;
   insta4: string;
+  instaLink: string | null | undefined;
+  facebookLink: string | null | undefined;
 }
 
 const OurInstagram: FC<OurInstagramProps> = ({
@@ -16,6 +18,8 @@ const OurInstagram: FC<OurInstagramProps> = ({
   insta2,
   insta3,
   insta4,
+  facebookLink,
+  instaLink,
 }) => {
   return (
     <SectionComponent>
@@ -52,7 +56,18 @@ const OurInstagram: FC<OurInstagramProps> = ({
             className="object-cover"></Image>
         </div>
         <div className="absolute md:right-0 bottom-0 max-md:-bottom-12">
-          <ArrowButton direction="right" label="Follow Us"></ArrowButton>
+          <ArrowButton
+            newTab
+            direction="right"
+            label="Instagram"
+            href={instaLink ?? "#"}></ArrowButton>
+        </div>
+        <div className="absolute md:left-0 bottom-0 max-md:-bottom-12">
+          <ArrowButton
+            newTab
+            direction="left"
+            label="Facebook"
+            href={facebookLink ?? "#"}></ArrowButton>
         </div>
       </div>
     </SectionComponent>

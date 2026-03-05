@@ -7,6 +7,7 @@ import { CalendarDays, MapPin } from "lucide-react";
 import { FC } from "react";
 import { Badge } from "@/components/ui/badge";
 import ArrowButton from "@/components/ui/ArrowButton";
+import { Event } from "@prisma/client";
 
 interface EventHeroProps {}
 
@@ -16,7 +17,7 @@ const EventHero: FC<EventHeroProps> = ({}) => {
       {/* Left: Main image */}
       <div className="relative min-h-svh w-full md:h-screen">
         <Image
-          src="/mainImage.jpg"
+          src="/hotelFront.jpg"
           alt="Hero Image"
           fill
           priority
@@ -59,7 +60,7 @@ const EventHero: FC<EventHeroProps> = ({}) => {
         <div className="w-full h-full">
           <div className="absolute right-6 top-24 w-[260px] aspect-5/3 md:right-20 md:top-32 md:w-[450px] max-md:hidden">
             <Image
-              src="/sideImage.jpg"
+              src="/front.jpg"
               alt="side Image"
               fill
               sizes="(min-width: 768px) 450px, 0px"

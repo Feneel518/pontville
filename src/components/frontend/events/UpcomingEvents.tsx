@@ -1,29 +1,32 @@
 "use client";
 
+import { CalendarDays, Clock, Ticket } from "lucide-react";
 import React, { FC } from "react";
-import {
-  CalendarDays,
-  Clock,
-  Music,
-  Sparkles,
-  Ticket,
-  Utensils,
-} from "lucide-react";
 
 import Link from "next/link";
 
-import Image from "next/image";
-import { Carousel, CarouselApi, CarouselContent, CarouselItem } from "@/components/ui/carousel";
-import SectionComponent from "@/components/global/SectionComponent";
 import Heading from "@/components/global/Heading";
+import SectionComponent from "@/components/global/SectionComponent";
 import ArrowButton from "@/components/ui/ArrowButton";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { typeBadge } from "@/lib/helpers/uiHelpers";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Carousel,
+  CarouselApi,
+  CarouselContent,
+  CarouselItem,
+} from "@/components/ui/carousel";
+import { typeBadge } from "@/lib/helpers/uiHelpers";
+import Image from "next/image";
+import { Event } from "@prisma/client";
+import { format } from "date-fns";
+import { formatEventDateLabel, to12HourTime } from "@/lib/helpers/timeHelpers";
+import { BookTableButton } from "@/components/global/BookTableButton";
 
-
-interface UpcomingEventsProps {}
+interface UpcomingEventsProps {
+  event: Event[];
+}
 
 type EventType =
   | "LIVE_MUSIC"
@@ -47,7 +50,7 @@ type EventItem = {
   ctaHref?: string; // e.g. "/contact"
 };
 
-const UpcomingEvents: FC<UpcomingEventsProps> = ({}) => {
+const UpcomingEvents: FC<UpcomingEventsProps> = ({ event }) => {
   const UPCOMING_EVENTS: EventItem[] = [
     {
       id: "ev-live-music",
@@ -115,7 +118,7 @@ const UpcomingEvents: FC<UpcomingEventsProps> = ({}) => {
     <SectionComponent>
       <div className="flex items-end justify-between">
         <Heading label="Upcoming Events"></Heading>
-        {UPCOMING_EVENTS.length > 3 && (
+        {event.length > 3 && (
           <div className="hidden items-center justify-end py-8 md:flex">
             <div className="" onClick={() => api?.scrollPrev()}>
               <ArrowButton
@@ -144,7 +147,7 @@ const UpcomingEvents: FC<UpcomingEventsProps> = ({}) => {
         }}
         className="w-full">
         <CarouselContent className="-ml-4">
-          {UPCOMING_EVENTS.map((ev, idx) => (
+          {event.map((ev, idx) => (
             <CarouselItem
               key={idx}
               className="pl-4 basis-full md:basis-1/2 lg:basis-1/3">
@@ -174,11 +177,11 @@ const UpcomingEvents: FC<UpcomingEventsProps> = ({}) => {
                   <div className="flex flex-col gap-2 text-sm text-muted-foreground">
                     <div className="flex items-center gap-2">
                       <CalendarDays className="h-4 w-4 text-primary/80" />
-                      <span>{ev.dateLabel}</span>
+                      <span>{formatEventDateLabel(ev.startDate)}</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <Clock className="h-4 w-4 text-primary/80" />
-                      <span>{ev.timeLabel}</span>
+                      <span>{to12HourTime(ev.startTime)}</span>
                     </div>
                   </div>
                 </CardHeader>
@@ -198,9 +201,17 @@ const UpcomingEvents: FC<UpcomingEventsProps> = ({}) => {
                   ) : null}
 
                   <Button asChild className="w-full" variant={"elegant"}>
-                    <Link href={ev.ctaHref ?? "/contact"}>
-                      {ev.ctaLabel ?? "Book"}
-                    </Link>
+                    <BookTableButton
+                      type={
+                        ev.ctaLabel?.toLowerCase().includes("table")
+                          ? "TABLE"
+                          : "EVENT"
+                      }
+                      trigger={
+                        <Button className="w-full" variant={"elegantFull"}>
+                          {ev.ctaLabel}
+                        </Button>
+                      }></BookTableButton>
                   </Button>
                 </CardContent>
               </Card>

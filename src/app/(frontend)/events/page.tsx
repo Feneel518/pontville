@@ -21,6 +21,7 @@ import EventHero from "@/components/frontend/events/EventHero";
 import UpcomingEvents from "@/components/frontend/events/UpcomingEvents";
 import WeeklyEvents from "@/components/frontend/events/WeeklyEvents";
 import FunctionEvents from "@/components/frontend/events/FunctionEvents";
+import { prisma } from "@/lib/prisma/db";
 
 type EventType =
   | "LIVE_MUSIC"
@@ -141,7 +142,18 @@ function typeBadge(type: EventType) {
   }
 }
 
-export default function EventsPage() {
+export default async function EventsPage() {
+  const events = await prisma.event.findMany({
+    where: {
+      status: "PUBLISHED",
+    },
+  });
+
+  const promos = await prisma.promoBanner.findMany({
+    where: {
+      isActive: true,
+    },
+  });
   return (
     <>
       <main className="min-h-screen bg-background  font-sans">
@@ -154,8 +166,8 @@ export default function EventsPage() {
         <div className="h-svh -mt-16 md:-mt-20 ">
           <EventHero></EventHero>
         </div>
-        <UpcomingEvents></UpcomingEvents>
-        <WeeklyEvents></WeeklyEvents>
+        <UpcomingEvents event={events}></UpcomingEvents>
+        <WeeklyEvents promos={promos}></WeeklyEvents>
         <FunctionEvents></FunctionEvents>
       </main>
     </>

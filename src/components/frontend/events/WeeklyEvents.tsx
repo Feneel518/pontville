@@ -8,8 +8,12 @@ import useCursorStore from "@/hooks/useCursorStore";
 import SectionComponent from "@/components/global/SectionComponent";
 import Heading from "@/components/global/Heading";
 import ArrowButton from "@/components/ui/ArrowButton";
+import { PromoBanner } from "@prisma/client";
+import { BookTableButton } from "@/components/global/BookTableButton";
 
-interface WeeklyEventsProps {}
+interface WeeklyEventsProps {
+  promos: PromoBanner[];
+}
 
 export const WEEKLY_EVENTS = [
   {
@@ -38,7 +42,7 @@ export const WEEKLY_EVENTS = [
   },
 ];
 
-const WeeklyEvents: FC<WeeklyEventsProps> = ({}) => {
+const WeeklyEvents: FC<WeeklyEventsProps> = ({ promos }) => {
   const ImageOneRef = useRef(null);
   const ImageTwoRef = useRef(null);
   const ImageThreeRef = useRef(null);
@@ -52,9 +56,9 @@ const WeeklyEvents: FC<WeeklyEventsProps> = ({}) => {
       label: (
         <>
           <div className="space-y-1 flex items-center justify-center flex-col p-1">
-            <p className="text-center">{WEEKLY_EVENTS[index].title}</p>
+            <p className="text-center">{promos[index].title}</p>
             <p className="text-sm text-wrap text-center ">
-              {WEEKLY_EVENTS[index].subtitle}
+              {promos[index].message}
             </p>
           </div>
         </>
@@ -77,16 +81,16 @@ const WeeklyEvents: FC<WeeklyEventsProps> = ({}) => {
             <div className="bg-primary/80! backdrop-blur-[2px] size-44 rounded-sm flex items-center justify-center     text-xl uppercase   text-white font-serif">
               <>
                 <div className="space-y-1 flex items-center justify-center flex-col p-1">
-                  <p className="text-center">{WEEKLY_EVENTS[0].title}</p>
+                  <p className="text-center">{promos[0].title}</p>
                   <p className="text-sm text-wrap text-center ">
-                    {WEEKLY_EVENTS[0].subtitle}
+                    {promos[0].message}
                   </p>
                 </div>
               </>
             </div>
           </div>
           <Image
-            src={"/sideImage.jpg"}
+            src={promos[0].imageUrl ?? "/placeholder.jpg"}
             alt="image"
             fill
             className="object-cover"></Image>
@@ -100,16 +104,16 @@ const WeeklyEvents: FC<WeeklyEventsProps> = ({}) => {
             <div className="bg-primary/80! backdrop-blur-[2px] size-44 rounded-sm flex items-center justify-center     text-xl uppercase   text-white font-serif">
               <>
                 <div className="space-y-1 flex items-center justify-center flex-col p-1">
-                  <p className="text-center">{WEEKLY_EVENTS[1].title}</p>
+                  <p className="text-center">{promos[1].title}</p>
                   <p className="text-sm text-wrap text-center ">
-                    {WEEKLY_EVENTS[1].subtitle}
+                    {promos[1].message}
                   </p>
                 </div>
               </>
             </div>
           </div>
           <Image
-            src={"/sideImage.jpg"}
+            src={promos[1].imageUrl ?? "/placeholder.jpg"}
             alt="image"
             fill
             className="object-cover"></Image>
@@ -123,16 +127,16 @@ const WeeklyEvents: FC<WeeklyEventsProps> = ({}) => {
             <div className="bg-primary/80! backdrop-blur-[2px] size-44 rounded-sm flex items-center justify-center     text-xl uppercase   text-white font-serif">
               <>
                 <div className="space-y-1 flex items-center justify-center flex-col p-1">
-                  <p className="text-center">{WEEKLY_EVENTS[2].title}</p>
+                  <p className="text-center">{promos[2].title}</p>
                   <p className="text-sm text-wrap text-center ">
-                    {WEEKLY_EVENTS[2].subtitle}
+                    {promos[2].message}
                   </p>
                 </div>
               </>
             </div>
           </div>
           <Image
-            src={"/sideImage.jpg"}
+            src={promos[2].imageUrl ?? "/placeholder.jpg"}
             alt="image"
             fill
             className="object-cover"></Image>
@@ -146,25 +150,40 @@ const WeeklyEvents: FC<WeeklyEventsProps> = ({}) => {
             <div className="bg-primary/80! backdrop-blur-[2px] size-44 rounded-sm flex items-center justify-center     text-xl uppercase   text-white font-serif">
               <>
                 <div className="space-y-1 flex items-center justify-center flex-col p-1">
-                  <p className="text-center">{WEEKLY_EVENTS[3].title}</p>
+                  <p className="text-center">{promos[3]?.title}</p>
                   <p className="text-sm text-wrap text-center ">
-                    {WEEKLY_EVENTS[3].subtitle}
+                    {promos[3]?.message}
                   </p>
                 </div>
               </>
             </div>
           </div>
           <Image
-            src={"/sideImage.jpg"}
+            src={promos[3]?.imageUrl ?? "/placeholder.jpg"}
             alt="image"
             fill
             className="object-cover"></Image>
         </div>
         <div className="absolute md:right-0 bottom-0 max-md:-bottom-12">
-          <ArrowButton
-            direction="right"
-            label="Group Booking"
-            className="pl-0"></ArrowButton>
+          <BookTableButton
+            type="EVENT"
+            trigger={
+              <div className="group flex cursor-pointer items-center z-40 gap-2 md:p-2 md:pl-0 max-md:-ml-2">
+                <div
+                  className={`relative h-4 w-[200px] shrink-0 inline-block translate-x-0 transition-transform duration-300 group-hover:-translate-x-2" `}>
+                  <Image
+                    src="/Arrow.svg"
+                    alt="Arrow"
+                    fill
+                    className={`object-contain `}
+                  />
+                </div>
+                <div
+                  className={`h-4 flex items-center justify-center  translate-x-0 transition-transform duration-300 group-hover:translate-x-2}`}>
+                  Group Booking
+                </div>
+              </div>
+            }></BookTableButton>
         </div>
       </div>
     </SectionComponent>

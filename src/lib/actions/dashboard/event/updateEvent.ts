@@ -24,7 +24,7 @@ export const updateEventAction = async (values: EventFormValues) => {
   const data = parsed.data;
 
   try {
-    await prisma.event.update({
+    const response = await prisma.event.update({
       where: { id: data.id },
       data: {
         ...(data.title !== undefined ? { title: data.title } : {}),
@@ -64,10 +64,14 @@ export const updateEventAction = async (values: EventFormValues) => {
     });
     revalidatePath("/events");
     revalidatePath("/dashboard/events");
-    return { ok: true as const, message: "Event created successfully." };
+    return {
+      ok: true as const,
+      message: "Event created successfully.",
+      data: response,
+    };
   } catch (error: any) {
     console.log(error);
 
-    return { ok: false, message: error.message };
+    return { ok: false, message: error.message, data: null };
   }
 };

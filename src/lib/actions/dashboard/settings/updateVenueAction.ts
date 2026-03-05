@@ -6,6 +6,7 @@ import { getSingletonId } from "@/lib/helpers/getSingletonId";
 
 import { prisma } from "@/lib/prisma/db";
 import { VenueInput, venueSchema } from "@/lib/validators/settingsValidator";
+import { revalidatePath } from "next/cache";
 
 export async function updateVenueAction(value: VenueInput) {
   await requireAuth();
@@ -14,5 +15,7 @@ export async function updateVenueAction(value: VenueInput) {
     return fail(parsed.error.issues[0]?.message ?? "Invalid");
   const id = await getSingletonId();
   await prisma.restaurant.update({ where: { id }, data: parsed.data });
+
+  revalidatePath("/events");
   return success("Venue updated.");
 }

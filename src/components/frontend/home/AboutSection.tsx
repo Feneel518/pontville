@@ -38,7 +38,7 @@ const AboutSection: FC<AboutSectionProps> = ({}) => {
         <aside className="grid grid-cols-2 gap-4 md:items-end md:gap-12">
           <div className="relative aspect-4/5 w-full md:aspect-4/5">
             <Image
-              src="/mainImage.jpg"
+              src="/about1.jpg"
               alt="About The Crown Inn"
               fill
               className="object-cover rounded-sm"
@@ -47,7 +47,7 @@ const AboutSection: FC<AboutSectionProps> = ({}) => {
 
           <div className="relative aspect-square w-full ">
             <Image
-              src="/sideImage.jpg"
+              src="/about2.jpg"
               alt="The Crown Inn interior"
               fill
               className="object-cover rounded-sm"

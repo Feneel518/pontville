@@ -37,12 +37,14 @@ export default async function Home() {
       <HowToBook tabelImage={restaurant?.homePageBookATableImage}></HowToBook>
       {reviews.length > 0 && <Testimonials reviews={reviews}></Testimonials>}
       <OurInstagram
+        instaLink={restaurant?.instagramUrl}
+        facebookLink={restaurant?.facebookUrl}
         insta1={restaurant?.insta1!}
         insta2={restaurant?.insta2!}
         insta3={restaurant?.insta3!}
         insta4={restaurant?.insta4!}></OurInstagram>
       <OurLocation
-        address={`${restaurant?.addressLine}, ${restaurant?.city}, ${restaurant?.state}} - ${restaurant?.postcode}`}
+        address={`${restaurant?.addressLine}, ${restaurant?.city}, ${restaurant?.state} - ${restaurant?.postcode}`}
         email={restaurant?.email!}
         hours={restaurant?.hoursJson}
         lat={restaurant?.mapLat!}

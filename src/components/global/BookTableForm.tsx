@@ -45,13 +45,19 @@ function toDateOrThrow(v: unknown) {
   return d;
 }
 
-export function BookTableForm({ onSuccess }: { onSuccess?: () => void }) {
+export function BookTableForm({
+  onSuccess,
+  eventType = "TABLE",
+}: {
+  onSuccess?: () => void;
+  eventType?: "EVENT" | "TABLE";
+}) {
   const [loading, setLoading] = React.useState(false);
 
   const form = useForm<CreateInquiryInput>({
     resolver: zodResolver(createInquirySchema) as any,
     defaultValues: {
-      type: "TABLE",
+      type: eventType,
       name: "",
       email: "",
       phone: "",
@@ -69,8 +75,6 @@ export function BookTableForm({ onSuccess }: { onSuccess?: () => void }) {
 
   const type = form.watch("type");
   const date = form.watch("bookingAt");
-
-  console.log(date);
 
   async function onSubmit(values: CreateInquiryInput) {
     try {

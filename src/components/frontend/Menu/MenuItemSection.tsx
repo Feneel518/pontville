@@ -11,7 +11,7 @@ const getMenuItemsByCategory = unstable_cache(
         status: "ACTIVE",
         isAvailable: true, // add if you have this field, huge filter
       },
-      orderBy: { sortOrder: "asc" }, // if exists
+      orderBy: { imageUrl: "asc" }, // if exists
       include: {
         addOnGroups: {
           include: {

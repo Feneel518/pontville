@@ -9,6 +9,7 @@ import {
   IntegrationsInput,
   integrationsSchema,
 } from "@/lib/validators/settingsValidator";
+import { revalidatePath } from "next/cache";
 
 export async function updateIntegrationsAction(value: IntegrationsInput) {
   await requireAuth();
@@ -28,6 +29,6 @@ export async function updateIntegrationsAction(value: IntegrationsInput) {
       mapLng: parsed.data.mapLng ? Number(parsed.data.mapLng) : null,
     } as any,
   });
-
+  revalidatePath("/events");
   return success("Integrations updated.");
 }

@@ -23,9 +23,14 @@ export function getBadgeVariantFromStatus(status: string) {
     case "REFUNDED":
       return "info";
 
+    case "DRAFT":
+      return "preparing";
+    case "PUBLISHED":
+      return "success";
+    case "ARCHIVED":
+      return "error";
+
     default:
       return "default";
   }
 }
-
-

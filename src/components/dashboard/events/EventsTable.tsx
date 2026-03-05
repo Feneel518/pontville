@@ -19,10 +19,11 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Input } from "@/components/ui/input";
-import { formatEventDateLabel } from "@/lib/helpers/timeHelpers";
+import { formatEventDateLabel, to12HourTime } from "@/lib/helpers/timeHelpers";
 import { typeBadge } from "@/lib/helpers/uiHelpers";
 import { ResponsiveModal } from "@/components/global/ResponsiveModal";
 import EventForm from "./EventForm";
+import { getBadgeVariantFromStatus } from "@/lib/helpers/BadgeSelection";
 
 interface EventsTableProps {
   items: Event[];
@@ -43,7 +44,9 @@ const EventsTable: FC<EventsTableProps> = ({
   });
 
   const [open, setOpen] = useState(false);
-
+  const [banners, setBanners] = React.useState<Event[]>(items);
+  const [openEdit, setOpenEdit] = React.useState(false);
+  const [editBanner, setEditBanner] = useState<Event | null>(null);
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
   const canPrev = page > 1;
   const canNext = page < totalPages;
@@ -75,12 +78,15 @@ const EventsTable: FC<EventsTableProps> = ({
     <div className="space-y-4">
       <EventsToolbar qp={qp} />
 
-      <div className="p-2 grid md:grid-cols-3">
+      <div className="p-2 grid md:grid-cols-3 gap-8">
         {items.map((ev, idx) => (
           <Card key={ev.id} className="rounded-2xl group">
             <CardHeader className="space-y-2">
               <div className="flex items-center justify-between gap-3">
                 {typeBadge(ev.type)}
+                <Badge variant={getBadgeVariantFromStatus(ev.status)}>
+                  {ev.status}
+                </Badge>
                 {ev.isTicketed ? (
                   <Badge variant="outline" className="gap-1">
                     <Ticket className="h-3.5 w-3.5" />
@@ -107,7 +113,7 @@ const EventsTable: FC<EventsTableProps> = ({
                 </div>
                 <div className="flex items-center gap-2">
                   <Clock className="h-4 w-4 text-primary/80" />
-                  <span>{ev.startTime}</span>
+                  <span>{to12HourTime(ev.startTime)}</span>
                 </div>
               </div>
             </CardHeader>
@@ -129,11 +135,27 @@ const EventsTable: FC<EventsTableProps> = ({
                   onOpenChange={setOpen}
                   open={open}
                   title={""}
-                  trigger={<Button className="w-full">Edit</Button>}>
+                  trigger={
+                    <Button
+                      className="w-full"
+                      onClick={() => setEditBanner(ev)}>
+                      Edit
+                    </Button>
+                  }>
                   <EventForm
+                    open={openEdit}
                     mode="edit"
-                    initial={ev}
-                    setOpen={setOpen}></EventForm>
+                    initial={editBanner ?? undefined}
+                    setOpen={(v) => {
+                      if (!v) setEditBanner(null);
+                    }}
+                    setOpenChange={setOpenEdit}
+                    onUpdated={(updated) => {
+                      setBanners((prev) =>
+                        prev.map((x) => (x.id === updated.id ? updated : x)),
+                      );
+                      setEditBanner(null);
+                    }}></EventForm>
                 </ResponsiveModal>
               </Button>
             </CardContent>

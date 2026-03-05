@@ -99,7 +99,7 @@ const MenuItemCard: FC<MenuItemCardProps> = ({
         </div>
         <div className="relative aspect-4/3 w-full overflow-hidden">
           <Image
-            src={item.imageUrl || "/placeholder.png"}
+            src={item.imageUrl || "/placeholder.jpg"}
             alt={item.name}
             fill
             className="object-cover transition duration-300 group-hover:scale-[1.02] rounded-[28px]  "

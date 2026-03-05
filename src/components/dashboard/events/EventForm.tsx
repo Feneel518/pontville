@@ -54,9 +54,21 @@ type Props = {
   mode: "create" | "edit";
   initial?: Event;
   setOpen: Dispatch<SetStateAction<boolean>>;
+  setOpenChange: Dispatch<SetStateAction<boolean>>;
+  open: boolean;
+  onCreated?: (b: Event) => void;
+  onUpdated?: (b: Event) => void;
 };
 
-export default function EventForm({ mode, initial, setOpen }: Props) {
+export default function EventForm({
+  mode,
+  initial,
+  setOpen,
+  open,
+  setOpenChange,
+  onCreated,
+  onUpdated,
+}: Props) {
   const router = useRouter();
   const [pending, start] = React.useTransition();
 
@@ -107,6 +119,9 @@ export default function EventForm({ mode, initial, setOpen }: Props) {
       router.push("/dashboard/events");
       router.refresh();
       setOpen(false);
+      setOpenChange(false);
+      if (mode === "create") onCreated?.(res.data!);
+      if (mode === "edit") onUpdated?.(res.data!);
     });
   }
 
