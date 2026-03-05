@@ -1,11 +1,14 @@
 import { Footer } from "@/components/frontend/Footer";
 import Navbar from "@/components/frontend/Navbar";
 import Cursor from "@/components/global/Cursor";
+import { auth } from "@/lib/auth/auth";
+import { baseMetadata } from "@/lib/helpers/seo";
 import { slugify } from "@/lib/helpers/SlugHelper";
 import { prisma } from "@/lib/prisma/db";
 // import "mapbox-gl/dist/mapbox-gl.css";
 import type { Metadata } from "next";
 import { Amarante, Inter } from "next/font/google";
+import { headers } from "next/headers";
 import { Toaster } from "sonner";
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 const amarante = Amarante({
@@ -14,10 +17,7 @@ const amarante = Amarante({
   variable: "--font-serif",
 });
 
-export const metadata: Metadata = {
-  title: "Crown Inn",
-  description: "Premium dining, cocktails, and events.",
-};
+export const metadata: Metadata = baseMetadata();
 
 export default async function RootLayout({
   children,
@@ -41,6 +41,20 @@ export default async function RootLayout({
     },
   });
 
+  const user = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  let hasDashboard = false;
+
+  if (user?.user) {
+    const allowed = await prisma.allowedUser.findUnique({
+      where: { email: user?.user.email, isActive: true, role: "ADMIN" },
+    });
+
+    hasDashboard = allowed ? true : false;
+  }
+
   if (!restaurant) {
     restaurant = await prisma.restaurant.create({
       data: {
@@ -57,7 +71,10 @@ export default async function RootLayout({
 
   return (
     <div className="">
-      <Navbar restaurantDetails={restaurant}></Navbar>
+      <Navbar
+        restaurantDetails={restaurant}
+        allowedDashboard={hasDashboard}
+        user={user?.user}></Navbar>
       <div className="flex-1 min-h-screen">{children}</div>
       <Toaster richColors />
       <Cursor></Cursor>

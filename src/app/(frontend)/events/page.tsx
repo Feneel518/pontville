@@ -22,6 +22,8 @@ import UpcomingEvents from "@/components/frontend/events/UpcomingEvents";
 import WeeklyEvents from "@/components/frontend/events/WeeklyEvents";
 import FunctionEvents from "@/components/frontend/events/FunctionEvents";
 import { prisma } from "@/lib/prisma/db";
+import { pageMetadata } from "@/lib/helpers/seo";
+import { Metadata } from "next";
 
 type EventType =
   | "LIVE_MUSIC"
@@ -108,6 +110,13 @@ const WEEKLY_EVENTS = [
     subtitle: "Chill afternoon vibes • Family-friendly",
   },
 ];
+
+export const metadata: Metadata = pageMetadata({
+  title: "Events & Functions",
+  description:
+    "Discover upcoming events, live music, and function options at The Pontville Pub in Pontville, Tasmania.",
+  path: "/events",
+});
 
 function typeBadge(type: EventType) {
   switch (type) {

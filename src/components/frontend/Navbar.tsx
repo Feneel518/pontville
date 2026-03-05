@@ -6,7 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { FC } from "react";
 import { IconRipple } from "@tabler/icons-react";
-import { Button } from "../ui/button";
+import { Button, buttonVariants } from "../ui/button";
 import {
   Sheet,
   SheetClose,
@@ -18,6 +18,8 @@ import {
 import { Separator } from "../ui/separator";
 import CartSheet from "./cart/CartSheet";
 import { BookTableButton } from "../global/BookTableButton";
+import HomeUserNavClient from "./home/HomeUserNavClient";
+import { User } from "better-auth";
 
 interface NavbarProps {
   restaurantDetails: {
@@ -25,6 +27,8 @@ interface NavbarProps {
     tagline: string | null;
     logoUrl: string | null;
   };
+  user: User | undefined;
+  allowedDashboard: boolean;
 }
 
 const nav = [
@@ -35,7 +39,11 @@ const nav = [
   { label: "Contact", href: "/contact" },
 ];
 
-const Navbar: FC<NavbarProps> = ({ restaurantDetails }) => {
+const Navbar: FC<NavbarProps> = ({
+  restaurantDetails,
+  allowedDashboard = false,
+  user,
+}) => {
   const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
@@ -96,6 +104,18 @@ const Navbar: FC<NavbarProps> = ({ restaurantDetails }) => {
               <BookTableButton variant="elegant" />
 
               <CartSheet></CartSheet>
+
+              {user ? (
+                <HomeUserNavClient
+                  canAccessDashboard={allowedDashboard}
+                  user={user}></HomeUserNavClient>
+              ) : (
+                <Link
+                  href={"/auth/login"}
+                  className={buttonVariants({ variant: "outline" })}>
+                  Log In
+                </Link>
+              )}
             </div>
 
             {/* Mobile menu */}

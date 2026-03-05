@@ -30,7 +30,7 @@ export const requireAuth = async () => {
     return { user: session.user };
   }
   const allowed = await prisma.allowedUser.findUnique({
-    where: { email: session.user.email },
+    where: { email: session.user.email, isActive: true, role: "ADMIN" },
   });
 
   if (!allowed?.isActive) redirect("/");

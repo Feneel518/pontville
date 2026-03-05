@@ -19,6 +19,7 @@ const items = [
   { key: "integrations", label: "Integrations" },
   { key: "homepage", label: "Home Page" },
   { key: "instagram", label: "Instagram" },
+  { key: "allowUser", label: "Allow User" },
 ] as const;
 
 export function SettingsNav({ active }: { active: string }) {

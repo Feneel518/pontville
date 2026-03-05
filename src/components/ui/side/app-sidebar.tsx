@@ -2,21 +2,16 @@
 
 import * as React from "react";
 import {
-  IconCamera,
-  IconChartBar,
   IconDashboard,
-  IconDatabase,
-  IconFileAi,
-  IconFileDescription,
-  IconFileWord,
-  IconFolder,
-  IconHelp,
-  IconInnerShadowTop,
-  IconListDetails,
-  IconReport,
-  IconRipple,
-  IconSearch,
+  IconToolsKitchen2,
+  IconReceipt2,
+  IconMail,
+  IconCalendarEvent,
+  IconCalendarTime,
+  IconSpeakerphone,
+  IconStar,
   IconSettings,
+  IconRipple,
   IconUsers,
 } from "@tabler/icons-react";
 
@@ -35,6 +30,7 @@ import {
 } from "@/components/ui/sidebar";
 import Link from "next/link";
 import Image from "next/image";
+import { User } from "better-auth";
 
 const data = {
   user: {
@@ -51,41 +47,46 @@ const data = {
     {
       title: "Menu",
       url: "/dashboard/menu",
-      icon: IconListDetails,
+      icon: IconToolsKitchen2,
     },
     {
-      title: "Orders ",
+      title: "Orders",
       url: "/dashboard/orders",
-      icon: IconChartBar,
+      icon: IconReceipt2,
     },
     {
       title: "Inquiries",
       url: "/dashboard/inquiries",
-      icon: IconFolder,
+      icon: IconMail,
     },
     {
       title: "Bookings",
       url: "/dashboard/bookings",
-      icon: IconUsers,
+      icon: IconCalendarTime,
     },
     {
       title: "Events",
       url: "/dashboard/events",
-      icon: IconUsers,
+      icon: IconCalendarEvent,
     },
     {
       title: "Promotions",
       url: "/dashboard/promo",
-      icon: IconUsers,
+      icon: IconSpeakerphone,
     },
     {
       title: "Reviews",
       url: "/dashboard/reviews",
-      icon: IconUsers,
+      icon: IconStar,
     },
   ],
 
   navSecondary: [
+    {
+      title: "Customers",
+      url: "/dashboard/customers",
+      icon: IconUsers,
+    },
     {
       title: "Settings",
       url: "/dashboard/settings",
@@ -95,9 +96,10 @@ const data = {
 };
 type AppSidebarProps = React.ComponentProps<typeof Sidebar> & {
   logo?: string | null;
+  user: User;
 };
 
-export function AppSidebar({ logo, ...props }: AppSidebarProps) {
+export function AppSidebar({ logo, user, ...props }: AppSidebarProps) {
   return (
     <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader>
@@ -137,7 +139,7 @@ export function AppSidebar({ logo, ...props }: AppSidebarProps) {
         <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser user={user} />
       </SidebarFooter>
     </Sidebar>
   );

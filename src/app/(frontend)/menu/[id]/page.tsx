@@ -4,6 +4,9 @@ import Heading from "@/components/global/Heading";
 import SectionComponent from "@/components/global/SectionComponent";
 import { getMenuById } from "@/lib/actions/frontend/menu/getMenuById";
 import { isMenuOpenNow } from "@/lib/checks/isMenuOpenNow";
+import { pageMetadata } from "@/lib/helpers/seo";
+import { prisma } from "@/lib/prisma/db";
+import { Metadata } from "next";
 import { unstable_cache } from "next/cache";
 import { redirect } from "next/navigation";
 
@@ -21,6 +24,35 @@ interface pageProps {
     id: string;
   }>;
   searchParams?: Promise<Record<string, string | string[] | undefined>>;
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ categorySlug: string }>;
+}): Promise<Metadata> {
+  const { categorySlug } = await params;
+
+  const category = await prisma.category.findUnique({
+    where: { slug: categorySlug },
+    select: { name: true, slug: true, description: true, updatedAt: true },
+  });
+
+  if (!category)
+    return pageMetadata({ title: "Menu", description: "Menu", path: "/menu" });
+
+  const title = category.name;
+  const description =
+    category.description?.trim() ||
+    `Explore ${category.name} at The Pontville Pub — Pontville, Tasmania.`;
+
+  return pageMetadata({
+    title,
+    description,
+    path: `/menu/${category.slug}`,
+    // Optional OG per category (if you have images)
+    // image: `/og?type=menu&title=${encodeURIComponent(title)}`
+  });
 }
 
 const page: FC<pageProps> = async ({ params, searchParams }) => {
@@ -51,8 +83,6 @@ const page: FC<pageProps> = async ({ params, searchParams }) => {
     openingHours: menu.openingHours,
     now: new Date(),
   });
-
-
 
   return (
     <SectionComponent>

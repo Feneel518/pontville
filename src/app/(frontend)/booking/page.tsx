@@ -1,6 +1,14 @@
 import BookingLookup from "@/components/frontend/booking/BookingLookup";
 import { Card, CardContent } from "@/components/ui/card";
+import { pageMetadata } from "@/lib/helpers/seo";
+import { Metadata } from "next";
 
+export const metadata: Metadata = pageMetadata({
+  title: "Book a Table",
+  description:
+    "Book a table at The Pontville Pub. Choose your date, time, and party size for a relaxed dining experience.",
+  path: "/book",
+});
 export default function BookingIndexPage() {
   return (
     <div className="mx-auto w-full max-w-5xl px-4 py-10 md:py-14">

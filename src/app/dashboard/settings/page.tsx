@@ -1,3 +1,4 @@
+import AllowUserForm from "@/components/dashboard/settings/AllowUserForm";
 import { BrandForm } from "@/components/dashboard/settings/BrandForm";
 import { HomepageForm } from "@/components/dashboard/settings/HomepageForm";
 import { HoursForm } from "@/components/dashboard/settings/HoursForm";
@@ -37,6 +38,8 @@ const page: FC<pageProps> = async ({ searchParams }) => {
     }));
 
   const hours = (settings.hoursJson ?? {}) as HoursEditorInput;
+
+    const allowedUsers = await prisma.allowedUser.findMany();
   return (
     <SettingsShell
       title="Settings"
@@ -130,6 +133,7 @@ const page: FC<pageProps> = async ({ searchParams }) => {
           }}
         />
       )}
+      {section === "allowUser" && <AllowUserForm allowedUser={allowedUsers} />}
     </SettingsShell>
   );
 };

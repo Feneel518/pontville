@@ -172,14 +172,22 @@ import OrdersPagination from "@/components/frontend/order/OrdersPagination";
 import Heading from "@/components/global/Heading";
 import SectionComponent from "@/components/global/SectionComponent";
 import { requireUser } from "@/lib/checks/requireUser";
+import { pageMetadata } from "@/lib/helpers/seo";
 import { prisma } from "@/lib/prisma/db";
 import { Prisma } from "@prisma/client";
+import { Metadata } from "next";
 import { FC } from "react";
 
 interface pageProps {
   searchParams?: Promise<Record<string, string | string[] | undefined>>;
 }
 
+export const metadata: Metadata = pageMetadata({
+  title: "Online Orders",
+  description:
+    "Order takeaway online from The Pontville Pub. Fast checkout and easy pickup in Pontville, Tasmania.",
+  path: "/orders",
+});
 const TAKE = 12;
 
 function toInt(v: unknown, fallback: number) {

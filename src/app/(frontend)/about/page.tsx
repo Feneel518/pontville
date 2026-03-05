@@ -4,7 +4,9 @@ import AboutHero from "@/components/frontend/about/AboutHero";
 import OurAmbience from "@/components/frontend/about/OurAmbience";
 import PentvilleGallery from "@/components/frontend/about/PentvilleGallery";
 import WhoWeAre from "@/components/frontend/about/WhoWeAre";
+import { pageMetadata } from "@/lib/helpers/seo";
 import { CalendarDays, HeartHandshake, Users, Utensils } from "lucide-react";
+import { Metadata } from "next";
 
 const VALUES = [
   {
@@ -35,6 +37,13 @@ const GALLERY = [
   { src: "/about/gallery-3.jpg", alt: "Crown Inn food and drinks" },
   { src: "/about/gallery-4.jpg", alt: "Crown Inn outdoor / entrance" },
 ];
+
+export const metadata: Metadata = pageMetadata({
+  title: "About",
+  description:
+    "Learn about The Pontville Pub — a historic Tasmanian pub serving travellers since 1835.",
+  path: "/about",
+});
 
 export default function AboutPage() {
   return (

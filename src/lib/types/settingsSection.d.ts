@@ -4,4 +4,6 @@ export type Section =
   | "brand"
   | "seo"
   | "integrations"
-  | "homepage" | "instagram";
+  | "homepage"
+  | "instagram"
+  | "allowUser";
