@@ -50,7 +50,7 @@ const HeroSection: FC<HeroSectionProps> = ({
 
   const onPointerLeave = () => setCursor({ label: null, type: "default" });
   return (
-    <section className="relative grid min-h-svh md:grid-cols-2">
+    <section className="relative grid min-h-svh md:grid-cols-2 max-md:w-screen overflow-hidden">
       {/* Left: Main image */}
       <div className="relative min-h-svh w-full md:min-h-full">
         <Image
@@ -90,7 +90,7 @@ const HeroSection: FC<HeroSectionProps> = ({
             ref={mainTextRef}
             onPointerEnter={onPointerEnter}
             onPointerLeave={onPointerLeave}
-            className="font-serif leading-none text-[clamp(120px,12vw,200px)] md:text-nowrap text-primary drop-shadow-xl"
+            className="font-serif leading-none text-[clamp(100px,6vw,200px)] md:text-nowrap text-primary drop-shadow-xl"
             style={{
               WebkitTextStroke: !isMobile ? "2px black" : "",
             }}>
