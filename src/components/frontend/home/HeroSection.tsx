@@ -1,6 +1,7 @@
 "use client";
 
 import ArrowButton from "@/components/ui/ArrowButton";
+import { useIsMobile } from "@/hooks/use-mobile";
 import useCursorStore from "@/hooks/useCursorStore";
 import Image from "next/image";
 
@@ -21,6 +22,7 @@ const HeroSection: FC<HeroSectionProps> = ({
   mainImage,
   sideImage,
 }) => {
+  const isMobile = useIsMobile();
   const mainTextRef = useRef(null);
   useEffect(() => {
     let locomotiveScroll: any;
@@ -79,19 +81,24 @@ const HeroSection: FC<HeroSectionProps> = ({
 
       {/* Overlay: Title content */}
       <div className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center px-4 ">
-        <div className="pointer-events-auto flex flex-col items-start md:items-start">
-          <p className="font-sans text-base md:text-2xl  ">{tagLine}</p>
+        <div className="pointer-events-auto flex flex-col items-start md:items-start ">
+          <p className="font-sans text-base md:text-2xl text-white  ">
+            {tagLine}
+          </p>
 
           <h1
             ref={mainTextRef}
             onPointerEnter={onPointerEnter}
             onPointerLeave={onPointerLeave}
-            className="font-serif leading-none  text-[clamp(60px,12vw,200px)] text-nowrap">
+            className="font-serif leading-none text-[clamp(120px,12vw,200px)] md:text-nowrap text-primary drop-shadow-xl"
+            style={{
+              WebkitTextStroke: !isMobile ? "2px black" : "",
+            }}>
             {restaurantName}
           </h1>
 
           {/* Mobile button (only on small screens) */}
-          <div className="mt-4 flex w-full justify-end md:hidden">
+          <div className="mt-4 flex w-full justify-end hidden">
             <ArrowButton direction="right" href="/menu" label="View Menu" />
           </div>
         </div>
