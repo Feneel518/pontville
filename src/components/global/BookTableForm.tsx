@@ -166,7 +166,7 @@ export function BookTableForm({
               <FormItem>
                 <FormLabel>Phone (optional)</FormLabel>
                 <FormControl>
-                  <Input placeholder="+91…" {...field} />
+                  <Input placeholder="+61…" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>

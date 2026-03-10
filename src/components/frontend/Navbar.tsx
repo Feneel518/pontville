@@ -110,7 +110,7 @@ const Navbar: FC<NavbarProps> = ({
               <Link
                 key={i.href}
                 href={i.href}
-                className="px-3 py-2 rounded-md hover:text-foreground hover:bg-primary/20 transition whitespace-nowrap">
+                className="px-3 py-2 rounded-md hover:text-foreground hover:bg-primary/20 transition whitespace-nowrap font-bold">
                 {i.label}
               </Link>
             ))}

@@ -1,6 +1,9 @@
+"use client";
+
 import Heading from "@/components/global/Heading";
 import SectionComponent from "@/components/global/SectionComponent";
 import ArrowButton from "@/components/ui/ArrowButton";
+import { useIsMobile } from "@/hooks/use-mobile";
 import Image from "next/image";
 import { FC } from "react";
 
@@ -21,8 +24,9 @@ const OurInstagram: FC<OurInstagramProps> = ({
   facebookLink,
   instaLink,
 }) => {
+  const isMobile = useIsMobile();
   return (
-    <SectionComponent>
+    <SectionComponent className="max-md:pb-24">
       <Heading
         label="Our Instagram"
         className="text-wrap leading-tight"></Heading>
@@ -55,19 +59,22 @@ const OurInstagram: FC<OurInstagramProps> = ({
             fill
             className="object-cover"></Image>
         </div>
-        <div className="absolute md:right-0 bottom-0 max-md:-bottom-12">
-          <ArrowButton
-            newTab
-            direction="right"
-            label="Instagram"
-            href={instaLink ?? "#"}></ArrowButton>
-        </div>
-        <div className="absolute md:left-0 bottom-0 max-md:-bottom-12">
-          <ArrowButton
-            newTab
-            direction="left"
-            label="Facebook"
-            href={facebookLink ?? "#"}></ArrowButton>
+
+        <div className="w-full absolute bottom-0 md:-bottom-16 flex items-center justify-between max-md:ml-2">
+          <div className="absolute md:right-0 bottom-0 max-md:-bottom-24">
+            <ArrowButton
+              newTab
+              direction="right"
+              label="Instagram"
+              href={instaLink ?? "#"}></ArrowButton>
+          </div>
+          <div className="absolute md:left-0 bottom-0 max-md:-bottom-12">
+            <ArrowButton
+              newTab
+              direction={isMobile ? "right" : "left"}
+              label="Facebook"
+              href={facebookLink ?? "#"}></ArrowButton>
+          </div>
         </div>
       </div>
     </SectionComponent>

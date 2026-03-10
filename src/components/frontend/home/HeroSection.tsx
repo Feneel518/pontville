@@ -24,13 +24,13 @@ const HeroSection: FC<HeroSectionProps> = ({
 }) => {
   const isMobile = useIsMobile();
   const mainTextRef = useRef(null);
-  useEffect(() => {
-    let locomotiveScroll: any;
-    (async () => {
-      const LocomotiveScroll = (await import("locomotive-scroll")).default;
-      locomotiveScroll = new LocomotiveScroll({});
-    })();
-  });
+  // useEffect(() => {
+  //   let locomotiveScroll: any;
+  //   (async () => {
+  //     const LocomotiveScroll = (await import("locomotive-scroll")).default;
+  //     locomotiveScroll = new LocomotiveScroll({});
+  //   })();
+  // });
 
   const setCursor = useCursorStore((s) => s.setCursor);
   const { label, type } = useCursorStore();
@@ -98,7 +98,7 @@ const HeroSection: FC<HeroSectionProps> = ({
           </h1>
 
           {/* Mobile button (only on small screens) */}
-          <div className="mt-4 flex w-full justify-end hidden">
+          <div className="mt-4  w-full justify-end hidden">
             <ArrowButton direction="right" href="/menu" label="View Menu" />
           </div>
         </div>

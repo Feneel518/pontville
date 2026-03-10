@@ -12,9 +12,13 @@ import SectionComponent from "../global/SectionComponent";
 
 const nav = [
   { label: "Menu", href: "/menu" },
+
   { label: "Events", href: "/events" },
+
   { label: "Functions", href: "/functions" },
+
   { label: "About", href: "/about" },
+
   { label: "Contact", href: "/contact" },
 ];
 
@@ -91,7 +95,7 @@ export function Footer({
 
   return (
     <>
-      <SectionComponent className="border-t border-secondary-foreground">
+      <SectionComponent className="border-t border-secondary-foreground ">
         <div className="grid md:grid-cols-4 grid-cols-2 gap-12  border-b border-secondary-foreground pb-12">
           <div className="">
             <Link href="/" className="flex items-center gap-2 min-w-0">
@@ -106,7 +110,7 @@ export function Footer({
               </div>
 
               <div className="min-w-0 leading-tight -ml-4">
-                <p className="font-serif tracking-tight  text-xl sm:text-xl md:text-2xl lg:text-[30px] truncate">
+                <p className="font-serif tracking-tight  text-xl sm:text-xl lg:text-[30px] ">
                   {name}
                 </p>
 
@@ -118,18 +122,30 @@ export function Footer({
             </Link>
           </div>
 
-          <div className="flex flex-col gap-2 font-sans">
-            <h3 className="font-serif text-2xl">Menu</h3>
-            {nav.map((link) => {
-              return (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className="hover:underline hover:underline-offset-4 transition-all duration-200 ease-in-out">
-                  {link.label}
-                </Link>
-              );
-            })}
+          <div className="grid grid-cols-2">
+            <div className="flex flex-col gap-1 font-sans">
+              <h3 className="font-serif text-2xl">Menu</h3>
+
+              {nav.map((link) => {
+                return (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    className={`hover:underline hover:underline-offset-4 transition-all duration-200 ease-in-out ${link.label === "" && "pointer-events-none"}`}>
+                    {link.label}
+                  </Link>
+                );
+              })}
+            </div>
+
+            <div className="mt-8 flex flex-col gap-1">
+              <p className="hover:underline hover:underline-offset-4 cursor-pointer">
+                Book a Table
+              </p>
+              <p className="hover:underline hover:underline-offset-4 cursor-pointer">
+                Leave Feedback
+              </p>
+            </div>
           </div>
 
           <div className="flex flex-col gap-2 font-sans">
@@ -176,12 +192,10 @@ export function Footer({
             ))}
           </div>
 
-          <div className="flex flex-col gap-2 font-sans">
-            <p className="hover:underline hover:underline-offset-4">
-              Book a table
-            </p>
-            <p className="hover:underline hover:underline-offset-4">
-              Leave Feedback
+          <div className="flex flex-col gap-2 font-sans w-3/4 mt-8">
+            <p className="">
+              Great food, crafted drinks, and a lively atmosphere — the perfect
+              place to relax and enjoy with friends. 🍻
             </p>
           </div>
 
