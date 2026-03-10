@@ -16,8 +16,8 @@ const OurAmbience: FC<OurAmbienceProps> = ({}) => {
             <Heading label="Our Ambience    "></Heading>
             <div className="space-y-4   text-sm md:text-base ">
               <p>
-                Originally established as the Crown Inn, the venue has long been
-                a landmark along the historic route between Hobart and
+                Originally established as the Pontville Pub, the venue has long
+                been a landmark along the historic route between Hobart and
                 Launceston. Over the years, it has remained a gathering place
                 where people come together to enjoy great food, refreshing
                 drinks, and genuine Tasmanian hospitality.
@@ -28,6 +28,13 @@ const OurAmbience: FC<OurAmbienceProps> = ({}) => {
                 and welcoming dining experience. Our menu features classic pub
                 favourites along with delicious meals made with quality
                 ingredients, all served in a warm and friendly atmosphere.
+              </p>
+              <p>
+                Serving travellers since 1835, Pontville Pub is one of the
+                oldest pubs in the Hobart region and a proud part of Tasmania’s
+                rich history. Located in the charming township of Pontville, the
+                pub has been welcoming locals, visitors, and travellers for
+                nearly two centuries.
               </p>
             </div>
           </div>

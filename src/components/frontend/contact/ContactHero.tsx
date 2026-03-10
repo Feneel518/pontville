@@ -2,17 +2,18 @@ import { FC } from "react";
 
 import { CONTACTEMAIL } from "@/lib/constants/contactConstants";
 
-import Link from "next/link";
-import SectionComponent from "@/components/global/SectionComponent";
 import Heading from "@/components/global/Heading";
-import { Input } from "@/components/ui/input";
-import ArrowButton from "@/components/ui/ArrowButton";
+import SectionComponent from "@/components/global/SectionComponent";
+import Link from "next/link";
 import MapboxMap from "../home/MapBox";
 import ContactForm from "./ContactForm";
+import { prisma } from "@/lib/prisma/db";
 
 interface ContactHeroProps {}
 
-const ContactHero: FC<ContactHeroProps> = ({}) => {
+const ContactHero: FC<ContactHeroProps> = async ({}) => {
+  const restaurant = await prisma.restaurant.findFirst();
+
   // Replace with Crown Inn coordinates (Pontville)
 
   const lat = -42.68448319849066;
@@ -21,8 +22,30 @@ const ContactHero: FC<ContactHeroProps> = ({}) => {
   const gmailLink =
     typeof window !== "undefined" &&
     /Android|iPhone|iPad/i.test(navigator.userAgent)
-      ? `googlegmail://co?to=${encodeURIComponent(CONTACTEMAIL.recepient)}&su=${encodeURIComponent(CONTACTEMAIL.subject)}&body=${encodeURIComponent(CONTACTEMAIL.body)}`
+      ? `googlegmail://co?to=${encodeURIComponent(restaurant?.email ?? CONTACTEMAIL.recepient)}&su=${encodeURIComponent(CONTACTEMAIL.subject)}&body=${encodeURIComponent(CONTACTEMAIL.body)}`
       : `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(CONTACTEMAIL.recepient)}&su=${encodeURIComponent(CONTACTEMAIL.subject)}&body=${encodeURIComponent(CONTACTEMAIL.body)}`;
+
+  const contactItems = [
+    {
+      label: "Address",
+      value: `${restaurant?.addressLine}, ${restaurant?.city}, ${restaurant?.state}, Australia`,
+      href: `https://www.google.com/maps?q=${lat},${lng}`,
+      external: true,
+    },
+    {
+      label: "Email",
+      value: `${restaurant?.email}`,
+      href: gmailLink,
+      external: true,
+    },
+    {
+      label: "Phone",
+      value: `${restaurant?.phone}`,
+      href: `tel:${restaurant?.phone}`,
+      external: false,
+    },
+  ];
+
   return (
     <SectionComponent>
       <div className="grid md:grid-cols-2 gap-12">
@@ -33,57 +56,34 @@ const ContactHero: FC<ContactHeroProps> = ({}) => {
               Don't miss out our news and be the first to know about our new
               products, subscribe to our hot offers and newsletter.
             </p>
-            {/* <div className="flex flex-col gap-12 mt-12">
-              <div className="flex  border-b border-secondary-foreground p-2 pl-0 text-base ">
-                <Input
-                  className="border-none shadow-none font-sans focus:ring-0 pl-0 "
-                  placeholder="Your Name"></Input>
-              </div>
-              <div className="flex  border-b border-secondary-foreground p-2 pl-0 text-base ">
-                <Input
-                  className="border-none shadow-none font-sans focus:ring-0 pl-0 "
-                  placeholder="Your Email"></Input>
-              </div>
-              <div className="col-span-2 flex flex-col gap-2 font-sans">
-                <div className="flex  border-b border-secondary-foreground p-2 pl-0 text-base ">
-                  <Input
-                    className="border-none shadow-none font-sans focus:ring-0 pl-0 "
-                    placeholder="Your Message"></Input>
-                  <ArrowButton
-                    direction="right"
-                    label="Submit"
-                    showLabel={false}></ArrowButton>
-                </div>
-                <p className="text-muted-foreground text-sm">
-                  By clicking on the submit button you are agreeing the terms &
-                  condition and Privacy Policy.
-                </p>
-              </div>
-            </div> */}
             <ContactForm></ContactForm>
           </div>
           <div className=" space-y-4  text-base  ">
-            <p>
-              <span className="font-semibold">WORKING HOURS: </span>Monday -
-              Sunday, 10:00 - 21:00
-            </p>
+            {Object.entries(restaurant?.hoursJson!).map(([key, value]) => (
+              <div key={key} className="flex justify-between text-sm">
+                <span className="font-medium capitalize">
+                  {key.replace(/([A-Z])/g, " $1")}
+                </span>
+                <span className="text-muted-foreground">{value as string}</span>
+              </div>
+            ))}
             <p>
               <span className="font-semibold">ADDRESS: </span>
               <Link
                 href={`https://www.google.com/maps?q=${lat},${lng}`}
                 target="_blank">
-                365 Brighton Road, Pontville Tasmania 7030
+                {restaurant?.addressLine}
               </Link>
             </p>
             <p>
               <span className="font-semibold">EMAIL: </span>
               <Link href={gmailLink} target="_blank" rel="noopener noreferrer">
-                pontvillepub@gmail.com
+                {restaurant?.email}
               </Link>
             </p>
             <p>
               <span className="font-semibold">PHONE: </span>{" "}
-              <Link href={"tel:+0362681235"}>+(03) 6268 1235</Link>
+              <Link href={`tel:${restaurant?.phone}`}>{restaurant?.phone}</Link>
             </p>
           </div>
         </div>

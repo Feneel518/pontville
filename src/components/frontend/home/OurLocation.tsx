@@ -35,6 +35,7 @@ const OurLocation: FC<OurLocationProps> = ({
     /Android|iPhone|iPad/i.test(navigator.userAgent)
       ? `googlegmail://co?to=${encodeURIComponent(email ?? CONTACTEMAIL.recepient)}&su=${encodeURIComponent(CONTACTEMAIL.subject)}&body=${encodeURIComponent(CONTACTEMAIL.body)}`
       : `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(CONTACTEMAIL.recepient)}&su=${encodeURIComponent(CONTACTEMAIL.subject)}&body=${encodeURIComponent(CONTACTEMAIL.body)}`;
+
   return (
     <SectionComponent className=" py-20">
       <Heading label="Our location"></Heading>

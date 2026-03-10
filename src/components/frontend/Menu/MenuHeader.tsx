@@ -74,7 +74,7 @@ const MenuHeader: FC<MenuHeaderProps> = async ({}) => {
           );
         })}
 
-        <div className="absolute lg:right-0 bottom-0 max-lg:-bottom-12">
+        <div className="absolute lg:right-0 -bottom-12 max-lg:-bottom-12">
           <ArrowButton
             href="/menu/full-menu"
             direction="right"

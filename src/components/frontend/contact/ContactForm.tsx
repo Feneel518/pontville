@@ -62,7 +62,7 @@ const ContactForm: FC<ContactFormProps> = ({}) => {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="space-y-4 flex flex-col gap-6 mt-12">
+        className="space-y-4 flex flex-col gap-2 mt-12">
         {/* Type */}
 
         {/* Contact */}
@@ -71,7 +71,7 @@ const ContactForm: FC<ContactFormProps> = ({}) => {
             control={form.control}
             name="name"
             render={({ field }) => (
-              <FormItem className="md:col-span-2">
+              <FormItem className="w-full">
                 <FormControl>
                   <Input
                     className="border-none shadow-none font-sans focus-visible:ring-0 pl-0  w-full text-2xl!"
@@ -90,7 +90,7 @@ const ContactForm: FC<ContactFormProps> = ({}) => {
             control={form.control}
             name="email"
             render={({ field }) => (
-              <FormItem>
+              <FormItem className="w-full">
                 <FormControl>
                   <Input
                     className="border-none shadow-none font-sans focus-visible:ring-0 pl-0  w-full text-2xl!"
@@ -110,7 +110,7 @@ const ContactForm: FC<ContactFormProps> = ({}) => {
             control={form.control}
             name="phone"
             render={({ field }) => (
-              <FormItem>
+              <FormItem className="w-full">
                 <FormControl>
                   <Input
                     className="border-none shadow-none font-sans focus-visible:ring-0 pl-0  w-full text-2xl!"
@@ -129,7 +129,7 @@ const ContactForm: FC<ContactFormProps> = ({}) => {
             control={form.control}
             name="notes"
             render={({ field }) => (
-              <FormItem>
+              <FormItem className="w-full">
                 <FormControl>
                   <Textarea
                     rows={4}

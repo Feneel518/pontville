@@ -115,7 +115,7 @@ export function Footer({
                 </p>
 
                 <p className="font-sans tracking-widest text-[10px] -mt-2 sm:text-[11px] md:text-xs text-foreground/70 flex items-center gap-2">
-                  <span className="truncate ml-1">{tagline}</span>
+                  <span className=" ml-1">{tagline}</span>
                   <IconRipple strokeWidth={0.75} className="shrink-0" />
                 </p>
               </div>
@@ -139,10 +139,10 @@ export function Footer({
             </div>
 
             <div className="mt-8 flex flex-col gap-1">
-              <p className="hover:underline hover:underline-offset-4 cursor-pointer">
+              <p className="hover:underline hover:underline-offset-4 cursor-pointer text-nowrap">
                 Book a Table
               </p>
-              <p className="hover:underline hover:underline-offset-4 cursor-pointer">
+              <p className="hover:underline hover:underline-offset-4 cursor-pointer text-nowrap">
                 Leave Feedback
               </p>
             </div>
@@ -194,7 +194,7 @@ export function Footer({
 
           <div className="flex flex-col gap-2 font-sans w-3/4 mt-8">
             <p className="">
-              Great food, crafted drinks, and a lively atmosphere — the perfect
+              Great food, crafted drinks, and a lively atmosphere; the perfect
               place to relax and enjoy with friends. 🍻
             </p>
           </div>
