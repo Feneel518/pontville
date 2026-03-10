@@ -26,34 +26,6 @@ interface pageProps {
   searchParams?: Promise<Record<string, string | string[] | undefined>>;
 }
 
-// export async function generateMetadata({
-//   params,
-// }: {
-//   params: Promise<{ categorySlug: string }>;
-// }): Promise<Metadata> {
-//   const { categorySlug } = await params;
-
-//   const category = await prisma.category.findUnique({
-//     where: { slug: categorySlug },
-//     select: { name: true, slug: true, description: true, updatedAt: true },
-//   });
-
-//   if (!category)
-//     return pageMetadata({ title: "Menu", description: "Menu", path: "/menu" });
-
-//   const title = category.name;
-//   const description =
-//     category.description?.trim() ||
-//     `Explore ${category.name} at The Pontville Pub — Pontville, Tasmania.`;
-
-//   return pageMetadata({
-//     title,
-//     description,
-//     path: `/menu/${category.slug}`,
-//     // Optional OG per category (if you have images)
-//     // image: `/og?type=menu&title=${encodeURIComponent(title)}`
-//   });
-// }
 
 const page: FC<pageProps> = async ({ params, searchParams }) => {
   const { id } = await params;
@@ -76,8 +48,6 @@ const page: FC<pageProps> = async ({ params, searchParams }) => {
   const activeSlug = requestedSlug ?? categories[0].slug;
   const activeCategory =
     categories.find((c) => c.slug === activeSlug) ?? categories[0];
-
-  console.log(menu.openingHours);
 
   const open = isMenuOpenNow({
     openingHours: menu.openingHours,

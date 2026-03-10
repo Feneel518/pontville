@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { MenuItemCardSelect } from "@/lib/types/MenuItemCards";
+
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 import React, { FC } from "react";
@@ -15,29 +15,32 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { isMenuOpenNow } from "@/lib/checks/isMenuOpenNow";
+import {
+  FullMenuItemCardSelect,
+  MenuItemCardSelect,
+} from "@/lib/types/FullMenu";
+import { formatUsd } from "@/lib/helpers/formatCurrency";
 
-interface MenuItemCardFrontendProps {
-  item: MenuItemCardSelect;
-  categorySlug: string;
-  menuId: string;
-  open: {
-    isOpen: boolean;
-    closesAt?: string;
-    opensAt?: string;
-  };
+type MenuOpenState = {
+  isOpen: boolean;
+  closesAt?: string;
+  opensAt?: string;
+};
+
+interface FullMenuItemCardFrontendProps {
+  item: MenuItemCardSelect | FullMenuItemCardSelect;
+  categorySlug?: string;
+  menuId?: string;
+  open?: MenuOpenState;
+  showMeta?: boolean;
 }
-
 function toNumberSafe(v: unknown) {
   const n = typeof v === "string" ? Number(v) : typeof v === "number" ? v : NaN;
   return Number.isFinite(n) ? n : null;
 }
 
-function formatUsd(v: string | number | null | undefined) {
-  const n = toNumberSafe(v);
-  if (n == null) return "—";
-  return `$${n.toFixed(2).replace(/\.00$/, "")}`;
-}
-function getPriceLabel(item: MenuItemCardSelect) {
+function getPriceLabel(item: MenuItemCardSelect | FullMenuItemCardSelect) {
   if (item.priceType === "SIMPLE") return formatUsd(item.basePrice ?? null);
 
   const prices =
@@ -52,15 +55,37 @@ function getPriceLabel(item: MenuItemCardSelect) {
   return min === max ? formatUsd(min) : `${formatUsd(min)}–${formatUsd(max)}`;
 }
 
-const MenuItemCardFrontend: FC<MenuItemCardFrontendProps> = ({
+function hasCategoryAndMenu(
+  item: MenuItemCardSelect | FullMenuItemCardSelect,
+): item is FullMenuItemCardSelect {
+  return "category" in item && !!item.category?.menu;
+}
+
+const FullMenuItemCardFrontend: FC<FullMenuItemCardFrontendProps> = ({
   item,
   categorySlug,
   menuId,
   open,
+  showMeta,
 }) => {
   const hasVariants = item.priceType === "VARIANT" && item.variants.length > 0;
 
-  // Default variant: cheapest available
+  const derivedMenuId = hasCategoryAndMenu(item)
+    ? item.category.menu.id
+    : menuId;
+  const derivedCategorySlug = hasCategoryAndMenu(item)
+    ? item.category.slug
+    : categorySlug;
+
+  const derivedOpen =
+    open ??
+    (hasCategoryAndMenu(item)
+      ? isMenuOpenNow({
+          openingHours: item.category.menu.openingHours,
+          now: new Date(),
+        })
+      : { isOpen: false });
+
   const defaultVariantId = React.useMemo(() => {
     if (!hasVariants) return undefined;
     const available = item.variants.filter((v) => v.isAvailable);
@@ -76,27 +101,20 @@ const MenuItemCardFrontend: FC<MenuItemCardFrontendProps> = ({
     setVariantId(defaultVariantId);
   }, [defaultVariantId]);
 
-  // Selected variant
   const selectedVariant = React.useMemo(() => {
     if (!hasVariants) return undefined;
     return item.variants.find((v) => v.id === variantId);
   }, [hasVariants, item.variants, variantId]);
 
-  // Base price (paise)
   const unitBasePricePaise = React.useMemo(() => {
     if (item.priceType === "SIMPLE") return item.basePrice ?? 0;
-    // VARIANT
     if (!selectedVariant) return 0;
     return selectedVariant.price;
   }, [item.basePrice, item.priceType, selectedVariant]);
 
-  const priceLabel = getPriceLabel(item);
-  //  const chips = getChips(item);
-
   function clampMulti(ids: string[], maxSelect: number | null | undefined) {
     if (maxSelect == null) return ids;
     if (ids.length <= maxSelect) return ids;
-    // keep the most recent selections
     return ids.slice(ids.length - maxSelect);
   }
 
@@ -112,7 +130,6 @@ const MenuItemCardFrontend: FC<MenuItemCardFrontendProps> = ({
     setSelectedByGroup((prev) => {
       const current = prev[groupId] ?? [];
 
-      // SINGLE behaves like radio (select 1); allow deselect only if minSelect = 0
       if (group.selection === "SINGLE") {
         const isSame = current.length === 1 && current[0] === addOnId;
         if (isSame && (group.minSelect ?? 0) === 0) {
@@ -121,7 +138,6 @@ const MenuItemCardFrontend: FC<MenuItemCardFrontendProps> = ({
         return { ...prev, [groupId]: [addOnId] };
       }
 
-      // MULTI
       const exists = current.includes(addOnId);
       const next = exists
         ? current.filter((x) => x !== addOnId)
@@ -148,7 +164,7 @@ const MenuItemCardFrontend: FC<MenuItemCardFrontendProps> = ({
         list.push({
           id: addOn.id,
           name: addOn.name,
-          price: addOn.price, // Int cents/paise
+          price: addOn.price,
           groupId: g.id,
           groupName: g.name,
         });
@@ -159,23 +175,20 @@ const MenuItemCardFrontend: FC<MenuItemCardFrontendProps> = ({
   }, [groups, selectedByGroup]);
 
   return (
-    <div className="group relative w-full h-full rounded-4xl bg-white shadow-sm ring-1 ring-black/5 transition hover:shadow-md p-3 space-y-3 justify-between flex flex-col">
+    <div className="group relative flex h-full w-full flex-col justify-between space-y-3 rounded-4xl bg-white p-3 shadow-sm ring-1 ring-black/5 transition hover:shadow-md">
       <div className="flex flex-col gap-3">
-        {/* Top Image panel */}
-        <div className="relative overflow-hidden rounded-3xl ">
+        <div className="relative overflow-hidden rounded-3xl">
           <div className="relative aspect-4/3 w-full overflow-hidden">
             <Image
               src={item.imageUrl || "/placeholder.jpg"}
               alt={item.name}
               fill
-              className="object-cover transition duration-300 group-hover:scale-[1.02] rounded-[28px]  "
+              className="rounded-[28px] object-cover transition duration-300 group-hover:scale-[1.02]"
               sizes="(max-width: 768px) 100vw, 360px"
-              priority={false}
             />
           </div>
 
-          {/*  tag */}
-          <div className="absolute right-3 top-3 z-10 rounded-full  text-sm font-semibold ">
+          <div className="absolute right-3 top-3 z-10 rounded-full text-sm font-semibold">
             {item.isVegan ? (
               <Badge className="rounded-full border border-emerald-500/40 bg-emerald-500 text-white">
                 Vegan
@@ -186,25 +199,40 @@ const MenuItemCardFrontend: FC<MenuItemCardFrontendProps> = ({
                 Veg
               </Badge>
             ) : null}
-
             {!item.isVeg && !item.isVegan ? (
               <Badge className="rounded-full border border-rose-500/40 bg-rose-500/50 text-white">
                 Non-veg
               </Badge>
             ) : null}
           </div>
-          <div className="flex items-center truncate  justify-center bg-black/10  py-2 pt-8 -mt-6 text-xs text-black/70">
-            <p className="">{item.name}</p>
+
+          <div className="flex items-center justify-center truncate bg-black/10 py-2 pt-8 -mt-6 text-xs text-black/70">
+            <p>{item.name}</p>
           </div>
         </div>
 
-        <div className="space-y-3 ">
-          <div className="flex items-start justify-between gap-3 ">
+        <div className="space-y-3">
+          <div className="flex items-start justify-between gap-3">
             <div className="min-w-0 w-full">
-              <div className=" text-xl w-full font-serif flex items-start gap-8 justify-between">
+              <div className="flex w-full items-start justify-between gap-8 font-serif text-xl">
                 <h3>{item.name}</h3>
                 <h3 className="text-3xl">{formatUsd(unitBasePricePaise)}</h3>
               </div>
+
+              {showMeta && hasCategoryAndMenu(item) ? (
+                <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+                  <Badge variant="secondary">{item.category.menu.name}</Badge>
+                  <Badge variant="outline">{item.category.name}</Badge>
+                  <Badge variant={derivedOpen.isOpen ? "default" : "secondary"}>
+                    {derivedOpen.isOpen
+                      ? `Open now${derivedOpen.closesAt ? ` · till ${derivedOpen.closesAt}` : ""}`
+                      : derivedOpen.opensAt
+                        ? `Opens at ${derivedOpen.opensAt}`
+                        : "Closed"}
+                  </Badge>
+                </div>
+              ) : null}
+
               {item.description ? (
                 <p className="mt-2 line-clamp-2 text-sm text-muted-foreground">
                   {item.description}
@@ -217,19 +245,13 @@ const MenuItemCardFrontend: FC<MenuItemCardFrontendProps> = ({
 
       <div className="flex flex-col gap-2">
         {hasVariants || groups.length > 0 ? (
-          <Accordion
-            type="single"
-            collapsible
-            className="w-full"
-            // optional: defaultValue="customize"
-          >
+          <Accordion type="single" collapsible className="w-full">
             <AccordionItem value="customize" className="border-none">
               <AccordionTrigger className="rounded-xl border bg-muted/30 px-3 py-2 text-sm font-medium hover:no-underline">
                 Customize
               </AccordionTrigger>
 
-              <AccordionContent className="pt-3 space-y-4">
-                {/* Variants */}
+              <AccordionContent className="space-y-4 pt-3">
                 {hasVariants ? (
                   <div className="rounded-xl border bg-muted/30 p-3">
                     <div className="mb-2 flex items-center justify-between">
@@ -244,7 +266,7 @@ const MenuItemCardFrontend: FC<MenuItemCardFrontendProps> = ({
                     <RadioGroup
                       value={variantId}
                       onValueChange={setVariantId}
-                      className="grid gap-2 grid-cols-2">
+                      className="grid grid-cols-2 gap-2">
                       {item.variants
                         .filter((v) => v.isAvailable)
                         .map((v) => (
@@ -271,7 +293,6 @@ const MenuItemCardFrontend: FC<MenuItemCardFrontendProps> = ({
                   </div>
                 ) : null}
 
-                {/* Add-ons */}
                 {groups.length > 0 ? (
                   <div className="space-y-4">
                     {groups.map((g) => {
@@ -281,7 +302,7 @@ const MenuItemCardFrontend: FC<MenuItemCardFrontendProps> = ({
                       return (
                         <div
                           key={g.id}
-                          className="rounded-2xl border bg-muted/30 p-4 space-y-3">
+                          className="space-y-3 rounded-2xl border bg-muted/30 p-4">
                           <div className="flex items-start justify-between gap-3">
                             <div>
                               <div className="text-sm font-semibold">
@@ -379,6 +400,7 @@ const MenuItemCardFrontend: FC<MenuItemCardFrontendProps> = ({
             </AccordionItem>
           </Accordion>
         ) : null}
+
         <AddToCartButton
           addOns={selectedAddOns}
           itemName={item.name}
@@ -386,9 +408,9 @@ const MenuItemCardFrontend: FC<MenuItemCardFrontendProps> = ({
           imageUrl={item.imageUrl}
           priceType={item.priceType}
           unitBasePrice={unitBasePricePaise}
-          categorySlug={categorySlug}
-          menuId={menuId}
-          open={open}
+          categorySlug={derivedCategorySlug ?? ""}
+          menuId={derivedMenuId ?? ""}
+          open={derivedOpen}
           variant={
             item.priceType === "VARIANT" && selectedVariant
               ? {
@@ -397,10 +419,11 @@ const MenuItemCardFrontend: FC<MenuItemCardFrontendProps> = ({
                   price: selectedVariant.price,
                 }
               : null
-          }></AddToCartButton>
+          }
+        />
       </div>
     </div>
   );
 };
 
-export default MenuItemCardFrontend;
+export default FullMenuItemCardFrontend;

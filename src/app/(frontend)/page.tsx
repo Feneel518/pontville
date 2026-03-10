@@ -12,7 +12,7 @@ import { Metadata } from "next";
 import Script from "next/script";
 
 export const metadata: Metadata = pageMetadata({
-  title: "Home",
+  title: "& Restaurant",
   description:
     "Serving travellers since 1835. Book a table, view the menu, and explore events at The Pontville Pub in Pontville, Tasmania.",
   path: "/",
