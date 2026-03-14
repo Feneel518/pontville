@@ -1,4 +1,5 @@
 "use client";
+import { useIsMobile } from "@/hooks/use-mobile";
 import useCursorStore from "@/hooks/useCursorStore";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
@@ -25,6 +26,8 @@ const ArrowButton: FC<ArrowButtonProps> = ({
   const mainTextRef = useRef(null);
   const setCursor = useCursorStore((s) => s.setCursor);
   const { label: cursorLabel, type } = useCursorStore();
+
+  const isMobile = useIsMobile();
 
   const onPointerEnter = () => {
     setCursor({
@@ -56,13 +59,22 @@ const ArrowButton: FC<ArrowButtonProps> = ({
         </div>
       )}
       <div
-        className={`relative h-4 w-[200px] shrink-0 inline-block translate-x-0 transition-transform duration-300 ${direction === "left" ? "group-hover:-translate-x-2" : "group-hover:translate-x-2"}`}>
-        <Image
-          src="/Arrow.svg"
-          alt="Arrow"
-          fill
-          className={`object-contain ${direction === "left" ? "-rotate-180" : "rotate-0"}`}
-        />
+        className={`relative h-4 ${isMobile ? "w-[130px]" : "w-[200px]"}   shrink-0 inline-block translate-x-0 transition-transform duration-300 ${direction === "left" ? "group-hover:-translate-x-2" : "group-hover:translate-x-2"}`}>
+        {isMobile ? (
+          <Image
+            src="/gallery/SmallArrow.svg"
+            alt="Arrow"
+            fill
+            className={`object-contain ${direction === "left" ? "-rotate-180" : "rotate-0"}`}
+          />
+        ) : (
+          <Image
+            src="/Arrow.svg"
+            alt="Arrow"
+            fill
+            className={`object-contain ${direction === "left" ? "-rotate-180" : "rotate-0"}`}
+          />
+        )}
       </div>
 
       {direction === "right" && (

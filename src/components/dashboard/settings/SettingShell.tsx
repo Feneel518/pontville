@@ -25,9 +25,9 @@ export function SettingsShell({
 
       <Separator className="mt-4"></Separator>
 
-      <div className="mt-10 grid md:gap-10 md:grid-cols-12 md:items-start">
-        <aside className="md:col-span-4">{nav}</aside>
-        <main className="md:col-span-8 space-y-6">{children}</main>
+      <div className="mt-10 grid md:gap-10 lg:grid-cols-12 md:items-start">
+        <aside className="lg:col-span-4">{nav}</aside>
+        <main className="lg:col-span-8 space-y-6">{children}</main>
       </div>
     </section>
   );

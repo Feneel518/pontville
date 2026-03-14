@@ -2,16 +2,9 @@
 
 import { ResponsiveModal } from "@/components/global/ResponsiveModal";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { MenuItemCardSelect } from "@/lib/types/MenuItemCards";
 import { cn } from "@/lib/utils";
-import {
-  AddOnSchemaRequest,
-  ItemVariantSchemaRequest,
-} from "@/lib/validators/menuItemValidator";
-import { AddOnGroup, ItemVariant, MenuItem } from "@prisma/client";
 import Image from "next/image";
-import Link from "next/link";
 import { FC, useState } from "react";
 import MenuItemForm from "./MenuItemForm";
 
@@ -36,13 +29,14 @@ function getPriceLabel(item: MenuItemCardSelect) {
       .filter((n): n is number => n != null) ?? [];
 
   if (!prices.length) return "—";
+
   const min = Math.min(...prices);
   const max = Math.max(...prices);
+
   return min === max ? formatUsd(min) : `${formatUsd(min)}–${formatUsd(max)}`;
 }
 
 function getChips(item: MenuItemCardSelect) {
-  // Show up to 4 “chips” like your sample. We’ll use add-ons first.
   const addOns =
     item.addOnGroups
       ?.flatMap((g) => g.addOns ?? [])
@@ -74,50 +68,60 @@ const MenuItemCard: FC<MenuItemCardProps> = ({
   const [open, setOpen] = useState(false);
   const priceLabel = getPriceLabel(item);
   const chips = getChips(item);
+
   return (
     <div
       className={cn(
-        "group relative w-full max-w-[360px] rounded-[28px] bg-white shadow-sm ring-1 ring-black/5 transition hover:shadow-md",
+        "group relative w-full overflow-hidden rounded-2xl sm:rounded-[28px] bg-white shadow-sm ring-1 ring-black/5 transition hover:shadow-md",
+        "mx-auto max-w-full sm:max-w-[420px]",
         className,
       )}>
       {/* Top image panel */}
-      <div className="relative m-3 overflow-hidden rounded-[22px] bg-muted">
+      <div className="relative m-2 sm:m-3 overflow-hidden rounded-xl sm:rounded-[22px] bg-muted">
         {/* Price tag */}
-        <div className="absolute right-3 top-3 z-10 rounded-full bg-white/90 px-3 py-1 text-sm font-semibold text-black shadow-sm ring-1 ring-black/5">
+        <div className="absolute right-2 top-2 z-10 rounded-full bg-white/90 px-2.5 py-1 text-xs sm:right-3 sm:top-3 sm:px-3 sm:text-sm font-semibold text-black shadow-sm ring-1 ring-black/5">
           {priceLabel}
         </div>
+
         {/* Availability / Status */}
-        <div className="absolute left-3 top-3 z-10 flex gap-2">
-          <Badge variant={item.status === "ACTIVE" ? "default" : "secondary"}>
+        <div className="absolute left-2 top-2 z-10 flex max-w-[70%] flex-wrap gap-1.5 sm:left-3 sm:top-3 sm:gap-2">
+          <Badge
+            variant={item.status === "ACTIVE" ? "default" : "secondary"}
+            className="text-[10px] sm:text-xs">
             {item.status}
           </Badge>
           <Badge
             variant="secondary"
-            className={cn(!item.isAvailable && "opacity-70")}>
+            className={cn(
+              "text-[10px] sm:text-xs",
+              !item.isAvailable && "opacity-70",
+            )}>
             {item.isAvailable ? "Available" : "Hidden"}
           </Badge>
         </div>
+
         <div className="relative aspect-4/3 w-full overflow-hidden">
           <Image
             src={item.imageUrl || "/placeholder.jpg"}
             alt={item.name}
             fill
-            className="object-cover transition duration-300 group-hover:scale-[1.02] rounded-[28px]  "
-            sizes="(max-width: 768px) 100vw, 360px"
+            className="rounded-xl sm:rounded-[22px] object-cover transition duration-300 group-hover:scale-[1.02]"
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 360px"
             priority={false}
           />
         </div>
+
         {/* Bottom strip inside image */}
-        <div className="flex items-center truncate  justify-center bg-black/10  py-2 pt-8 -mt-6 text-xs text-black/70">
-          <p className="">{item.name}</p>
+        <div className="-mt-5 flex items-center justify-center bg-emerald-400 px-3 py-2 pt-7 text-center text-[11px] text-black/70 sm:-mt-6 sm:pt-8 sm:text-xs">
+          <p className="line-clamp-1">{item.name}</p>
         </div>
       </div>
 
       {/* Content */}
-      <div className="px-5 pb-5 ">
-        <div className="flex items-end justify-between gap-3">
-          <div className="min-w-0">
-            <div className="truncate text-xl font-semibold leading-tight">
+      <div className="px-4 pb-4 sm:px-5 sm:pb-5">
+        <div className="flex items-start justify-between gap-3">
+          <div className="min-w-0 flex-1">
+            <div className="line-clamp-2 text-base font-semibold leading-tight sm:text-xl">
               {item.name}
             </div>
           </div>
@@ -126,7 +130,7 @@ const MenuItemCard: FC<MenuItemCardProps> = ({
             onOpenChange={setOpen}
             open={open}
             trigger={
-              <div className="flex items-center justify-center gap-2 hover:bg-primary rounded-md p-1 cursor-pointer text-sm">
+              <div className="shrink-0 rounded-md px-2 py-1 text-xs sm:text-sm font-medium cursor-pointer transition hover:bg-primary hover:text-primary-foreground">
                 Edit <span aria-hidden>↗</span>
               </div>
             }>
@@ -134,38 +138,42 @@ const MenuItemCard: FC<MenuItemCardProps> = ({
               categoryId={categoryId}
               mode="edit"
               setOpen={setOpen}
-              initial={item}></MenuItemForm>
+              initial={item}
+            />
           </ResponsiveModal>
         </div>
 
         {/* Description */}
         {item.description ? (
-          <div className="mt-2 line-clamp-2 text-sm text-muted-foreground">
+          <div className="mt-2 line-clamp-2 text-xs text-muted-foreground sm:text-sm">
             {item.description}
           </div>
         ) : null}
-        {/* Meta row: price type + counts */}
-        <div className="mt-3 grid grid-cols-2 gap-2">
+
+        {/* Meta row */}
+        <div className="mt-3 flex flex-wrap gap-2">
           {item.priceType === "VARIANT" ? (
-            <Badge variant="outline">
+            <Badge variant="outline" className="text-[10px] sm:text-xs">
               {item.variants?.length ?? 0} variant
               {(item.variants?.length ?? 0) === 1 ? "" : "s"}
             </Badge>
           ) : null}
 
-          <Badge variant="outline">
+          <Badge variant="outline" className="text-[10px] sm:text-xs">
             {item.addOnGroups?.length ?? 0} Add On
             {(item.addOnGroups?.length ?? 0) === 1 ? "" : "s"}
           </Badge>
         </div>
 
-        {/* Chips like the sample */}
-        <div className="mt-4 flex flex-wrap gap-2 ">
+        {/* Chips */}
+        <div className="mt-4 flex flex-wrap gap-2">
           {chips.map((c) => (
             <span
               key={c}
-              className="rounded-full bg-muted px-3 py-1 text-xs text-muted-foreground ring-1 ring-black/5">
-              {c}
+              className="max-w-full rounded-full bg-muted px-3 py-1 text-[10px] sm:text-xs text-muted-foreground ring-1 ring-black/5">
+              <span className="block max-w-[140px] truncate sm:max-w-[180px]">
+                {c}
+              </span>
             </span>
           ))}
         </div>

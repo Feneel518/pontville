@@ -60,18 +60,18 @@ const OurInstagram: FC<OurInstagramProps> = ({
             className="object-cover"></Image>
         </div>
 
-        <div className="w-full absolute bottom-0 md:-bottom-16 flex items-center justify-between max-md:ml-2">
-          <div className="absolute md:right-0 bottom-0 max-md:-bottom-24">
+        <div className="w-full absolute -bottom-16 flex items-center justify-between gap-8 max-md:ml-2">
+          <div className="absolute right-0 bottom-0 ">
             <ArrowButton
               newTab
               direction="right"
               label="Instagram"
               href={instaLink ?? "#"}></ArrowButton>
           </div>
-          <div className="absolute md:left-0 bottom-0 max-md:-bottom-12">
+          <div className="absolute left-0 bottom-0 ">
             <ArrowButton
               newTab
-              direction={isMobile ? "right" : "left"}
+              direction={"left"}
               label="Facebook"
               href={facebookLink ?? "#"}></ArrowButton>
           </div>

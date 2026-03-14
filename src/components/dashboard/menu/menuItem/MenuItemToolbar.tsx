@@ -81,7 +81,7 @@ const MenuItemToolbar: FC<MenuItemToolbarProps> = ({
 
   return (
     <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
-      <div className="flex flex-1 flex-col gap-3 md:flex-row md:items-center max-md:grid max-md:grid-cols-2">
+      <div className="flex flex-1 flex-col gap-3 md:flex-row md:items-center max-md:grid max-md:grid-cols-2 flex-wrap">
         <Input
           className="w-40"
           value={search}
