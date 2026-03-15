@@ -31,7 +31,6 @@ export const MenuTimeSlotSchema = z
     const open = timeToMinutes(val.openTime);
     const close = timeToMinutes(val.closeTime);
 
-    // same-day slots only (no overnight). If you want overnight, I’ll show that too.
     if (close <= open) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
@@ -48,7 +47,6 @@ export const MenuDayScheduleSchema = z
     slots: z.array(MenuTimeSlotSchema).default([]),
   })
   .superRefine((val, ctx) => {
-    // if closed, slots should be empty
     if (val.isClosed && val.slots.length > 0) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
@@ -57,7 +55,6 @@ export const MenuDayScheduleSchema = z
       });
     }
 
-    // if open, must have at least one slot
     if (!val.isClosed && val.slots.length === 0) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
@@ -66,7 +63,6 @@ export const MenuDayScheduleSchema = z
       });
     }
 
-    // prevent overlaps
     const sorted = [...val.slots].sort(
       (a, b) => timeToMinutes(a.openTime) - timeToMinutes(b.openTime),
     );
@@ -74,6 +70,7 @@ export const MenuDayScheduleSchema = z
     for (let i = 0; i < sorted.length - 1; i++) {
       const aEnd = timeToMinutes(sorted[i].closeTime);
       const bStart = timeToMinutes(sorted[i + 1].openTime);
+
       if (bStart < aEnd) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
@@ -86,18 +83,28 @@ export const MenuDayScheduleSchema = z
 
 export const createMenuSchema = z.object({
   id: z.string().optional(),
-  name: z.string().min(2, "Name is required").max(120),
-  slug: z
-    .string()
-    .trim()
-    .max(140)
-    .optional()
-    .transform((v) => (v ? slugify(v) : undefined)),
-  description: z.string().max(500).optional().nullable(),
-  imageUrl: z.string().url().optional().nullable(),
+
+  name: z.string().trim().min(2, "Name is required").max(120),
+
+  slug: z.preprocess((val) => {
+    if (val === "" || val == null) return undefined;
+    return slugify(String(val));
+  }, z.string().max(140).optional()),
+
+  description: z.preprocess((val) => {
+    if (val === "") return null;
+    return val;
+  }, z.string().max(500).nullable().optional()),
+
+  imageUrl: z.preprocess((val) => {
+    if (val === "") return null;
+    return val;
+  }, z.string().url("Please upload a valid image").nullable().optional()),
+
   sortOrder: z.coerce.number().int().min(0).max(9999).default(0),
+
   status: MenuStatusEnum.optional().default("ACTIVE"),
-  // ✅ opening hours
+
   schedules: z.array(MenuDayScheduleSchema).default([]),
 });
 

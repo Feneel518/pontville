@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   FormControl,
   FormField,
@@ -27,8 +28,6 @@ const DayScheduleRow: FC<DayScheduleRowProps> = ({ day, dayIndex, form }) => {
   });
   const isClosed = form.watch(`schedules.${dayIndex}.isClosed`);
 
-  
-
   const dayLabel = day.charAt(0) + day.slice(1).toLowerCase().replace("_", " ");
   return (
     <div className="rounded-xl border p-4">
@@ -39,32 +38,40 @@ const DayScheduleRow: FC<DayScheduleRowProps> = ({ day, dayIndex, form }) => {
           control={form.control}
           name={`schedules.${dayIndex}.isClosed`}
           render={({ field }) => (
-            <FormItem className="flex items-center gap-2 space-y-0">
-              <FormLabel className="text-sm text-muted-foreground">
-                Closed
-              </FormLabel>
+            <FormItem className="flex items-center gap-3">
               <FormControl>
-                <Switch
-                  checked={!!field.value}
-                  onCheckedChange={(v) => {
-                    field.onChange(v);
+                <Checkbox
+                  checked={field.value}
+                  onCheckedChange={(checked) => {
+                    const isClosed = checked === true;
 
-                    // If closing the day -> clear slots
-                    if (v) {
-                      slotsArray.replace([]);
+                    field.onChange(isClosed);
+
+                    if (isClosed) {
+                      form.setValue(`schedules.${dayIndex}.slots`, [], {
+                        shouldValidate: true,
+                        shouldDirty: true,
+                      });
                     } else {
-                      // If opening the day -> ensure at least 1 slot
-                      if (slotsArray.fields.length === 0) {
-                        slotsArray.append({
-                          openTime: "09:00",
-                          closeTime: "22:00",
-                        });
+                      const currentSlots = form.getValues(
+                        `schedules.${dayIndex}.slots`,
+                      );
+
+                      if (!currentSlots || currentSlots.length === 0) {
+                        form.setValue(
+                          `schedules.${dayIndex}.slots`,
+                          [{ openTime: "09:00", closeTime: "18:00" }],
+                          {
+                            shouldValidate: true,
+                            shouldDirty: true,
+                          },
+                        );
                       }
                     }
                   }}
                 />
               </FormControl>
-              <FormMessage />
+              <FormLabel className="mb-0">Closed</FormLabel>
             </FormItem>
           )}
         />

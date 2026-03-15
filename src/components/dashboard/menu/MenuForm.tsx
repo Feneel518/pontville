@@ -1,3 +1,241 @@
+// "use client";
+
+// import { useRouter } from "next/navigation";
+// import * as React from "react";
+
+// import { Button } from "@/components/ui/button";
+// import {
+//   Form,
+//   FormControl,
+//   FormDescription,
+//   FormField,
+//   FormItem,
+//   FormLabel,
+//   FormMessage,
+// } from "@/components/ui/form";
+// import { Input } from "@/components/ui/input";
+// import {
+//   Select,
+//   SelectContent,
+//   SelectItem,
+//   SelectTrigger,
+//   SelectValue,
+// } from "@/components/ui/select";
+// import { Textarea } from "@/components/ui/textarea";
+
+// import { zodResolver } from "@hookform/resolvers/zod";
+// import { useForm } from "react-hook-form";
+// import { toast } from "sonner";
+// import { Menu, MenuOpeningHour } from "@prisma/client";
+// import {
+//   CreateMenuInput,
+//   createMenuSchema,
+// } from "@/lib/validators/menuValidator";
+// import { slugify } from "@/lib/helpers/SlugHelper";
+// import { createMenuAction } from "@/lib/actions/dashboard/menu/createMenuAction";
+// import { updateMenuAction } from "@/lib/actions/dashboard/menu/updateMenuAction";
+// import FormLayout from "@/components/global/FormLayout";
+// import LoadingButton from "@/components/global/LoadingButton";
+// import { FileUpload } from "@/components/global/FileUpload";
+// import { buildDefaultSchedules, WEEK_DAYS } from "@/lib/constants/Weekdays";
+// import DayScheduleRow from "./DayScheduleRow";
+// import MenuQrCard from "./MenuQRCode";
+
+// export default function MenuForm({
+//   mode,
+//   initial,
+//   setOpen,
+// }: {
+//   mode: "create" | "edit";
+//   initial?: Partial<Menu> & {
+//     openingHours: MenuOpeningHour[];
+//   };
+//   setOpen?: React.Dispatch<React.SetStateAction<boolean>>;
+// }) {
+//   const router = useRouter();
+//   const [pending, start] = React.useTransition();
+//   const [status, setStatus] = React.useState<CreateMenuInput["status"]>(
+//     (initial?.status as any) ?? "ACTIVE",
+//   );
+//   const [error, setError] = React.useState<string | null>(null);
+
+//   const form = useForm<CreateMenuInput>({
+//     resolver: zodResolver(createMenuSchema) as any,
+//     defaultValues: {
+//       id: initial?.id ?? undefined,
+//       description: initial?.description ?? "",
+//       name: initial?.name ?? "",
+//       slug: initial?.slug ?? "",
+//       status: initial?.status ?? "ACTIVE",
+//       imageUrl: initial?.imageUrl ?? "",
+//       sortOrder: initial?.sortOrder ?? undefined,
+//       schedules: buildDefaultSchedules(mode, initial?.openingHours), // ✅
+//     },
+//   });
+
+//   React.useEffect(() => {
+//     form.setValue("slug", slugify(form.watch("name")));
+//   }, [form.watch("name")]);
+
+//   const onSubmit = (values: CreateMenuInput) => {
+//     setError(null);
+
+//     start(async () => {
+//       const res =
+//         mode === "create"
+//           ? await createMenuAction(values)
+//           : await updateMenuAction(values);
+
+//       if (!res.ok) {
+//         setError(res.message);
+//         toast.error(res.message);
+//         return;
+//       }
+//       toast.success(res.message);
+//       router.push("/dashboard/menu");
+//       router.refresh();
+//       if (setOpen) {
+//         setOpen(false);
+//       }
+//     });
+//   };
+
+//   return (
+//     <FormLayout
+//       title={mode === "create" ? "New Menu" : "Edit Menu"}
+//       description={
+//         mode === "create"
+//           ? "You can add categories and menu Items inside."
+//           : "Update catgeory details."
+//       }
+//       footer={
+//         <div className="flex flex-col-reverse gap-2 md:flex-row md:justify-end">
+//           <Button
+//             type="button"
+//             variant="outline"
+//             onClick={() => setOpen && setOpen(false)}
+//             disabled={pending}>
+//             Cancel
+//           </Button>
+
+//           <Button type="submit" form="menu-form" disabled={pending}>
+//             {pending ? (
+//               <LoadingButton></LoadingButton>
+//             ) : mode === "create" ? (
+//               "Create Menu"
+//             ) : (
+//               "Save Changes"
+//             )}
+//           </Button>
+//         </div>
+//       }>
+//       {error ? (
+//         <div className="rounded-lg border border-destructive/30 bg-destructive/5 p-3 text-sm text-destructive">
+//           {error}
+//         </div>
+//       ) : null}
+
+//       <Form {...form}>
+//         <form
+//           id="menu-form"
+//           onSubmit={form.handleSubmit(onSubmit)}
+//           className="space-y-5">
+//           {/* SECTION: Company */}
+//           <FormField
+//             control={form.control}
+//             name="imageUrl"
+//             render={({ field }) => (
+//               <FormItem className="">
+//                 <FormLabel>Menu Image</FormLabel>
+//                 <FormControl>
+//                   <FileUpload
+//                     endpoint="menuImage"
+//                     onChange={field.onChange}
+//                     value={field.value}></FileUpload>
+//                 </FormControl>
+//                 <FormMessage />
+//               </FormItem>
+//             )}
+//           />
+
+//           <div className="grid gap-4 md:grid-cols-2">
+//             <FormField
+//               control={form.control}
+//               name="name"
+//               render={({ field }) => (
+//                 <FormItem className="">
+//                   <FormLabel>Menu Name</FormLabel>
+//                   <FormControl>
+//                     <Input placeholder="e.g. Pizzeria" {...field} />
+//                   </FormControl>
+//                   <FormMessage />
+//                 </FormItem>
+//               )}
+//             />
+//             <FormField
+//               control={form.control}
+//               name="status"
+//               render={({ field }) => (
+//                 <FormItem>
+//                   <FormLabel>Status</FormLabel>
+//                   <Select value={field.value} onValueChange={field.onChange}>
+//                     <FormControl>
+//                       <SelectTrigger className="w-full">
+//                         <SelectValue placeholder="Select status" />
+//                       </SelectTrigger>
+//                     </FormControl>
+//                     <SelectContent>
+//                       <SelectItem value="ACTIVE">ACTIVE</SelectItem>
+//                       <SelectItem value="INACTIVE">INACTIVE</SelectItem>
+//                     </SelectContent>
+//                   </Select>
+
+//                   <FormMessage />
+//                 </FormItem>
+//               )}
+//             />
+//           </div>
+
+//           <MenuQrCard slug={form.watch("id")} />
+
+//           {WEEK_DAYS.map((day, dayIndex) => (
+//             <DayScheduleRow
+//               key={day}
+//               form={form}
+//               day={day}
+//               dayIndex={dayIndex}
+//             />
+//           ))}
+
+//           <FormField
+//             control={form.control}
+//             name="description"
+//             render={({ field }) => (
+//               <FormItem>
+//                 <FormLabel>Description</FormLabel>
+//                 <FormControl>
+//                   <Textarea
+//                     placeholder="Various information about pizzeria"
+//                     {...field}
+//                     value={field.value!}
+//                   />
+//                 </FormControl>
+//                 <FormDescription className="text-xs">
+//                   Optional (recommended for webiste catalog).
+//                 </FormDescription>
+//                 <FormMessage />
+//               </FormItem>
+//             )}
+//           />
+
+//           {/* Optional: hidden submit button for Enter key */}
+//           <button type="submit" className="hidden" />
+//         </form>
+//       </Form>
+//     </FormLayout>
+//   );
+// }
+
 "use client";
 
 import { useRouter } from "next/navigation";
@@ -24,7 +262,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { FieldErrors, useForm, useWatch } from "react-hook-form";
 import { toast } from "sonner";
 import { Menu, MenuOpeningHour } from "@prisma/client";
 import {
@@ -41,6 +279,33 @@ import { buildDefaultSchedules, WEEK_DAYS } from "@/lib/constants/Weekdays";
 import DayScheduleRow from "./DayScheduleRow";
 import MenuQrCard from "./MenuQRCode";
 
+function getFirstErrorMessage(errors: FieldErrors<any>): string | null {
+  const walk = (obj: any): string | null => {
+    if (!obj) return null;
+
+    if (typeof obj.message === "string") return obj.message;
+
+    if (Array.isArray(obj)) {
+      for (const item of obj) {
+        const found = walk(item);
+        if (found) return found;
+      }
+      return null;
+    }
+
+    if (typeof obj === "object") {
+      for (const key of Object.keys(obj)) {
+        const found = walk(obj[key]);
+        if (found) return found;
+      }
+    }
+
+    return null;
+  };
+
+  return walk(errors);
+}
+
 export default function MenuForm({
   mode,
   initial,
@@ -54,50 +319,77 @@ export default function MenuForm({
 }) {
   const router = useRouter();
   const [pending, start] = React.useTransition();
-  const [status, setStatus] = React.useState<CreateMenuInput["status"]>(
-    (initial?.status as any) ?? "ACTIVE",
-  );
-  const [error, setError] = React.useState<string | null>(null);
+  const [serverError, setServerError] = React.useState<string | null>(null);
 
   const form = useForm<CreateMenuInput>({
     resolver: zodResolver(createMenuSchema) as any,
+    mode: "onSubmit",
+    reValidateMode: "onChange",
     defaultValues: {
       id: initial?.id ?? undefined,
-      description: initial?.description ?? "",
       name: initial?.name ?? "",
       slug: initial?.slug ?? "",
+      description: initial?.description ?? null,
+      imageUrl: initial?.imageUrl ?? null,
+      sortOrder: initial?.sortOrder ?? 0,
       status: initial?.status ?? "ACTIVE",
-      imageUrl: initial?.imageUrl ?? "",
-      sortOrder: initial?.sortOrder ?? undefined,
-      schedules: buildDefaultSchedules(mode, initial?.openingHours), // ✅
+      schedules: buildDefaultSchedules(mode, initial?.openingHours),
     },
   });
 
+  const watchedName = useWatch({
+    control: form.control,
+    name: "name",
+  });
+
   React.useEffect(() => {
-    form.setValue("slug", slugify(form.watch("name")));
-  }, [form.watch("name")]);
+    const nextSlug = slugify(watchedName || "");
+    form.setValue("slug", nextSlug, {
+      shouldValidate: false,
+      shouldDirty: true,
+    });
+  }, [watchedName, form]);
+
+  const firstFormError = getFirstErrorMessage(form.formState.errors);
 
   const onSubmit = (values: CreateMenuInput) => {
-    setError(null);
+    const cleanedValues: CreateMenuInput = {
+      ...values,
+      schedules: values.schedules.map((schedule) => ({
+        ...schedule,
+        slots: schedule.isClosed ? [] : schedule.slots,
+      })),
+    };
+
+    setServerError(null);
 
     start(async () => {
       const res =
         mode === "create"
-          ? await createMenuAction(values)
-          : await updateMenuAction(values);
+          ? await createMenuAction(cleanedValues)
+          : await updateMenuAction(cleanedValues);
 
       if (!res.ok) {
-        setError(res.message);
+        setServerError(res.message);
         toast.error(res.message);
         return;
       }
+
       toast.success(res.message);
       router.push("/dashboard/menu");
       router.refresh();
+
       if (setOpen) {
         setOpen(false);
       }
     });
+  };
+
+  const onInvalid = (errors: FieldErrors<CreateMenuInput>) => {
+    const message =
+      getFirstErrorMessage(errors) ??
+      "Please fix the form errors and try again.";
+    toast.error(message);
   };
 
   return (
@@ -105,53 +397,61 @@ export default function MenuForm({
       title={mode === "create" ? "New Menu" : "Edit Menu"}
       description={
         mode === "create"
-          ? "You can add categories and menu Items inside."
-          : "Update catgeory details."
+          ? "You can add categories and menu items inside."
+          : "Update menu details."
       }
       footer={
-        <div className="flex flex-col-reverse gap-2 md:flex-row md:justify-end">
-          <Button
-            type="button"
-            variant="outline"
-            onClick={() => setOpen && setOpen(false)}
-            disabled={pending}>
-            Cancel
-          </Button>
+        <div className="flex flex-col gap-3">
+          {(serverError || firstFormError) && (
+            <div className="rounded-lg border border-destructive/30 bg-destructive/5 px-3 py-2 text-sm text-destructive">
+              {serverError || firstFormError}
+            </div>
+          )}
 
-          <Button type="submit" form="menu-form" disabled={pending}>
-            {pending ? (
-              <LoadingButton></LoadingButton>
-            ) : mode === "create" ? (
-              "Create Menu"
-            ) : (
-              "Save Changes"
-            )}
-          </Button>
+          <div className="flex flex-col-reverse gap-2 md:flex-row md:justify-end">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setOpen?.(false)}
+              disabled={pending}>
+              Cancel
+            </Button>
+
+            <Button type="submit" form="menu-form" disabled={pending}>
+              {pending ? (
+                <LoadingButton />
+              ) : mode === "create" ? (
+                "Create Menu"
+              ) : (
+                "Save Changes"
+              )}
+            </Button>
+          </div>
         </div>
       }>
-      {error ? (
+      {serverError ? (
         <div className="rounded-lg border border-destructive/30 bg-destructive/5 p-3 text-sm text-destructive">
-          {error}
+          {serverError}
         </div>
       ) : null}
 
       <Form {...form}>
         <form
           id="menu-form"
-          onSubmit={form.handleSubmit(onSubmit)}
+          onSubmit={form.handleSubmit(onSubmit, onInvalid)}
           className="space-y-5">
-          {/* SECTION: Company */}
           <FormField
             control={form.control}
             name="imageUrl"
             render={({ field }) => (
-              <FormItem className="">
+              <FormItem>
                 <FormLabel>Menu Image</FormLabel>
                 <FormControl>
                   <FileUpload
                     endpoint="menuImage"
-                    onChange={field.onChange}
-                    value={field.value}></FileUpload>
+                    onChange={(value) => field.onChange(value || null)}
+                    value={field.value ?? ""}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -163,7 +463,7 @@ export default function MenuForm({
               control={form.control}
               name="name"
               render={({ field }) => (
-                <FormItem className="">
+                <FormItem>
                   <FormLabel>Menu Name</FormLabel>
                   <FormControl>
                     <Input placeholder="e.g. Pizzeria" {...field} />
@@ -172,6 +472,7 @@ export default function MenuForm({
                 </FormItem>
               )}
             />
+
             <FormField
               control={form.control}
               name="status"
@@ -189,7 +490,6 @@ export default function MenuForm({
                       <SelectItem value="INACTIVE">INACTIVE</SelectItem>
                     </SelectContent>
                   </Select>
-
                   <FormMessage />
                 </FormItem>
               )}
@@ -215,20 +515,19 @@ export default function MenuForm({
                 <FormLabel>Description</FormLabel>
                 <FormControl>
                   <Textarea
-                    placeholder="Various information about pizzeria"
+                    placeholder="Various information about the menu"
                     {...field}
-                    value={field.value!}
+                    value={field.value ?? ""}
                   />
                 </FormControl>
                 <FormDescription className="text-xs">
-                  Optional (recommended for webiste catalog).
+                  Optional (recommended for website catalog).
                 </FormDescription>
                 <FormMessage />
               </FormItem>
             )}
           />
 
-          {/* Optional: hidden submit button for Enter key */}
           <button type="submit" className="hidden" />
         </form>
       </Form>

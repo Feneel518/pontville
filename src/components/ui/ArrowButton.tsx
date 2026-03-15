@@ -59,7 +59,12 @@ const ArrowButton: FC<ArrowButtonProps> = ({
         </div>
       )}
       <div
-        className={`relative h-4 ${isMobile ? "w-[130px]" : "w-[200px]"}   shrink-0 inline-block translate-x-0 transition-transform duration-300 ${direction === "left" ? "group-hover:-translate-x-2" : "group-hover:translate-x-2"}`}>
+        className={cn(
+          "relative h-4 shrink-0 inline-block w-[clamp(80px,15vw,200px)]",
+          direction === "left"
+            ? "group-hover:-translate-x-2"
+            : "group-hover:translate-x-2",
+        )}>
         {isMobile ? (
           <Image
             src="/gallery/SmallArrow.svg"
