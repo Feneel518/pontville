@@ -41,7 +41,7 @@ const MenuHeader: FC<MenuHeaderProps> = async ({}) => {
     );
   }
 
-  const cols = `grid-cols-${menu.length}`;
+  const cols = `grid-cols-${menu.length > 4 ? 4 : menu.length}`;
 
   return (
     <SectionComponent>

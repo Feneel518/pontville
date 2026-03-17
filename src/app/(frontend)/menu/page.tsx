@@ -5,6 +5,8 @@ import { FC } from "react";
 
 interface pageProps {}
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = pageMetadata({
   title: "Menu",
   description:
