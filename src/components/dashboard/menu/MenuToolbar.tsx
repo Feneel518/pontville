@@ -21,6 +21,7 @@ import { X } from "lucide-react";
 import { useQueryStates } from "nuqs";
 import { FC, useEffect, useState } from "react";
 import MenuForm from "./MenuForm";
+import Link from "next/link";
 
 interface MenuToolbarProps {
   qp: menuQP;
@@ -90,6 +91,9 @@ const MenuToolbar: FC<MenuToolbarProps> = ({ qp }) => {
             ))}
           </SelectContent>
         </Select>
+        <Button asChild variant="outline" className="border-input">
+          <Link href="/dashboard/menu/reorder">Reorder Menus</Link>
+        </Button>
 
         {activeFilters > 0 && (
           <Button

@@ -337,6 +337,7 @@ const MenuTable: FC<MenuTableProps> = ({
     <Card className="p-4">
       {/* Toolbar */}
       <MenuToolbar qp={qp}></MenuToolbar>
+      
       {/* Table */}
       <div className="mt-4 overflow-x-auto rounded-lg border">
         <Table className="p-4">

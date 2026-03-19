@@ -22,7 +22,7 @@ const MenuHeader: FC<MenuHeaderProps> = async ({}) => {
       slug: true,
     },
     orderBy: {
-      createdAt: "asc",
+      sortOrder: "asc",
     },
   });
 
