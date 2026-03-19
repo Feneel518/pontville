@@ -146,7 +146,7 @@ const Page: FC<PageProps> = async ({ params, searchParams }) => {
 
   const availabiltiy = getMenuAvailabilityNew(
     menu.openingHours,
-    "Asia/Kolkata",
+    "Australia/Hobart",
   );
 
   // console.log({ initialOpen, availabiltiy });
@@ -165,7 +165,7 @@ const Page: FC<PageProps> = async ({ params, searchParams }) => {
         categorySlug={activeCategory.slug}
         initialOpen={availabiltiy}
         openingHours={menu.openingHours}
-        timezone={"Asia/Kolkata"}
+        timezone={"Australia/Hobart"}
       />
     </SectionComponent>
   );
