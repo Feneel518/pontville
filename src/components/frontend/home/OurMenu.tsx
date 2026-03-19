@@ -11,7 +11,8 @@ interface OurMenuProps {}
 const OurMenu: FC<OurMenuProps> = async () => {
   const menu = await prisma.menu.findMany({
     take: 3,
-    orderBy: { name: "asc" },
+    where: { status: "ACTIVE", deletedAt: null },
+    orderBy: { sortOrder: "asc" },
   });
 
   if (!menu.length) return null; // or show placeholder section
