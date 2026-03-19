@@ -3,21 +3,25 @@
 import { prisma } from "@/lib/prisma/db";
 import { revalidatePath } from "next/cache";
 
-export async function reorderMenusAction(menuIds: string[]) {
-  if (!Array.isArray(menuIds) || menuIds.length === 0) {
-    throw new Error("No menus provided for reorder.");
-  }
+type ReorderPayload = {
+  id: string;
+  sortOrder: number;
+}[];
+
+export async function reorderMenusAction(payload: ReorderPayload) {
+  if (!payload.length) return { success: true };
 
   await prisma.$transaction(
-    menuIds.map((id, index) =>
+    payload.map((item) =>
       prisma.menu.update({
-        where: { id },
-        data: { sortOrder: index },
+        where: { id: item.id },
+        data: { sortOrder: item.sortOrder },
       }),
     ),
   );
 
   revalidatePath("/dashboard/menu");
+  revalidatePath("/dashboard/menu/reorder");
 
   return { success: true };
 }

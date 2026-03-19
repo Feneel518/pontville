@@ -103,6 +103,19 @@ export default function MenuReorderList({ items }: MenuReorderListProps) {
     }),
   );
 
+  function getChangedItems(
+    prev: { id: string; sortOrder: number }[],
+    next: { id: string; sortOrder: number }[],
+  ) {
+    const prevMap = new Map(prev.map((item) => [item.id, item.sortOrder]));
+    return next
+      .filter((item) => prevMap.get(item.id) !== item.sortOrder)
+      .map((item) => ({
+        id: item.id,
+        sortOrder: item.sortOrder,
+      }));
+  }
+
   function handleDragEnd(event: DragEndEvent) {
     const { active, over } = event;
 
@@ -113,6 +126,8 @@ export default function MenuReorderList({ items }: MenuReorderListProps) {
 
     if (oldIndex === -1 || newIndex === -1) return;
 
+    const previousMenus = menus;
+
     const next = arrayMove(menus, oldIndex, newIndex).map((item, index) => ({
       ...item,
       sortOrder: index,
@@ -120,9 +135,16 @@ export default function MenuReorderList({ items }: MenuReorderListProps) {
 
     setMenus(next);
 
-    startTransition(async () => {
-      await reorderMenusAction(next.map((item) => item.id));
-    });
+   const changed = getChangedItems(previousMenus, next);
+
+   startTransition(async () => {
+     try {
+       await reorderMenusAction(changed);
+     } catch (error) {
+       console.error(error);
+       setMenus(previousMenus); // rollback UI if save fails
+     }
+   });
   }
 
   return (

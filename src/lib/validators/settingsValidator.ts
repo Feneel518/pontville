@@ -28,8 +28,6 @@ export const hoursEditorSchema = z.object({
   bar: z.string().min(2, "Bar hours required"),
   bistroLunch: z.string().min(2, "Bistro Lunch hours required"),
   bistroDinner: z.string().min(2, "Bistro Dinner hours required"),
-  pizzaLunch: z.string().min(2, "Pizza Lunch hours required"),
-  pizzaDinner: z.string().min(2, "Pizza Dinner hours required"),
   tea: z.string().min(2, "Tea hours required"),
   notes: z.string().max(240).optional().or(z.literal("")),
   weeklyHolidays: z.array(weekdayEnum).default([]),

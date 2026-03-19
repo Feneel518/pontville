@@ -122,7 +122,7 @@ export function Footer({
             </Link>
           </div>
 
-          <div className="grid grid-cols-2">
+          <div className="grid md:grid-cols-2">
             <div className="flex flex-col gap-1 font-sans">
               <h3 className="font-serif text-2xl">Menu</h3>
 

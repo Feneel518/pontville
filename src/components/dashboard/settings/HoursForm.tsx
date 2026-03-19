@@ -100,18 +100,7 @@ export function HoursForm({
               placeholder="10:00 - 21:00"
               control={form.control}
             />
-            <Row
-              label="Pizza Lunch"
-              name="pizzaLunch"
-              placeholder="10:00 - 21:00"
-              control={form.control}
-            />
-            <Row
-              label="Bistro Dinner"
-              name="pizzaDinner"
-              placeholder="10:00 - 21:00"
-              control={form.control}
-            />
+
             <Row
               label="Tea"
               name="tea"
