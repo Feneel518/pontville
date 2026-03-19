@@ -1,5 +1,3 @@
-"use client";
-
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 export type MenuOpenStatus = {
@@ -35,10 +33,7 @@ export function useMenuOpenStatus(
 
   const msUntilNextChange = useMemo(() => {
     if (!status.nextChangeAt) return null;
-
     const diff = new Date(status.nextChangeAt).getTime() - Date.now();
-
-    // 1 second buffer
     return Math.max(diff + 1000, 1000);
   }, [status.nextChangeAt]);
 
@@ -63,7 +58,9 @@ export function useMenuOpenStatus(
 
     const onFocus = () => refresh();
     const onVisibility = () => {
-      if (document.visibilityState === "visible") refresh();
+      if (document.visibilityState === "visible") {
+        refresh();
+      }
     };
 
     window.addEventListener("focus", onFocus);

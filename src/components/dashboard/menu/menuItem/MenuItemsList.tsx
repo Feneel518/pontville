@@ -1,5 +1,6 @@
 import MenuItemCardFrontend from "@/components/frontend/Menu/MenuItemCardFrontend";
 import Heading from "@/components/global/Heading";
+import { useMenuOpenStatus } from "@/hooks/useMenuOpenStatus";
 import { cn } from "@/lib/utils";
 import { Prisma } from "@prisma/client";
 import { FC } from "react";
@@ -34,6 +35,8 @@ const MenuItemsList: FC<MenuItemsListProps> = ({
   open,
   categorySlug,
 }) => {
+
+   const { status: liveOpen } = useMenuOpenStatus(menuId, open);
   if (items?.length === 0) {
     return <div className="">No Items found</div>;
   }
@@ -45,7 +48,7 @@ const MenuItemsList: FC<MenuItemsListProps> = ({
           return (
             <div key={item.id} className={cn(" ")}>
               <MenuItemCardFrontend
-                open={open}
+                open={liveOpen}
                 menuId={menuId}
                 categorySlug={categorySlug!}
                 key={item.id}

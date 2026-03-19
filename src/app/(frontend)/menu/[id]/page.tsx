@@ -59,16 +59,8 @@ const page: FC<pageProps> = async ({ params, searchParams }) => {
         selected={activeCategory?.id}></MenuCategoriesPublicToolbar>
 
       {/* streams separately, keeps page responsive */}
-      {/* <MenuItemsSection
+      <MenuItemsSection
         open={initialOpen}
-        menuId={id}
-        categoryId={activeCategory.id}
-        categoryName={activeCategory.name}
-        categorySlug={activeCategory.slug}
-      /> */}
-
-      <MenuItemsSectionLive
-        initialOpen={initialOpen}
         menuId={id}
         categoryId={activeCategory.id}
         categoryName={activeCategory.name}

@@ -9,9 +9,9 @@ const getMenuItemsByCategory = unstable_cache(
         categoryId,
         deletedAt: null,
         status: "ACTIVE",
-        isAvailable: true, // add if you have this field, huge filter
+        isAvailable: true,
       },
-      orderBy: { imageUrl: "asc" }, // if exists
+      orderBy: { imageUrl: "asc" },
       include: {
         addOnGroups: {
           include: {
@@ -22,9 +22,9 @@ const getMenuItemsByCategory = unstable_cache(
       },
     });
   },
-  //   @ts-ignore
+  // @ts-ignore
   (categoryId: string) => [`menu-items-by-category:${categoryId}`],
-  { revalidate: 30 }, // tune: 30s/60s/300s depending on how often menu changes
+  { revalidate: 30 },
 );
 
 export default async function MenuItemsSection({
@@ -38,6 +38,7 @@ export default async function MenuItemsSection({
     isOpen: boolean;
     closesAt?: string;
     opensAt?: string;
+    nextChangeAt?: string;
   };
   menuId: string;
   categoryId: string;
