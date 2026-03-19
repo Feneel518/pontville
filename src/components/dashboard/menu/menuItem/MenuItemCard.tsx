@@ -112,8 +112,8 @@ const MenuItemCard: FC<MenuItemCardProps> = ({
         </div>
 
         {/* Bottom strip inside image */}
-        <div className="-mt-5 flex items-center justify-center bg-emerald-400 px-3 py-2 pt-7 text-center text-[11px] text-black/70 sm:-mt-6 sm:pt-8 sm:text-xs">
-          <p className="line-clamp-1">{item.name}</p>
+        <div className="flex items-center justify-center truncate bg-black/10 py-2 pt-8 -mt-8 text-xs text-black/70">
+          {/* <p>{item.name}</p> */}
         </div>
       </div>
 

@@ -640,8 +640,8 @@ const FullMenuItemCardFrontend: FC<FullMenuItemCardFrontendProps> = ({
             ) : null}
           </div>
 
-          <div className="flex items-center justify-center truncate bg-black/10 py-2 pt-8 -mt-6 text-xs text-black/70">
-            <p>{item.name}</p>
+          <div className="flex items-center justify-center truncate bg-black/10 py-2 pt-8 -mt-8 text-xs text-black/70">
+            {/* <p>{item.name}</p> */}
           </div>
         </div>
 

@@ -4,7 +4,7 @@ import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { Toaster } from "sonner";
 import "./globals.css";
 import { CursorRouteReset } from "@/components/global/CursorUnmount";
-
+import NextTopLoader from "nextjs-toploader";
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 const amarante = Amarante({
   subsets: ["latin"],
@@ -77,6 +77,7 @@ export default function RootLayout({
       <body
         className={`${inter.className} ${amarante.variable} font-sans  antialiased flex flex-col min-h-svh`}>
         <CursorRouteReset />
+        <NextTopLoader color="#f9786c;" showSpinner={false} height={3} />
         <NuqsAdapter>{children}</NuqsAdapter>
         <Toaster richColors />
       </body>
