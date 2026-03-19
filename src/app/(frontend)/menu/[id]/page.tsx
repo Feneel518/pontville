@@ -138,12 +138,6 @@ const Page: FC<PageProps> = async ({ params, searchParams }) => {
   const activeCategory =
     categories.find((c) => c.slug === requestedSlug) ?? categories[0];
 
-  const initialOpen = getMenuAvailability({
-    openingHours: menu.openingHours,
-    now: new Date(),
-    timezone: "Australia/Hobart",
-  });
-
   const availabiltiy = getMenuAvailabilityNew(
     menu.openingHours,
     "Australia/Hobart",

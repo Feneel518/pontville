@@ -7,6 +7,7 @@ export type MenuItemCardSelect = Prisma.MenuItemGetPayload<{
         addOns: true;
       };
     };
+
     variants: true;
   };
 }>;

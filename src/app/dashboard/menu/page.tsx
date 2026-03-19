@@ -22,7 +22,13 @@ const page: FC<pageProps> = async ({ searchParams }) => {
         </p>
       </div>
 
-      <MenuTable items={items.items} page={items.page} pageSize={items.pageSize} qp={sp} total={items.total} />
+      <MenuTable
+        items={items.items}
+        page={items.page}
+        pageSize={items.pageSize}
+        qp={sp}
+        total={items.total}
+      />
     </div>
   );
 };

@@ -2,6 +2,7 @@ import FullMenuItemCardFrontend from "@/components/frontend/Menu/FullMenuItemCar
 import FullMenuSearchBar from "@/components/frontend/Menu/FullMenuSearchBar";
 import Heading from "@/components/global/Heading";
 import SectionComponent from "@/components/global/SectionComponent";
+import { getMenuAvailabilityNew } from "@/lib/menuChecks/menuAvailability";
 import { prisma } from "@/lib/prisma/db";
 import { unstable_cache } from "next/cache";
 

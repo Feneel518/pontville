@@ -32,6 +32,6 @@ export const buildMenusOrderBy = (sp: menuQP) => {
       return { status: dir };
     case "createdAt":
     default:
-      return { createdAt: dir };
+      return [{ sortOrder: "asc" }, { updatedAt: "desc" }];
   }
 };
