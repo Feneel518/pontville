@@ -39,7 +39,7 @@ const page: FC<pageProps> = async ({ searchParams }) => {
 
   const hours = (settings.hoursJson ?? {}) as HoursEditorInput;
 
-    const allowedUsers = await prisma.allowedUser.findMany();
+  const allowedUsers = await prisma.allowedUser.findMany();
   return (
     <SettingsShell
       title="Settings"
@@ -66,8 +66,6 @@ const page: FC<pageProps> = async ({ searchParams }) => {
             bar: hours.bar ?? "",
             bistroDinner: hours.bistroDinner ?? "",
             bistroLunch: hours.bistroLunch ?? "",
-            pizzaLunch: hours.pizzaLunch ?? "",
-            pizzaDinner: hours.pizzaDinner ?? "",
             tea: hours.tea ?? "",
             weeklyHolidays: settings.weeklyHolidays ?? [],
             notes: hours.notes ?? "",
