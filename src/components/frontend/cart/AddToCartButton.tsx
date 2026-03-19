@@ -2,6 +2,7 @@ import ArrowButton from "@/components/ui/ArrowButton";
 import { Button } from "@/components/ui/button";
 import { to12HourTime } from "@/lib/helpers/timeHelpers";
 import { cartKeyForUI, useCartStore } from "@/lib/store/cart.store";
+import { MenuAvailabilityState } from "@/lib/types/menuAvailability";
 import { cn } from "@/lib/utils";
 import { Minus, Plus, ShoppingCart } from "lucide-react";
 import Image from "next/image";
@@ -32,11 +33,7 @@ interface AddToCartButtonProps {
 
   className?: string;
 
-  open: {
-    isOpen: boolean;
-    closesAt?: string;
-    opensAt?: string;
-  };
+  open: MenuAvailabilityState;
 }
 
 const AddToCartButton: FC<AddToCartButtonProps> = ({
@@ -78,7 +75,7 @@ const AddToCartButton: FC<AddToCartButtonProps> = ({
   const canAdd = priceType !== "VARIANT" || Boolean(variant?.id);
 
   if (!open.isOpen) {
-    return <Button disabled>Opens at {to12HourTime(open.opensAt!)}</Button>;
+    return <Button disabled>{open.message}</Button>;
   }
 
   if (!line) {

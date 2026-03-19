@@ -50,6 +50,8 @@ const MenuItemsList: FC<MenuItemsListProps> = ({
     initialAvailability: initialOpen,
   });
 
+  console.log(availability);
+
   return (
     <div>
       <Heading label={categoryName!}></Heading>
