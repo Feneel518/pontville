@@ -1,4 +1,7 @@
 import MenuItemsList from "@/components/dashboard/menu/menuItem/MenuItemsList";
+import { MenuOpenStatus } from "@/hooks/useMenuOpenStatus";
+import { Weekday } from "@/lib/helpers/WeekDaysHelpers";
+import { OpeningHour } from "@/lib/menuChecks/menuAvailability";
 import { prisma } from "@/lib/prisma/db";
 import { MenuAvailabilityState } from "@/lib/types/menuAvailability";
 import { unstable_cache } from "next/cache";
@@ -29,23 +32,29 @@ const getMenuItemsByCategory = unstable_cache(
 );
 
 export default async function MenuItemsSection({
-  open,
+  initialOpen,
+  openingHours,
+  timezone,
   menuId,
   categoryId,
   categoryName,
   categorySlug,
 }: {
-  open: MenuAvailabilityState;
   menuId: string;
   categoryId: string;
   categoryName: string;
   categorySlug: string;
+  initialOpen: MenuOpenStatus;
+  openingHours: OpeningHour[];
+  timezone: string;
 }) {
   const items = await getMenuItemsByCategory(categoryId);
 
   return (
     <MenuItemsList
-      open={open}
+      initialOpen={initialOpen}
+      openingHours={openingHours}
+      timezone={timezone}
       menuId={menuId}
       items={items}
       categoryName={categoryName}

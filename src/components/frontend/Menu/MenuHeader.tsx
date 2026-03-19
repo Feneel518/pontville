@@ -13,11 +13,13 @@ const MenuHeader: FC<MenuHeaderProps> = async ({}) => {
   const menu = await prisma.menu.findMany({
     where: {
       status: "ACTIVE",
+      deletedAt: null,
     },
     select: {
       id: true,
       name: true,
       imageUrl: true,
+      slug: true,
     },
     orderBy: {
       createdAt: "asc",
@@ -31,6 +33,13 @@ const MenuHeader: FC<MenuHeaderProps> = async ({}) => {
     { height: "h-[400px]", align: "" },
   ];
 
+  const getGridCols = (count: number) => {
+    if (count <= 1) return "lg:grid-cols-1";
+    if (count === 2) return "lg:grid-cols-2";
+    if (count === 3) return "lg:grid-cols-3";
+    return "lg:grid-cols-4";
+  };
+
   if (!menu) {
     return (
       <SectionComponent className="text-center">
@@ -41,13 +50,13 @@ const MenuHeader: FC<MenuHeaderProps> = async ({}) => {
     );
   }
 
-  const cols = `grid-cols-${menu.length > 4 ? 4 : menu.length}`;
+  const gridColsClass = getGridCols(menu.length);
 
   return (
     <SectionComponent>
       <Heading label="Our Menu" className="text-wrap leading-tight"></Heading>
       <div
-        className={`grid md:grid-cols-2 lg:${cols} gap-8 relative max-md:mb-20 `}>
+        className={`grid md:grid-cols-2 ${gridColsClass} gap-8 relative max-md:mb-20`}>
         {menu.map((me, index) => {
           const group = Math.floor(index / 4);
           const isReversed = group % 2 === 1;
@@ -58,16 +67,16 @@ const MenuHeader: FC<MenuHeaderProps> = async ({}) => {
           return (
             <Link
               key={me.id}
-              href={`/menu/${me.id}`}
+              href={`/menu/${me.slug}`}
               className={`group transition-all duration-200 ease-in-out ${layout.align}`}>
               <div
                 key={index}
                 className={`${layout.height} max-md:h-[350px] w-full relative overflow-hidden  }`}>
                 <Image
-                  src={me.imageUrl!}
+                  src={me.imageUrl ?? "/placeholder.jpg"}
                   alt={me.name}
                   fill
-                  className="object-cover group-hover:scale-[102%] transition-all duration-500 ease-in-out"></Image>
+                  className="object-cover group-hover:scale-[102%] transition-all duration-500 ease-in-out rounded-sm"></Image>
               </div>
               <div className="md:hidden">{me.name}</div>
               <div className="font-serif max-md:mt-4 md:block hidden ">

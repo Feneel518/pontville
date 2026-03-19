@@ -81,6 +81,7 @@ import MenuItemsSectionLive from "@/components/frontend/Menu/MenuItemsSectionLiv
 import Heading from "@/components/global/Heading";
 import SectionComponent from "@/components/global/SectionComponent";
 import { getMenuById } from "@/lib/actions/frontend/menu/getMenuById";
+import { getMenuAvailabilityNew } from "@/lib/menuChecks/menuAvailability";
 
 import { prisma } from "@/lib/prisma/db";
 import { redirect } from "next/navigation";
@@ -99,7 +100,7 @@ const Page: FC<PageProps> = async ({ params, searchParams }) => {
   const sp = (await searchParams) ?? {};
 
   const menu = await prisma.menu.findUnique({
-    where: { id },
+    where: { slug: id, status: "ACTIVE", deletedAt: null },
     select: {
       id: true,
       openingHours: {
@@ -111,7 +112,7 @@ const Page: FC<PageProps> = async ({ params, searchParams }) => {
         },
       },
       categories: {
-        where: { deletedAt: null },
+        where: { deletedAt: null, status: "ACTIVE" },
         select: {
           id: true,
           name: true,
@@ -143,6 +144,13 @@ const Page: FC<PageProps> = async ({ params, searchParams }) => {
     timezone: "Australia/Hobart",
   });
 
+  const availabiltiy = getMenuAvailabilityNew(
+    menu.openingHours,
+    "Asia/Kolkata",
+  );
+
+  // console.log({ initialOpen, availabiltiy });
+
   return (
     <SectionComponent>
       <MenuCategoriesPublicToolbar
@@ -155,9 +163,9 @@ const Page: FC<PageProps> = async ({ params, searchParams }) => {
         categoryId={activeCategory.id}
         categoryName={activeCategory.name}
         categorySlug={activeCategory.slug}
-        initialOpen={initialOpen}
+        initialOpen={availabiltiy}
         openingHours={menu.openingHours}
-        timezone={"Australia/Hobart"}
+        timezone={"Asia/Kolkata"}
       />
     </SectionComponent>
   );

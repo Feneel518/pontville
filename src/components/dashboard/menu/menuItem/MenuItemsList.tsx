@@ -1,7 +1,11 @@
+"use client";
+
 import MenuItemCardFrontend from "@/components/frontend/Menu/MenuItemCardFrontend";
 import Heading from "@/components/global/Heading";
-import { useMenuOpenStatus } from "@/hooks/useMenuOpenStatus";
-import { MenuAvailabilityState } from "@/lib/types/menuAvailability";
+import { useMenuAvailability } from "@/hooks/useMenuAvailability";
+import { MenuOpenStatus, useMenuOpenStatus } from "@/hooks/useMenuOpenStatus";
+import { Weekday } from "@/lib/helpers/WeekDaysHelpers";
+import { OpeningHour } from "@/lib/menuChecks/menuAvailability";
 import { cn } from "@/lib/utils";
 import { Prisma } from "@prisma/client";
 import { FC } from "react";
@@ -22,19 +26,30 @@ interface MenuItemsListProps {
   categoryName: string | undefined;
   categorySlug: string | undefined;
   menuId: string;
-  open: MenuAvailabilityState;
+  initialOpen: MenuOpenStatus;
+  openingHours: OpeningHour[];
+  timezone: string;
 }
 
 const MenuItemsList: FC<MenuItemsListProps> = ({
   items,
   categoryName,
   menuId,
-  open,
+  initialOpen,
+  openingHours,
+  timezone,
   categorySlug,
 }) => {
   if (items?.length === 0) {
     return <div className="">No Items found</div>;
   }
+
+  const availability = useMenuAvailability({
+    openingHours,
+    timezone,
+    initialAvailability: initialOpen,
+  });
+
   return (
     <div>
       <Heading label={categoryName!}></Heading>
@@ -43,7 +58,7 @@ const MenuItemsList: FC<MenuItemsListProps> = ({
           return (
             <div key={item.id} className={cn(" ")}>
               <MenuItemCardFrontend
-                open={open}
+                open={availability}
                 menuId={menuId}
                 categorySlug={categorySlug!}
                 key={item.id}

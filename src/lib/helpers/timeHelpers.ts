@@ -1,28 +1,39 @@
-export function to12HourTime(hhmm: string): string {
-  const [hhStr, mmStr] = hhmm.split(":");
-  const hh = Number(hhStr);
-  const mm = Number(mmStr);
+export function to12HourTime(input: string) {
+  if (!input) return "";
+
+  // Case 1: Already 12-hour format
+  if (/am|pm/i.test(input)) {
+    const date = new Date(`1970-01-01 ${input}`);
+    if (isNaN(date.getTime())) {
+      throw new Error(`Invalid time: "${input}"`);
+    }
+
+    return date.toLocaleTimeString("en-US", {
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: true,
+    });
+  }
+
+  // Case 2: HH:mm format
+  const [hh, mm] = input.split(":").map(Number);
 
   if (
-    !Number.isFinite(hh) ||
-    !Number.isFinite(mm) ||
-    mm < 0 ||
-    mm > 59 ||
+    Number.isNaN(hh) ||
+    Number.isNaN(mm) ||
     hh < 0 ||
-    hh > 23
+    hh > 23 ||
+    mm < 0 ||
+    mm > 59
   ) {
-    throw new Error(`Invalid time: "${hhmm}" (expected "HH:mm")`);
+    throw new Error(`Invalid time: "${input}" (expected "HH:mm")`);
   }
 
   const period = hh >= 12 ? "PM" : "AM";
-  const hour12 = hh % 12 === 0 ? 12 : hh % 12;
+  const hour12 = hh % 12 || 12;
 
-  // keep minutes padded (e.g. 11:05)
-  const minutes = String(mm).padStart(2, "0");
-
-  return `${hour12}:${minutes} ${period}`;
+  return `${hour12}:${mm.toString().padStart(2, "0")} ${period}`;
 }
-
 import { format } from "date-fns";
 
 /**
