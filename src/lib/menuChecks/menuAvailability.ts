@@ -90,6 +90,27 @@ function sortSlotsByOpenTime(slots: OpeningHour[]) {
   );
 }
 
+function getDayOffset(fromDay: Weekday, toDay: Weekday) {
+  const fromIndex = WEEKDAYS.indexOf(fromDay);
+  const toIndex = WEEKDAYS.indexOf(toDay);
+
+  return (toIndex - fromIndex + 7) % 7;
+}
+
+function formatWeekdayLabel(day: Weekday) {
+  return day.charAt(0) + day.slice(1).toLowerCase();
+}
+
+function getRelativeOpenPrefix(currentDay: Weekday, targetDay: Weekday) {
+  const offset = getDayOffset(currentDay, targetDay);
+
+  if (offset === 0) return "Opens today";
+  if (offset === 1) return "Opens tomorrow";
+  if (offset === 2) return "Opens day after tomorrow";
+
+  return `Opens on ${formatWeekdayLabel(targetDay)}`;
+}
+
 function getNextOpenSlot(
   openingHours: OpeningHour[],
   currentDay: Weekday,
@@ -128,6 +149,7 @@ function getNextOpenSlot(
 
   return null;
 }
+
 export function getMenuAvailabilityNew(
   openingHours: OpeningHour[],
   timezone: string,
@@ -152,7 +174,7 @@ export function getMenuAvailabilityNew(
         message: `Open now · Closes at ${formatMinutesTo12Hour(closeMinutes)}`,
         closesAt: formatMinutesTo12Hour(closeMinutes),
         nextChangeAt: slot.closeTime,
-        timezone: timezone,
+        timezone,
       };
     }
   }
@@ -167,10 +189,10 @@ export function getMenuAvailabilityNew(
 
     return {
       isOpen: false,
-      message: `Opens at ${formatMinutesTo12Hour(openMinutes)}`,
+      message: `Opens today at ${formatMinutesTo12Hour(openMinutes)}`,
       opensAt: formatMinutesTo12Hour(openMinutes),
       nextChangeAt: nextTodaySlot.openTime,
-      timezone: timezone,
+      timezone,
     };
   }
 
@@ -181,17 +203,17 @@ export function getMenuAvailabilityNew(
     return {
       isOpen: false,
       message: "Currently closed",
-      timezone: timezone,
+      timezone,
     };
   }
 
+  const openLabel = formatMinutesTo12Hour(nextOpen.openMinutes);
+  const prefix = getRelativeOpenPrefix(weekday, nextOpen.day);
+
   return {
     isOpen: false,
-    message:
-      nextOpen.day === weekday
-        ? `Opens at ${formatMinutesTo12Hour(nextOpen.openMinutes)}`
-        : `Opens ${nextOpen.day.toLowerCase()} at ${formatMinutesTo12Hour(nextOpen.openMinutes)}`,
-    opensAt: formatMinutesTo12Hour(nextOpen.openMinutes),
-    timezone: timezone,
+    message: `${prefix} at ${openLabel}`,
+    opensAt: openLabel,
+    timezone,
   };
 }

@@ -111,8 +111,6 @@ export function useMenuAvailability({
   const [availability, setAvailability] =
     useState<MenuAvailabilityState>(initialAvailability);
 
-  console.log({ availability });
-
   useEffect(() => {
     const updateAvailability = () => {
       const next = getMenuAvailabilityNew(openingHours, timezone);
