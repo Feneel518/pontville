@@ -1,3 +1,5 @@
+import { MenuOpeningHour } from "@prisma/client";
+
 export const WEEK_DAYS = [
   "MONDAY",
   "TUESDAY",
@@ -17,39 +19,43 @@ type DbOpeningHour = {
   slot?: number | null; // if you add slot field
 };
 
-export const buildDefaultSchedules = (
+export function buildDefaultSchedules(
   mode: "create" | "edit",
-  initialOpeningHours?: DbOpeningHour[],
-) => {
-  // Group rows by day
-  const byDay = new Map<Weekday, DbOpeningHour[]>();
-  (initialOpeningHours ?? []).forEach((row) => {
-    const arr = byDay.get(row.day) ?? [];
-    arr.push(row);
-    byDay.set(row.day, arr);
-  });
+  openingHours?: MenuOpeningHour[],
+) {
+  if (mode === "create" || !openingHours?.length) {
+    return WEEK_DAYS.map((day) => ({
+      day,
+      isClosed: false,
+      slots: [{ openTime: "09:00", closeTime: "18:00" }],
+    }));
+  }
 
   return WEEK_DAYS.map((day) => {
-    const rows = byDay.get(day) ?? [];
+    const rows = openingHours
+      .filter((row) => row.day === day)
+      .sort((a, b) => a.slot - b.slot);
 
-    // If you have slot column, keep stable order
-    rows.sort((a, b) => (a.slot ?? 0) - (b.slot ?? 0));
+    const hasClosedRow = rows.some((row) => row.isClosed);
 
-    if (rows.length > 0) {
+    if (hasClosedRow) {
       return {
         day,
-        isClosed: false,
-        slots: rows.map((r) => ({
-          openTime: r.openTime,
-          closeTime: r.closeTime,
-        })),
+        isClosed: true,
+        slots: [],
       };
     }
 
     return {
       day,
-      isClosed: mode === "edit" ? true : false,
-      slots: [{ openTime: "09:00", closeTime: "22:00" }],
+      isClosed: false,
+      slots:
+        rows.length > 0
+          ? rows.map((row) => ({
+              openTime: row.openTime,
+              closeTime: row.closeTime,
+            }))
+          : [{ openTime: "09:00", closeTime: "18:00" }],
     };
   });
-};
+}

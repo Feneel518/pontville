@@ -1,5 +1,6 @@
 import MenuItemsList from "@/components/dashboard/menu/menuItem/MenuItemsList";
 import { prisma } from "@/lib/prisma/db";
+import { MenuAvailabilityState } from "@/lib/types/menuAvailability";
 import { unstable_cache } from "next/cache";
 
 const getMenuItemsByCategory = unstable_cache(
@@ -34,12 +35,7 @@ export default async function MenuItemsSection({
   categoryName,
   categorySlug,
 }: {
-  open: {
-    isOpen: boolean;
-    closesAt?: string;
-    opensAt?: string;
-    nextChangeAt?: string;
-  };
+  open: MenuAvailabilityState;
   menuId: string;
   categoryId: string;
   categoryName: string;

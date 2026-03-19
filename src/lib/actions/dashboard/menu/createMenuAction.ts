@@ -33,16 +33,27 @@ export const createMenuAction = async (value: CreateMenuInput) => {
   });
 
   // ✅ flatten schedules -> rows
-  const openingHoursRows = (data.schedules ?? [])
-    .filter((d) => !d.isClosed)
-    .flatMap((d) =>
-      (d.slots ?? []).map((s, idx) => ({
-        day: d.day,
-        slot: idx,
-        openTime: s.openTime,
-        closeTime: s.closeTime,
-      })),
-    );
+  const openingHoursRows = (data.schedules ?? []).flatMap((d) => {
+    if (d.isClosed) {
+      return [
+        {
+          day: d.day,
+          slot: 0,
+          isClosed: true,
+          openTime: "00:00",
+          closeTime: "00:00",
+        },
+      ];
+    }
+
+    return (d.slots ?? []).map((s, idx) => ({
+      day: d.day,
+      slot: idx,
+      isClosed: false,
+      openTime: s.openTime,
+      closeTime: s.closeTime,
+    }));
+  });
 
   const created = await prisma.$transaction(async (tx) => {
     const menu = await tx.menu.create({
@@ -64,6 +75,7 @@ export const createMenuAction = async (value: CreateMenuInput) => {
           menuId: menu.id,
           day: r.day,
           slot: r.slot,
+          isClosed: r.isClosed,
           openTime: r.openTime,
           closeTime: r.closeTime,
         })),

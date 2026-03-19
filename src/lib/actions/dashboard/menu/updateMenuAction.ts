@@ -44,16 +44,27 @@ export async function updateMenuAction(value: CreateMenuInput) {
       slugFor: "menu",
     });
   }
-  const openingHoursRows = (data.schedules ?? [])
-    .filter((d) => !d.isClosed)
-    .flatMap((d) =>
-      (d.slots ?? []).map((s, idx) => ({
-        day: d.day,
-        slot: idx,
-        openTime: s.openTime,
-        closeTime: s.closeTime,
-      })),
-    );
+  const openingHoursRows = (data.schedules ?? []).flatMap((d) => {
+    if (d.isClosed) {
+      return [
+        {
+          day: d.day,
+          slot: 0,
+          isClosed: true,
+          openTime: "00:00",
+          closeTime: "00:00",
+        },
+      ];
+    }
+
+    return (d.slots ?? []).map((s, idx) => ({
+      day: d.day,
+      slot: idx,
+      isClosed: false,
+      openTime: s.openTime,
+      closeTime: s.closeTime,
+    }));
+  });
 
   await prisma.$transaction(async (tx) => {
     // ✅ ensure menu belongs to restaurant
@@ -67,6 +78,7 @@ export async function updateMenuAction(value: CreateMenuInput) {
       where: { id: data.id },
       data: {
         name: data.name,
+        slug: nextSlug,
         description: data.description ?? null,
         imageUrl: data.imageUrl ?? null,
         sortOrder: data.sortOrder ?? 0,
@@ -85,6 +97,7 @@ export async function updateMenuAction(value: CreateMenuInput) {
           menuId: data.id!,
           day: r.day,
           slot: r.slot,
+          isClosed: r.isClosed,
           openTime: r.openTime,
           closeTime: r.closeTime,
         })),

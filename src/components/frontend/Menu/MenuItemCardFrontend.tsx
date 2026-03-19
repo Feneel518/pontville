@@ -15,16 +15,13 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { MenuAvailabilityState } from "@/lib/types/menuAvailability";
 
 interface MenuItemCardFrontendProps {
   item: MenuItemCardSelect;
   categorySlug: string;
   menuId: string;
-  open: {
-    isOpen: boolean;
-    closesAt?: string;
-    opensAt?: string;
-  };
+  open: MenuAvailabilityState;
 }
 
 function toNumberSafe(v: unknown) {

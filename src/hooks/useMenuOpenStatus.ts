@@ -1,82 +1,58 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { MenuAvailabilityState } from "@/lib/types/menuAvailability";
+import { getMenuAvailability } from "@/components/frontend/Menu/MenuAvailability";
+import { Weekday } from "@/lib/helpers/WeekDaysHelpers";
 
-export type MenuOpenStatus = {
-  isOpen: boolean;
-  closesAt?: string;
-  opensAt?: string;
-  nextChangeAt?: string;
+type OpeningHourInput = {
+  day: Weekday;
+  isClosed?: boolean | null;
+  openTime?: string | null;
+  closeTime?: string | null;
 };
 
-export function useMenuOpenStatus(
-  menuId: string,
-  initialStatus: MenuOpenStatus,
-) {
-  const [status, setStatus] = useState<MenuOpenStatus>(initialStatus);
-  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+type UseMenuOpenStatusArgs = {
+  openingHours: OpeningHourInput[];
+  initialStatus: MenuAvailabilityState;
+  timezone?: string;
+};
 
-  const refresh = useCallback(async () => {
-    try {
-      const res = await fetch(`/api/menu/${menuId}/status`, {
-        method: "GET",
-        cache: "no-store",
-      });
+export function useMenuOpenStatus({
+  openingHours,
+  initialStatus,
+  timezone = "Australia/Hobart",
+}: UseMenuOpenStatusArgs) {
+  const [status, setStatus] = useState<MenuAvailabilityState>(initialStatus);
 
-      if (!res.ok) return;
-
-      const data = (await res.json()) as MenuOpenStatus;
-      setStatus(data);
-    } catch (error) {
-      console.error("Failed to refresh menu status", error);
-    }
-  }, [menuId]);
-
-  const msUntilNextChange = useMemo(() => {
+  const nextChangeMs = useMemo(() => {
     if (!status.nextChangeAt) return null;
-    const diff = new Date(status.nextChangeAt).getTime() - Date.now();
-    return Math.max(diff + 1000, 1000);
+    const next = new Date(status.nextChangeAt).getTime();
+    const now = Date.now();
+    const diff = next - now;
+    return diff > 0 ? diff : 0;
   }, [status.nextChangeAt]);
 
   useEffect(() => {
-    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    if (nextChangeMs == null) return;
 
-    if (msUntilNextChange != null) {
-      timeoutRef.current = setTimeout(() => {
-        refresh();
-      }, msUntilNextChange);
-    }
+    const timeout = window.setTimeout(
+      () => {
+        const fresh = getMenuAvailability({
+          openingHours,
+          now: new Date(),
+          timezone,
+        });
 
-    return () => {
-      if (timeoutRef.current) clearTimeout(timeoutRef.current);
-    };
-  }, [msUntilNextChange, refresh]);
+        setStatus(fresh);
+      },
+      Math.min(nextChangeMs + 1000, 2_147_483_647),
+    );
 
-  useEffect(() => {
-    intervalRef.current = setInterval(() => {
-      refresh();
-    }, 60_000);
+    return () => window.clearTimeout(timeout);
+  }, [nextChangeMs, openingHours, timezone]);
 
-    const onFocus = () => refresh();
-    const onVisibility = () => {
-      if (document.visibilityState === "visible") {
-        refresh();
-      }
-    };
-
-    window.addEventListener("focus", onFocus);
-    document.addEventListener("visibilitychange", onVisibility);
-
-    return () => {
-      if (intervalRef.current) clearInterval(intervalRef.current);
-      window.removeEventListener("focus", onFocus);
-      document.removeEventListener("visibilitychange", onVisibility);
-    };
-  }, [refresh]);
-
-  return {
-    status,
-    refresh,
-  };
+  return { status };
 }
+
+export type MenuOpenStatus = MenuAvailabilityState;

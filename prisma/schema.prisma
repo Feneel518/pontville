@@ -260,6 +260,7 @@ model MenuOpeningHour {
   menu   Menu   @relation(fields: [menuId], references: [id], onDelete: Cascade)
 
   day       Weekday
+  isClosed  Boolean @default(false)
   slot      Int     @default(0) // 0..n within the day
   openTime  String // "09:00"
   closeTime String // "22:00"
