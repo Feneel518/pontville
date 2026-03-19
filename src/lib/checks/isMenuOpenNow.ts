@@ -366,9 +366,9 @@ export function isMenuOpenNow(opts: {
     return {
       isOpen: false,
       message: "Currently closed",
-      opensAt: null,
-      closesAt: null,
-      nextChangeAt: null,
+      opensAt: undefined,
+      closesAt: undefined,
+      nextChangeAt: undefined,
       timezone,
     };
   }
@@ -398,9 +398,9 @@ export function isMenuOpenNow(opts: {
     message: next?.openTime
       ? `Closed • Opens at ${next.openTime}`
       : "Currently closed",
-    opensAt: next?.openTime ?? null,
-    closesAt: null,
-    nextChangeAt: next?.start.toISOString() ?? null,
+    opensAt: next?.openTime ?? undefined,
+    closesAt: undefined,
+    nextChangeAt: next?.start.toISOString() ?? undefined,
     timezone,
   };
 }
