@@ -1,5 +1,3 @@
-"use client";
-
 import MenuItemsSection from "@/components/frontend/Menu/MenuItemSection";
 import {
   useMenuOpenStatus,
