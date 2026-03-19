@@ -1,55 +1,89 @@
-// lib/hooks/useMenuAvailability.ts
 "use client";
 
-import * as React from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-type MenuAvailability = {
+export type MenuAvailabilityState = {
   isOpen: boolean;
-  opensAt?: string;
-  closesAt?: string;
+  message: string;
+  opensAt: string | null;
+  closesAt: string | null;
+  nextChangeAt: string | null;
+  timezone: string;
 };
 
 export function useMenuAvailability(
   menuId: string,
-  initialData: MenuAvailability,
+  initial: MenuAvailabilityState,
 ) {
-  const [data, setData] = React.useState<MenuAvailability>(initialData);
-  const [loading, setLoading] = React.useState(false);
+  const [state, setState] = useState<MenuAvailabilityState>(initial);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  React.useEffect(() => {
-    let mounted = true;
+  const refresh = useCallback(async () => {
+    try {
+      const res = await fetch(`/api/menu/${menuId}/availability`, {
+        method: "GET",
+        cache: "no-store",
+      });
 
-    const fetchAvailability = async () => {
-      try {
-        setLoading(true);
-        const res = await fetch(`/api/menu/${menuId}/availability`, {
-          cache: "no-store",
-        });
+      if (!res.ok) return;
 
-        if (!res.ok) return;
+      const json = (await res.json()) as MenuAvailabilityState;
+      setState(json);
+    } catch (error) {
+      console.error("Failed to refresh menu availability", error);
+    }
+  }, [menuId]);
 
-        const json = await res.json();
-        if (!mounted) return;
+  const msUntilNextChange = useMemo(() => {
+    if (!state.nextChangeAt) return null;
 
-        setData({
-          isOpen: json.isOpen,
-          opensAt: json.opensAt,
-          closesAt: json.closesAt,
-        });
-      } catch {
-      } finally {
-        if (mounted) setLoading(false);
+    const diff = new Date(state.nextChangeAt).getTime() - Date.now();
+
+    // add slight buffer so we refresh after actual change moment
+    return Math.max(diff + 1000, 1000);
+  }, [state.nextChangeAt]);
+
+  useEffect(() => {
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+
+    if (msUntilNextChange != null) {
+      timeoutRef.current = setTimeout(() => {
+        refresh();
+      }, msUntilNextChange);
+    }
+
+    return () => {
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    };
+  }, [msUntilNextChange, refresh]);
+
+  useEffect(() => {
+    // Fallback: periodic safety refresh every 60 sec
+    pollRef.current = setInterval(() => {
+      refresh();
+    }, 60_000);
+
+    const onVisibility = () => {
+      if (document.visibilityState === "visible") {
+        refresh();
       }
     };
 
-    fetchAvailability();
+    const onFocus = () => refresh();
 
-    const interval = setInterval(fetchAvailability, 30_000); // 30 sec
+    document.addEventListener("visibilitychange", onVisibility);
+    window.addEventListener("focus", onFocus);
+
     return () => {
-      mounted = false;
-      clearInterval(interval);
+      if (pollRef.current) clearInterval(pollRef.current);
+      document.removeEventListener("visibilitychange", onVisibility);
+      window.removeEventListener("focus", onFocus);
     };
-  }, [menuId]);
+  }, [refresh]);
 
-  return { ...data, loading };
+  return {
+    ...state,
+    refresh,
+  };
 }
