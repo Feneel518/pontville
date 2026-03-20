@@ -182,20 +182,31 @@ export function Footer({
 
           <div className="flex flex-col gap-2 font-sans">
             <h3 className="font-serif text-2xl">Open Hours</h3>
-            {Object.entries(hoursJson).map(([key, value]) => (
-              <div key={key} className="flex justify-between text-sm">
-                <span className="font-medium capitalize">
-                  {key.replace(/([A-Z])/g, " $1")}
-                </span>
-                <span className="text-muted-foreground">{value as string}</span>
-              </div>
-            ))}
+            {Object.entries(hoursJson!).map(([key, value]) => {
+              // @ts-ignore
+              if (value && value.length > 0) {
+                return (
+                  <div key={key} className="flex justify-between text-sm">
+                    <span className="font-medium capitalize">
+                      {key.replace(/([A-Z])/g, " $1")}
+                    </span>
+                    <span className="text-muted-foreground">
+                      {value as string}
+                    </span>
+                  </div>
+                );
+              } else null;
+            })}
           </div>
 
           <div className="flex flex-col gap-2 font-sans w-3/4 mt-8">
             <p className="">
-              Great food, crafted drinks, and a lively atmosphere; the perfect
-              place to relax and enjoy with friends. 🍻
+              We acknowledge the Traditional Custodians of the land on which we
+              live an work. We recognize their ongoing connection to the land
+              and waterways which have always been places of community and
+              culture. We pay our respects to the Elder past and present and
+              extent that respect to all Aborignal and Torres Strait Islander
+              peoples today.
             </p>
           </div>
 

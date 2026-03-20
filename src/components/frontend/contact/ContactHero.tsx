@@ -59,14 +59,21 @@ const ContactHero: FC<ContactHeroProps> = async ({}) => {
             <ContactForm></ContactForm>
           </div>
           <div className=" space-y-4  text-base  ">
-            {Object.entries(restaurant?.hoursJson!).map(([key, value]) => (
-              <div key={key} className="flex justify-between text-sm">
-                <span className="font-medium capitalize">
-                  {key.replace(/([A-Z])/g, " $1")}
-                </span>
-                <span className="text-muted-foreground">{value as string}</span>
-              </div>
-            ))}
+            {Object.entries(restaurant?.hoursJson!).map(([key, value]) => {
+              if (value && value.length > 0) {
+                return (
+                  <div key={key} className="flex justify-between text-sm">
+                    <span className="font-medium capitalize">
+                      {key.replace(/([A-Z])/g, " $1")}
+                    </span>
+                    <span className="text-muted-foreground">
+                      {value as string}
+                    </span>
+                  </div>
+                );
+              } else null;
+            })}
+
             <p>
               <span className="font-semibold">ADDRESS: </span>
               <Link

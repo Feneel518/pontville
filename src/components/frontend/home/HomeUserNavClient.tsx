@@ -54,7 +54,7 @@ export default function HomeUserNavClient({
       {/* Quick buttons (optional) */}
 
       {/* User dropdown */}
-      <DropdownMenu>
+      <DropdownMenu modal={false}>
         <DropdownMenuTrigger asChild>
           <Button variant="outline" className="h-10 px-2 gap-2">
             <Avatar className="h-8 w-8 rounded-lg">

@@ -73,7 +73,7 @@ const Navbar: FC<NavbarProps> = ({
     router.replace("/");
   }
   return (
-    <header className="sticky inset-0 top-0 z-50   ">
+    <header className="sticky  top-0 z-50   ">
       <div
         className={` h-20 md:h-20 pt-1 transition-all duration-500 ${isScrolled ? "bg-white/80 backdrop-blur-md" : "bg-transparent"}`}>
         <div
