@@ -201,12 +201,8 @@ export function Footer({
 
           <div className="flex flex-col gap-2 font-sans w-3/4 mt-8">
             <p className="">
-              We acknowledge the Traditional Custodians of the land on which we
-              live an work. We recognize their ongoing connection to the land
-              and waterways which have always been places of community and
-              culture. We pay our respects to the Elder past and present and
-              extent that respect to all Aborignal and Torres Strait Islander
-              peoples today.
+              Great food, crafted drinks, and a lively atmosphere; the perfect
+              place to relax and enjoy with friends. 🍻
             </p>
           </div>
 
