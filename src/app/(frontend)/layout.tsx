@@ -1,6 +1,7 @@
 import { Footer } from "@/components/frontend/Footer";
 import Navbar from "@/components/frontend/Navbar";
 import Cursor from "@/components/global/Cursor";
+import WhatsAppFloating from "@/components/global/WhatsappFloating";
 import { auth } from "@/lib/auth/auth";
 import { baseMetadata } from "@/lib/helpers/seo";
 import { slugify } from "@/lib/helpers/SlugHelper";
@@ -70,6 +71,8 @@ export default async function RootLayout({
     });
   }
 
+  console.log(restaurant.phone);
+
   return (
     <div className="">
       <Navbar
@@ -78,6 +81,10 @@ export default async function RootLayout({
         user={user?.user}></Navbar>
       <div className="flex-1 min-h-screen">{children}</div>
       <Toaster richColors />
+      <WhatsAppFloating
+        phone={restaurant.phone?.replace(/\s+/g, "") ?? ""} // ← your number (NO +)
+        message="Hi, I’d like to place an order!"
+      />
       <Cursor></Cursor>
       <Footer
         address={restaurant.addressLine}

@@ -47,7 +47,7 @@ const DashboardBreadcrumbs: FC<DashboardBreadcrumbsProps> = ({}) => {
               <BreadcrumbItem
                 className={idx === 0 ? "hidden md:block" : undefined}>
                 {isLast ? (
-                  <BreadcrumbPage className="text-xl font-thin">
+                  <BreadcrumbPage className="text-xl font-light">
                     {c.label}
                   </BreadcrumbPage>
                 ) : (

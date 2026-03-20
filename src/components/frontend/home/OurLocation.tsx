@@ -76,7 +76,7 @@ const OurLocation: FC<OurLocationProps> = ({
             </p>
             <p>
               <span className="font-semibold">PHONE: </span>{" "}
-              <Link href={`tel:${phone}`}>{phone}</Link>
+              <a href={`tel:+${phone?.replace(/\s+/g, "")}`}>+{phone}</a>
             </p>
           </div>
 

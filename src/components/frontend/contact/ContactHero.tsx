@@ -40,8 +40,8 @@ const ContactHero: FC<ContactHeroProps> = async ({}) => {
     },
     {
       label: "Phone",
-      value: `${restaurant?.phone}`,
-      href: `tel:${restaurant?.phone}`,
+      value: `+${restaurant?.phone}`,
+      href: `tel:+${restaurant?.phone}`,
       external: false,
     },
   ];
@@ -77,9 +77,11 @@ const ContactHero: FC<ContactHeroProps> = async ({}) => {
             <p>
               <span className="font-semibold">ADDRESS: </span>
               <Link
+                className="text-wrap"
                 href={`https://www.google.com/maps?q=${lat},${lng}`}
                 target="_blank">
-                {restaurant?.addressLine}
+                {restaurant?.addressLine}, {restaurant?.city},{" "}
+                {restaurant?.state}, Asutralia - {restaurant?.postcode}
               </Link>
             </p>
             <p>
@@ -90,7 +92,9 @@ const ContactHero: FC<ContactHeroProps> = async ({}) => {
             </p>
             <p>
               <span className="font-semibold">PHONE: </span>{" "}
-              <Link href={`tel:${restaurant?.phone}`}>{restaurant?.phone}</Link>
+              <a href={`tel:+${restaurant?.phone?.replace(/\s+/g, "")}`}>
+                +{restaurant?.phone}
+              </a>
             </p>
           </div>
         </div>
