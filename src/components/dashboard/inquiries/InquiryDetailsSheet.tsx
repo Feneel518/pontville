@@ -15,6 +15,11 @@ import type { Inquiry, TableInquiry, EventInquiry } from "@prisma/client";
 
 import { formatUsd } from "@/lib/helpers/formatCurrency";
 import { InquiriesView } from "@/lib/actions/dashboard/inquiries/listInquiriesAction";
+import {
+  formatRestaurantDate,
+  formatRestaurantDateTime,
+  formatRestaurantTime,
+} from "@/lib/helpers/timeHelpers";
 
 type InquiryFull = Inquiry & {
   tableInquiry?: TableInquiry | null;
@@ -22,7 +27,7 @@ type InquiryFull = Inquiry & {
 };
 
 function timeHHMM(d: Date) {
-  return d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+  return formatRestaurantTime(d);
 }
 
 function statusVariant(status: string) {
@@ -40,7 +45,7 @@ function typeBadge(type: string) {
   );
 }
 
-export default function   InquiriesList(props: {
+export default function InquiriesList(props: {
   inquiries: InquiryFull[];
   nextCursor: string | null;
   date: string;
@@ -78,13 +83,10 @@ export default function   InquiriesList(props: {
 
         const primaryLine = isTable
           ? bookingAt
-            ? bookingAt.toLocaleString("en-IN", {
-                dateStyle: "medium",
-                timeStyle: "short",
-              })
+            ? formatRestaurantDateTime(bookingAt)
             : "No booking time"
           : eventDate
-            ? eventDate.toLocaleDateString("en-IN", { dateStyle: "medium" })
+            ? formatRestaurantDate(eventDate)
             : "No event date";
 
         return (
@@ -92,12 +94,14 @@ export default function   InquiriesList(props: {
             key={i.id}
             href={`/dashboard/inquiries/${i.id}`}
             className={cn(
-              "group block rounded-2xl border  p-4 transition",
-
-              `${i.status === "ACCEPTED" ? "bg-green-100 hover:bg-green-50" : i.status === "REJECTED" ? "bg-red-100 hover:bg-red-50" : " bg-background"}`,
+              "group block rounded-2xl border p-4 transition",
+              i.status === "ACCEPTED"
+                ? "bg-green-100 hover:bg-green-50"
+                : i.status === "REJECTED"
+                  ? "bg-red-100 hover:bg-red-50"
+                  : "bg-background",
             )}>
             <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-              {/* Left */}
               <div className="min-w-0">
                 <div className="flex flex-wrap items-center gap-2">
                   <div className="text-sm font-semibold">
@@ -116,7 +120,6 @@ export default function   InquiriesList(props: {
                 </div>
 
                 <div className="mt-2 grid gap-2 md:grid-cols-3">
-                  {/* Customer */}
                   <div className="min-w-0">
                     <div className="text-xs text-muted-foreground">
                       Customer
@@ -136,7 +139,6 @@ export default function   InquiriesList(props: {
                     </div>
                   </div>
 
-                  {/* Request */}
                   <div className="min-w-0 md:col-span-2">
                     <div className="text-xs text-muted-foreground">
                       {isTable ? "Table Request" : "Event Request"}
@@ -179,7 +181,6 @@ export default function   InquiriesList(props: {
                 </div>
               </div>
 
-              {/* Right */}
               <div className="flex items-center justify-between gap-3 md:flex-col md:items-end md:justify-center">
                 <Button
                   variant="secondary"
@@ -195,17 +196,11 @@ export default function   InquiriesList(props: {
             <Separator className="my-3" />
 
             <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-muted-foreground">
-              <div>
-                Created:{" "}
-                {new Date(i.createdAt).toLocaleString("en-IN", {
-                  dateStyle: "medium",
-                  timeStyle: "short",
-                })}
-              </div>
+              <div>Created: {formatRestaurantDateTime(i.createdAt)}</div>
               <div>
                 {isTable
-                  ? `Booking: ${bookingAt ? bookingAt.toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short" }) : "—"}`
-                  : `Event: ${eventDate ? eventDate.toLocaleDateString("en-IN", { dateStyle: "medium" }) : "—"}`}
+                  ? `Booking: ${bookingAt ? formatRestaurantDateTime(bookingAt) : "—"}`
+                  : `Event: ${eventDate ? formatRestaurantDate(eventDate) : "—"}`}
               </div>
             </div>
           </Link>
@@ -216,9 +211,7 @@ export default function   InquiriesList(props: {
         <div className="flex justify-center pt-2">
           <Button asChild variant="secondary" className="rounded-full">
             <Link
-              href={`?date=${encodeURIComponent(date)}&view=${encodeURIComponent(view)}&pageSize=${pageSize}&cursor=${encodeURIComponent(nextCursor)}&q=${encodeURIComponent(
-                q ?? "",
-              )}&type=${encodeURIComponent(type ?? "")}`}
+              href={`?date=${encodeURIComponent(date)}&view=${encodeURIComponent(view)}&pageSize=${pageSize}&cursor=${encodeURIComponent(nextCursor)}&q=${encodeURIComponent(q ?? "")}&type=${encodeURIComponent(type ?? "")}`}
               scroll={false}>
               Load more
             </Link>

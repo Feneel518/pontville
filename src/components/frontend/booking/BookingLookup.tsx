@@ -22,6 +22,10 @@ import {
   Search,
 } from "lucide-react";
 import { listPublicBookings } from "@/lib/actions/frontend/booking/listPublicBookings";
+import {
+  formatRestaurantDate,
+  formatRestaurantDateTime,
+} from "@/lib/helpers/timeHelpers";
 
 type Row = Awaited<ReturnType<typeof listPublicBookings>>[number];
 
@@ -47,17 +51,14 @@ function badgeForStatus(status: string) {
   );
 }
 
-function fmtDT(d?: Date | null) {
+function fmtDT(d?: Date | string | null) {
   if (!d) return "—";
-  return new Date(d).toLocaleString("en-IN", {
-    dateStyle: "medium",
-    timeStyle: "short",
-  });
+  return formatRestaurantDateTime(d);
 }
 
-function fmtD(d?: Date | null) {
+function fmtD(d?: Date | string | null) {
   if (!d) return "—";
-  return new Date(d).toLocaleDateString("en-IN", { dateStyle: "medium" });
+  return formatRestaurantDate(d);
 }
 
 export default function BookingLookup() {
@@ -87,7 +88,6 @@ export default function BookingLookup() {
 
   return (
     <div className="space-y-5">
-      {/* Search bar */}
       <div className="rounded-3xl border bg-background p-4 md:p-5">
         <div className="flex flex-col gap-3 md:flex-row md:items-center">
           <div className="flex flex-1 items-center gap-2 rounded-2xl border bg-muted/20 px-3 py-2">
@@ -122,7 +122,6 @@ export default function BookingLookup() {
         </div>
       </div>
 
-      {/* Results */}
       {hasSearched && rows.length === 0 ? (
         <div className="rounded-3xl border bg-muted/10 p-10 text-center">
           <div className="text-sm font-medium">No bookings found</div>
@@ -155,9 +154,7 @@ export default function BookingLookup() {
                   "hover:bg-muted/20",
                 )}>
                 <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-                  {/* Left */}
                   <div className="flex min-w-0 items-start gap-3">
-                    {/* Restaurant logo */}
                     <div className="mt-0.5">
                       {r.restaurant?.logoUrl ? (
                         <div className="relative h-11 w-11 overflow-hidden rounded-2xl border bg-muted">
@@ -213,7 +210,6 @@ export default function BookingLookup() {
                     </div>
                   </div>
 
-                  {/* Right */}
                   <div className="flex items-center justify-between gap-3 md:justify-end">
                     <div className="text-right text-xs text-muted-foreground">
                       Ref:{" "}
@@ -236,13 +232,7 @@ export default function BookingLookup() {
                 <Separator className="my-3" />
 
                 <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-muted-foreground">
-                  <div>
-                    Submitted:{" "}
-                    {new Date(r.createdAt).toLocaleString("en-IN", {
-                      dateStyle: "medium",
-                      timeStyle: "short",
-                    })}
-                  </div>
+                  <div>Submitted: {formatRestaurantDateTime(r.createdAt)}</div>
                   <div>
                     Status: <span className="font-medium">{r.status}</span>
                   </div>

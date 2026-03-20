@@ -20,7 +20,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-
+import {
+  formatRestaurantDate,
+  formatRestaurantDateTime,
+} from "@/lib/helpers/timeHelpers";
 
 function statusBadgeVariant(status: string) {
   if (status === "PENDING") return "secondary";
@@ -39,8 +42,13 @@ export function InquiriesTable({ inquiries }: { inquiries: any[] }) {
 
   function setParam(key: string, val: string) {
     const params = new URLSearchParams(sp.toString());
-    if (!val) params.delete(key);
-    else params.set(key, val);
+
+    if (!val || val === "ALL") {
+      params.delete(key);
+    } else {
+      params.set(key, val);
+    }
+
     router.push(`?${params.toString()}`);
   }
 
@@ -48,7 +56,9 @@ export function InquiriesTable({ inquiries }: { inquiries: any[] }) {
     <div className="space-y-3">
       <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
         <div className="flex gap-2">
-          <Select value={status} onValueChange={(v) => setParam("status", v)}>
+          <Select
+            value={status || "ALL"}
+            onValueChange={(v) => setParam("status", v)}>
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="Status" />
             </SelectTrigger>
@@ -61,7 +71,9 @@ export function InquiriesTable({ inquiries }: { inquiries: any[] }) {
             </SelectContent>
           </Select>
 
-          <Select value={type} onValueChange={(v) => setParam("type", v)}>
+          <Select
+            value={type || "ALL"}
+            onValueChange={(v) => setParam("type", v)}>
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="Type" />
             </SelectTrigger>
@@ -132,12 +144,7 @@ export function InquiriesTable({ inquiries }: { inquiries: any[] }) {
                     <TableCell className="font-medium">{i.name}</TableCell>
 
                     <TableCell className="hidden md:table-cell">
-                      {when
-                        ? new Date(when).toLocaleString("en-IN", {
-                            dateStyle: "medium",
-                            timeStyle: "short",
-                          })
-                        : "-"}
+                      {when ? formatRestaurantDateTime(when) : "-"}
                     </TableCell>
 
                     <TableCell className="hidden md:table-cell">
@@ -145,9 +152,7 @@ export function InquiriesTable({ inquiries }: { inquiries: any[] }) {
                     </TableCell>
 
                     <TableCell className="hidden md:table-cell">
-                      {new Date(i.createdAt).toLocaleDateString("en-IN", {
-                        dateStyle: "medium",
-                      })}
+                      {formatRestaurantDate(i.createdAt)}
                     </TableCell>
 
                     <TableCell className="text-right">

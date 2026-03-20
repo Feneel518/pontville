@@ -9,6 +9,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { formatRestaurantDateTime } from "@/lib/helpers/timeHelpers";
 
 export function BookingsTable({ bookings }: { bookings: any[] }) {
   return (
@@ -43,10 +44,7 @@ export function BookingsTable({ bookings }: { bookings: any[] }) {
                 <TableCell className="font-medium">{b.name}</TableCell>
                 <TableCell>
                   {b.tableInquiry?.bookingAt
-                    ? new Date(b.tableInquiry.bookingAt).toLocaleString(
-                        "en-IN",
-                        { dateStyle: "medium", timeStyle: "short" },
-                      )
+                    ? formatRestaurantDateTime(b.tableInquiry.bookingAt)
                     : "-"}
                 </TableCell>
                 <TableCell>{b.tableInquiry?.guests ?? "-"}</TableCell>

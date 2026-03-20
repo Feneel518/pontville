@@ -23,6 +23,8 @@ const buttonVariants = cva(
           "border border-secondary-foreground hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-[4px] hover:bg-primary/50",
         elegantFull:
           "border border-secondary-foreground hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-[4px] bg-primary hover:bg-primary/90",
+        success:
+          "bg-green-600 text-white hover:bg-green-700 focus-visible:ring-green-500/20 dark:bg-green-600 dark:hover:bg-green-700",
       },
       size: {
         default: "h-9 px-4 py-2 has-[>svg]:px-3",

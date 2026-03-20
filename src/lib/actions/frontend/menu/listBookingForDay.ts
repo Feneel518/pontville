@@ -1,11 +1,15 @@
 "use server";
 
+import { RESTAURANT_TIMEZONE } from "@/lib/constants/timezone";
 import { prisma } from "@/lib/prisma/db";
+import { fromZonedTime } from "date-fns-tz";
 
 export async function dayRange(dateStr: string) {
-  const start = new Date(`${dateStr}T00:00:00`);
-  const end = new Date(`${dateStr}T23:59:59.999`);
-  return { start, end };
+   const start = fromZonedTime(`${dateStr}T00:00:00.000`, RESTAURANT_TIMEZONE);
+
+   const end = fromZonedTime(`${dateStr}T23:59:59.999`, RESTAURANT_TIMEZONE);
+
+   return { start, end };
 }
 
 export async function listAcceptedBookingsForDay(opts: {

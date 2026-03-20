@@ -49,10 +49,14 @@ export default async function RootLayout({
 
   let hasDashboard = false;
 
+  console.log(user);
+
   if (user?.user) {
     const allowed = await prisma.allowedUser.findUnique({
       where: { email: user?.user.email, isActive: true, role: "ADMIN" },
     });
+
+    console.log(allowed);
 
     hasDashboard = allowed ? true : false;
   }
@@ -70,8 +74,6 @@ export default async function RootLayout({
       },
     });
   }
-
-  console.log(restaurant.phone);
 
   return (
     <div className="">

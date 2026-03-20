@@ -1,5 +1,11 @@
 import { formatUsd } from "@/lib/helpers/formatCurrency";
 import { EventInquiry, Inquiry, TableInquiry } from "@prisma/client";
+import {
+  formatRestaurantDate,
+  formatRestaurantDateTime,
+  getRestaurantDateISO,
+  getRestaurantTodayISO,
+} from "@/lib/helpers/timeHelpers";
 
 type FullInquiry = Inquiry & {
   tableInquiry?: TableInquiry | null;
@@ -8,12 +14,12 @@ type FullInquiry = Inquiry & {
 
 export type BrandConfig = {
   restaurantName: string;
-  logoUrl?: string; // optional
-  primaryColor?: string; // hex
-  supportEmail?: string; // optional
-  supportPhone?: string; // optional
-  websiteUrl?: string; // optional
-  addressLine?: string; // optional
+  logoUrl?: string;
+  primaryColor?: string;
+  supportEmail?: string;
+  supportPhone?: string;
+  websiteUrl?: string;
+  addressLine?: string;
 };
 
 function esc(s: unknown) {
@@ -25,15 +31,14 @@ function esc(s: unknown) {
     .replaceAll("'", "&#039;");
 }
 
-function fmtDateTime(d?: Date | null) {
+function fmtDateTime(d?: Date | string | null) {
   if (!d) return "-";
-  // Keep it simple & predictable. If you want locale formatting, pass a formatted string instead.
-  return d.toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short" });
+  return formatRestaurantDateTime(d);
 }
 
-function fmtDate(d?: Date | null) {
+function fmtDate(d?: Date | string | null) {
   if (!d) return "-";
-  return d.toLocaleDateString("en-IN", { dateStyle: "medium" });
+  return formatRestaurantDate(d);
 }
 
 function baseLayout(opts: {
@@ -48,7 +53,8 @@ function baseLayout(opts: {
   footerNote?: string;
 }) {
   const brand = opts.brand;
-  const primary = brand.primaryColor ?? "#0ea5e9"; // sky-500 fallback
+  const primary = brand.primaryColor ?? "#0ea5e9";
+
   const logo = brand.logoUrl
     ? `<img src="${esc(brand.logoUrl)}" alt="${esc(brand.restaurantName)}" style="height:40px; display:block;" />`
     : `<div style="font-weight:800; letter-spacing:0.5px; font-size:18px; color:#0f172a;">${esc(
@@ -171,6 +177,7 @@ function baseLayout(opts: {
 
 function inquiryDetailsBlock(inquiry: FullInquiry) {
   const isTable = inquiry.type === "TABLE";
+
   const contact = `
     <div style="margin-top:14px; padding:14px; border:1px solid #e2e8f0; border-radius:14px;">
       <div style="font-weight:800; color:#0f172a; margin-bottom:8px;">Contact</div>
@@ -230,8 +237,8 @@ export function acceptedInquiryEmail(
   inquiry: FullInquiry,
   brand: BrandConfig,
   opts?: {
-    whatsappLink?: string; // optional
-    manageLink?: string; // optional website link
+    whatsappLink?: string;
+    manageLink?: string;
   },
 ) {
   const isTable = inquiry.type === "TABLE";
@@ -266,7 +273,7 @@ export function acceptedInquiryEmail(
         ? { label: "WhatsApp Us", href: opts.whatsappLink }
         : undefined,
       footerNote:
-        "Tip: Please arrive 10 minutes early for the best experience.",
+        "Tip: Please arrive 10 minutes early for the best experience. All times are shown in Hobart, Tasmania.",
     }),
   };
 }
@@ -275,8 +282,8 @@ export function rejectedInquiryEmail(
   inquiry: FullInquiry,
   brand: BrandConfig,
   opts?: {
-    whatsappLink?: string; // optional
-    manageLink?: string; // optional website link
+    whatsappLink?: string;
+    manageLink?: string;
   },
 ) {
   const isTable = inquiry.type === "TABLE";
@@ -310,7 +317,8 @@ export function rejectedInquiryEmail(
       ctaSecondary: opts?.manageLink
         ? { label: "View Details", href: opts.manageLink }
         : undefined,
-      footerNote: "We appreciate your understanding.",
+      footerNote:
+        "We appreciate your understanding. All times are shown in Hobart, Tasmania.",
     }),
   };
 }
@@ -321,7 +329,7 @@ export function receivedInquiryEmail(
   opts?: {
     whatsappLink?: string;
     manageLink?: string;
-    etaText?: string; // e.g. "within 2 hours" / "today"
+    etaText?: string;
   },
 ) {
   const isTable = inquiry.type === "TABLE";
@@ -355,7 +363,7 @@ export function receivedInquiryEmail(
       title: "We’ve received your request",
       subtitle: "Our team is reviewing it now.",
       badgeText: "RECEIVED",
-      badgeColor: "#f59e0b", // amber
+      badgeColor: "#f59e0b",
       bodyHtml: body,
       ctaPrimary: opts?.manageLink
         ? { label: "View Request", href: opts.manageLink }
@@ -364,7 +372,7 @@ export function receivedInquiryEmail(
         ? { label: "WhatsApp Us", href: opts.whatsappLink }
         : undefined,
       footerNote:
-        "Tip: If your date/time is flexible, mention alternate options to speed up confirmation.",
+        "Tip: If your date/time is flexible, mention alternate options to speed up confirmation. All times are shown in Hobart, Tasmania.",
     }),
   };
 }
@@ -381,8 +389,8 @@ export function adminInquiryReceivedEmail(
   const isToday =
     isTable &&
     inquiry.tableInquiry?.bookingAt &&
-    new Date(inquiry.tableInquiry.bookingAt).toDateString() ===
-      new Date().toDateString();
+    getRestaurantDateISO(inquiry.tableInquiry.bookingAt) ===
+      getRestaurantTodayISO();
 
   const urgencyBadge = isToday
     ? `<div style="margin-bottom:10px; padding:8px 12px; background:#dc2626; color:#fff; font-weight:800; border-radius:8px; display:inline-block;">
@@ -422,7 +430,8 @@ export function adminInquiryReceivedEmail(
       ctaPrimary: opts?.dashboardLink
         ? { label: "Open Dashboard", href: opts.dashboardLink }
         : undefined,
-      footerNote: "This is an automated notification from your booking system.",
+      footerNote:
+        "This is an automated notification from your booking system. All times are shown in Hobart, Tasmania.",
     }),
   };
 }
@@ -467,7 +476,7 @@ export function cancelledBookingEmail(
         ? { label: "View Details", href: opts.manageLink }
         : undefined,
       footerNote:
-        "Tip: Share 2–3 alternate times and we’ll confirm the best option.",
+        "Tip: Share 2–3 alternate times and we’ll confirm the best option. All times are shown in Hobart, Tasmania.",
     }),
   };
 }
@@ -500,13 +509,13 @@ export function adminContactReceivedEmail(
         
         <div style="margin-bottom:8px;">
           <span style="font-weight:700;">Name:</span>
-          ${contact.name}
+          ${esc(contact.name)}
         </div>
 
         <div style="margin-bottom:8px;">
           <span style="font-weight:700;">Email:</span>
-          <a href="mailto:${contact.email}" style="color:#0ea5e9;">
-            ${contact.email}
+          <a href="mailto:${esc(contact.email)}" style="color:#0ea5e9;">
+            ${esc(contact.email)}
           </a>
         </div>
 
@@ -515,8 +524,8 @@ export function adminContactReceivedEmail(
             ? `
         <div style="margin-bottom:8px;">
           <span style="font-weight:700;">Phone:</span>
-          <a href="tel:${contact.phone}" style="color:#0ea5e9;">
-            ${contact.phone}
+          <a href="tel:${esc(contact.phone)}" style="color:#0ea5e9;">
+            ${esc(contact.phone)}
           </a>
         </div>`
             : ""
@@ -528,7 +537,7 @@ export function adminContactReceivedEmail(
         <div style="margin-top:12px;">
           <div style="font-weight:700; margin-bottom:4px;">Message:</div>
           <div style="background:#f8fafc; padding:10px; border-radius:6px;">
-            ${contact.note}
+            ${esc(contact.note)}
           </div>
         </div>`
             : ""

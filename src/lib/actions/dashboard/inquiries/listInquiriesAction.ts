@@ -1,5 +1,6 @@
 "use server";
 
+import { getRestaurantDayUtcRange } from "@/lib/helpers/timeHelpers";
 import { prisma } from "@/lib/prisma/db";
 
 export type InquiriesView = "pending" | "accepted" | "rejected" | "all";
@@ -17,8 +18,7 @@ export async function listInquiriesForDate(opts: {
 }) {
   const { restaurantId, dateStr, view, pageSize, cursor, q, type } = opts;
 
-  const start = new Date(`${dateStr}T00:00:00`);
-  const end = new Date(`${dateStr}T23:59:59.999`);
+  const { startUtc, endUtc } = getRestaurantDayUtcRange(dateStr);
 
   const statusWhere =
     view === "pending"
@@ -34,7 +34,7 @@ export async function listInquiriesForDate(opts: {
   // - EVENT: eventInquiry.eventDate in day
   // - If eventDate is null (some events may not pick a date), we fallback to createdAt filter
   const dateWhere = {
-    createdAt: { gte: start, lte: end },
+    createdAt: { gte: startUtc, lt: new Date(endUtc.getTime() + 1) },
   };
 
   const searchWhere = q?.trim()

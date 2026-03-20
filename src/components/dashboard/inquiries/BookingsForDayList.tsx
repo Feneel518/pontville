@@ -8,13 +8,14 @@ import { Separator } from "@/components/ui/separator";
 import { ChevronRight } from "lucide-react";
 import { toast } from "sonner";
 import { decideInquiryAction } from "@/lib/actions/frontend/decideInquiryAction";
+import { formatRestaurantDateTime } from "@/lib/helpers/timeHelpers";
 
 export default function BookingsForDayList(props: {
   title: string;
   rows: any[];
   emptyText: string;
   highlightId?: string;
-  showDecisionButtons?: boolean; // only for pending list
+  showDecisionButtons?: boolean;
 }) {
   async function quickDecision(id: string, status: "ACCEPTED" | "REJECTED") {
     try {
@@ -36,9 +37,7 @@ export default function BookingsForDayList(props: {
         </div>
       ) : (
         props.rows.map((r) => {
-          const bookingAt = r.tableInquiry?.bookingAt
-            ? new Date(r.tableInquiry.bookingAt)
-            : null;
+          const bookingAt = r.tableInquiry?.bookingAt ?? null;
 
           return (
             <div
@@ -70,13 +69,8 @@ export default function BookingsForDayList(props: {
                   </div>
 
                   <div className="mt-1 text-xs text-muted-foreground">
-                    {bookingAt
-                      ? bookingAt.toLocaleString("en-IN", {
-                          dateStyle: "medium",
-                          timeStyle: "short",
-                        })
-                      : "—"}{" "}
-                    • Guests: {r.tableInquiry?.guests ?? "—"}
+                    {bookingAt ? formatRestaurantDateTime(bookingAt) : "—"} •{" "}
+                    Guests: {r.tableInquiry?.guests ?? "—"}
                   </div>
 
                   {r.notes ? (
@@ -100,13 +94,12 @@ export default function BookingsForDayList(props: {
                   <Separator className="my-3" />
                   <div className="flex gap-2">
                     <Button
-                      className="rounded-full"
+                      variant={"default"}
                       onClick={() => quickDecision(r.id, "ACCEPTED")}>
                       Accept
                     </Button>
                     <Button
-                      variant="destructive"
-                      className="rounded-full"
+                      variant="outline"
                       onClick={() => quickDecision(r.id, "REJECTED")}>
                       Reject
                     </Button>

@@ -1,3 +1,4 @@
+import { fromZonedTime } from "date-fns-tz";
 export function to12HourTime(input: string) {
   if (!input) return "";
 
@@ -35,6 +36,7 @@ export function to12HourTime(input: string) {
   return `${hour12}:${mm.toString().padStart(2, "0")} ${period}`;
 }
 import { format } from "date-fns";
+import { RESTAURANT_TIMEZONE } from "../constants/timezone";
 
 /**
  * Example output:
@@ -100,4 +102,66 @@ export function getTodayRange(tz = "Australia/Hobart") {
   const end = new Date(`${yyyy}-${mm}-${dd}T23:59:59.999Z`);
 
   return { start, end };
+}
+
+export function formatRestaurantDateTime(date: Date | string) {
+  return new Intl.DateTimeFormat("en-AU", {
+    timeZone: RESTAURANT_TIMEZONE,
+    dateStyle: "medium",
+    timeStyle: "short",
+  }).format(new Date(date));
+}
+
+export function formatRestaurantDate(date: Date | string) {
+  return new Intl.DateTimeFormat("en-AU", {
+    timeZone: RESTAURANT_TIMEZONE,
+    dateStyle: "medium",
+  }).format(new Date(date));
+}
+
+export function formatRestaurantTime(date: Date | string) {
+  return new Intl.DateTimeFormat("en-AU", {
+    timeZone: RESTAURANT_TIMEZONE,
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true,
+  }).format(new Date(date));
+}
+
+export function getRestaurantTodayISO() {
+  const parts = new Intl.DateTimeFormat("en-CA", {
+    timeZone: RESTAURANT_TIMEZONE,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).formatToParts(new Date());
+
+  const year = parts.find((p) => p.type === "year")?.value;
+  const month = parts.find((p) => p.type === "month")?.value;
+  const day = parts.find((p) => p.type === "day")?.value;
+
+  return `${year}-${month}-${day}`;
+}
+
+export function getRestaurantDayUtcRange(dateStr: string) {
+  const startUtc = fromZonedTime(`${dateStr}T00:00:00`, RESTAURANT_TIMEZONE);
+
+  const endUtc = fromZonedTime(`${dateStr}T23:59:59.999`, RESTAURANT_TIMEZONE);
+
+  return { startUtc, endUtc };
+}
+
+export function getRestaurantDateISO(date: Date | string) {
+  const parts = new Intl.DateTimeFormat("en-CA", {
+    timeZone: RESTAURANT_TIMEZONE,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).formatToParts(new Date(date));
+
+  const year = parts.find((p) => p.type === "year")?.value;
+  const month = parts.find((p) => p.type === "month")?.value;
+  const day = parts.find((p) => p.type === "day")?.value;
+
+  return `${year}-${month}-${day}`;
 }

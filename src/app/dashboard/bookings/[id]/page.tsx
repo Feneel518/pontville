@@ -6,6 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import BookingActionsPanel from "@/components/dashboard/booking/BookingActionPanel";
+import { formatRestaurantDateTime } from "@/lib/helpers/timeHelpers";
 
 export default async function BookingDetailPage({
   params,
@@ -19,9 +20,7 @@ export default async function BookingDetailPage({
   const { id } = await params;
   const booking = await getBookingById({ restaurantId, id });
 
-  const bookingAt = booking.tableInquiry?.bookingAt
-    ? new Date(booking.tableInquiry.bookingAt)
-    : null;
+  const bookingAt = booking.tableInquiry?.bookingAt ?? null;
 
   return (
     <div className="space-y-4">
@@ -63,12 +62,7 @@ export default async function BookingDetailPage({
                 <div>
                   <span className="text-muted-foreground">Booking at:</span>{" "}
                   <span className="font-medium">
-                    {bookingAt
-                      ? bookingAt.toLocaleString("en-IN", {
-                          dateStyle: "medium",
-                          timeStyle: "short",
-                        })
-                      : "—"}
+                    {bookingAt ? formatRestaurantDateTime(bookingAt) : "—"}
                   </span>
                 </div>
                 <div>
@@ -110,16 +104,10 @@ export default async function BookingDetailPage({
 
             <Separator />
             <div className="flex flex-wrap justify-between gap-2 text-xs text-muted-foreground">
-              <div>
-                Created:{" "}
-                {new Date(booking.createdAt).toLocaleString("en-IN", {
-                  dateStyle: "medium",
-                  timeStyle: "short",
-                })}
-              </div>
+              <div>Created: {formatRestaurantDateTime(booking.createdAt)}</div>
               <div>
                 {booking.handledAt
-                  ? `Handled: ${new Date(booking.handledAt).toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short" })}`
+                  ? `Handled: ${formatRestaurantDateTime(booking.handledAt)}`
                   : "—"}
               </div>
             </div>
@@ -130,7 +118,6 @@ export default async function BookingDetailPage({
           bookingId={booking.id}
           status={booking.status}
           initialNote={booking.staffNote ?? ""}
-          // bookingAtISO={bookingAt?.toISOString() ?? ""}
         />
       </div>
     </div>

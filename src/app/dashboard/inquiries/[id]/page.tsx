@@ -4,18 +4,18 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 
-
 import { getInquiryById } from "@/lib/actions/frontend/getInquiryById";
-import { listAcceptedBookingsForDay, listPendingTableInquiriesForDay } from "@/lib/actions/frontend/menu/listBookingForDay";
+import {
+  listAcceptedBookingsForDay,
+  listPendingTableInquiriesForDay,
+} from "@/lib/actions/frontend/menu/listBookingForDay";
 import InquiryDecisionPanel from "@/components/dashboard/inquiries/InquiryDecisionPanel";
 import BookingsForDayList from "@/components/dashboard/inquiries/BookingsForDayList";
-
-function isoFromDate(d: Date) {
-  const yyyy = d.getFullYear();
-  const mm = String(d.getMonth() + 1).padStart(2, "0");
-  const dd = String(d.getDate()).padStart(2, "0");
-  return `${yyyy}-${mm}-${dd}`;
-}
+import {
+  formatRestaurantDate,
+  formatRestaurantDateTime,
+  getRestaurantDateISO,
+} from "@/lib/helpers/timeHelpers";
 
 export default async function InquiryDetailPage({
   params,
@@ -32,7 +32,7 @@ export default async function InquiryDetailPage({
   const isTable = inquiry.type === "TABLE";
   const bookingDateStr =
     isTable && inquiry.tableInquiry?.bookingAt
-      ? isoFromDate(new Date(inquiry.tableInquiry.bookingAt))
+      ? getRestaurantDateISO(inquiry.tableInquiry.bookingAt)
       : null;
 
   const acceptedSameDay = bookingDateStr
@@ -41,6 +41,7 @@ export default async function InquiryDetailPage({
         dateStr: bookingDateStr,
       })
     : [];
+
   const pendingSameDay = bookingDateStr
     ? await listPendingTableInquiriesForDay({
         restaurantId,
@@ -72,7 +73,6 @@ export default async function InquiryDetailPage({
       </div>
 
       <div className="grid gap-4 lg:grid-cols-3">
-        {/* LEFT: Details */}
         <Card className="rounded-2xl lg:col-span-2">
           <CardContent className="p-4 space-y-4">
             <div className="space-y-1">
@@ -98,12 +98,9 @@ export default async function InquiryDetailPage({
                     <span className="text-muted-foreground">Booking at:</span>{" "}
                     <span className="font-medium">
                       {inquiry.tableInquiry?.bookingAt
-                        ? new Date(
+                        ? formatRestaurantDateTime(
                             inquiry.tableInquiry.bookingAt,
-                          ).toLocaleString("en-IN", {
-                            dateStyle: "medium",
-                            timeStyle: "short",
-                          })
+                          )
                         : "—"}
                     </span>
                   </div>
@@ -131,9 +128,7 @@ export default async function InquiryDetailPage({
                     <span className="text-muted-foreground">Event date:</span>{" "}
                     <span className="font-medium">
                       {inquiry.eventInquiry?.eventDate
-                        ? new Date(
-                            inquiry.eventInquiry.eventDate,
-                          ).toLocaleDateString("en-IN", { dateStyle: "medium" })
+                        ? formatRestaurantDate(inquiry.eventInquiry.eventDate)
                         : "—"}
                     </span>
                   </div>
@@ -185,30 +180,22 @@ export default async function InquiryDetailPage({
 
             <Separator />
             <div className="flex flex-wrap justify-between gap-2 text-xs text-muted-foreground">
-              <div>
-                Created:{" "}
-                {new Date(inquiry.createdAt).toLocaleString("en-IN", {
-                  dateStyle: "medium",
-                  timeStyle: "short",
-                })}
-              </div>
+              <div>Created: {formatRestaurantDateTime(inquiry.createdAt)}</div>
               <div>
                 {inquiry.handledAt
-                  ? `Handled: ${new Date(inquiry.handledAt).toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short" })}`
+                  ? `Handled: ${formatRestaurantDateTime(inquiry.handledAt)}`
                   : "Not handled yet"}
               </div>
             </div>
           </CardContent>
         </Card>
 
-        {/* RIGHT: Decision panel */}
         <InquiryDecisionPanel
           inquiryId={inquiry.id}
           status={inquiry.status}
           initialStaffNote={inquiry.staffNote ?? ""}
         />
 
-        {/* Same-day context */}
         {bookingDateStr ? (
           <div className="lg:col-span-3 space-y-3">
             <div className="text-sm font-medium">

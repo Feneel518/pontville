@@ -22,7 +22,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-import { authClient } from "@/lib/auth/authClient"; // your better-auth client
+import { authClient, useSession } from "@/lib/auth/authClient"; // your better-auth client
 import { User } from "better-auth";
 
 export default function HomeUserNavClient({
@@ -33,6 +33,8 @@ export default function HomeUserNavClient({
   canAccessDashboard: boolean;
 }) {
   const router = useRouter();
+  const { data: session } = useSession();
+  const currentUser = session?.user ?? user;
 
   const initials =
     user?.name
@@ -43,26 +45,37 @@ export default function HomeUserNavClient({
       .toUpperCase() ?? "U";
 
   async function onLogout() {
-    // ✅ Better Auth sign out
-    await authClient.signOut();
-    router.refresh();
-    router.replace("/");
+    try {
+      const res = await authClient.signOut();
+
+      if (res?.error) {
+        console.error("Logout failed:", res.error);
+        return;
+      }
+
+      router.replace("/");
+      router.refresh();
+    } catch (error) {
+      console.error("Logout error:", error);
+    }
   }
 
-  return (
-    <div className="flex items-center gap-2 h-10 ">
-      {/* Quick buttons (optional) */}
+  if (!currentUser) return null;
 
-      {/* User dropdown */}
+  return (
+    <div className="flex items-center gap-2 h-10">
       <DropdownMenu modal={false}>
         <DropdownMenuTrigger asChild>
           <Button variant="outline" className="h-10 px-2 gap-2">
             <Avatar className="h-8 w-8 rounded-lg">
-              <AvatarImage src={user.image ?? ""} alt={user.name} />
+              <AvatarImage
+                src={currentUser.image ?? ""}
+                alt={currentUser.name}
+              />
               <AvatarFallback className="rounded-lg">{initials}</AvatarFallback>
             </Avatar>
             <span className="hidden md:block text-sm font-medium truncate max-w-[140px]">
-              {user.name}
+              {currentUser.name}
             </span>
           </Button>
         </DropdownMenuTrigger>
@@ -71,15 +84,18 @@ export default function HomeUserNavClient({
           <DropdownMenuLabel className="font-normal">
             <div className="flex items-center gap-2">
               <Avatar className="h-9 w-9 rounded-lg">
-                <AvatarImage src={user.image ?? ""} alt={user.name} />
+                <AvatarImage
+                  src={currentUser.image ?? ""}
+                  alt={currentUser.name}
+                />
                 <AvatarFallback className="rounded-lg">
                   {initials}
                 </AvatarFallback>
               </Avatar>
               <div className="grid leading-tight">
-                <span className="text-sm font-medium">{user.name}</span>
+                <span className="text-sm font-medium">{currentUser.name}</span>
                 <span className="text-xs text-muted-foreground truncate">
-                  {user.email}
+                  {currentUser.email}
                 </span>
               </div>
             </div>
@@ -101,6 +117,7 @@ export default function HomeUserNavClient({
                 Orders
               </Link>
             </DropdownMenuItem>
+
             <DropdownMenuItem asChild>
               <Link href="/booking" className="flex items-center gap-2">
                 <IconUserCircle className="size-4" />
@@ -121,7 +138,10 @@ export default function HomeUserNavClient({
           <DropdownMenuSeparator />
 
           <DropdownMenuItem
-            onClick={onLogout}
+            onSelect={(e) => {
+              e.preventDefault();
+              void onLogout();
+            }}
             className="text-destructive focus:text-destructive">
             <IconLogout className="size-4 mr-2" />
             Log out

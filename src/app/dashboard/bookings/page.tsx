@@ -8,14 +8,7 @@ import {
 } from "@/lib/actions/dashboard/bookings/listBookings";
 import BookingsToolbar from "@/components/dashboard/booking/BookingsToolbar";
 import BookingsList from "@/components/dashboard/booking/BookingsList";
-
-function todayISO() {
-  const d = new Date();
-  const yyyy = d.getFullYear();
-  const mm = String(d.getMonth() + 1).padStart(2, "0");
-  const dd = String(d.getDate()).padStart(2, "0");
-  return `${yyyy}-${mm}-${dd}`;
-}
+import { getRestaurantTodayISO } from "@/lib/helpers/timeHelpers";
 
 type SP = {
   date?: string;
@@ -35,7 +28,7 @@ export default async function BookingsPage({
   if (!restaurantId) throw new Error("Missing restaurantId in session");
 
   const sp = (await searchParams) ?? {};
-  const date = sp.date ?? todayISO();
+  const date = sp.date ?? getRestaurantTodayISO();
   const view: BookingsView = sp.view ?? "accepted";
   const cursor = sp.cursor || undefined;
   const pageSize = Math.min(Math.max(Number(sp.pageSize ?? 30) || 30, 10), 100);

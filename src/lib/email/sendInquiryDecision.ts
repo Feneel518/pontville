@@ -9,6 +9,10 @@ import {
 import { createTableBookingICS } from "../calendar/calendar";
 import { createWhatsAppLink } from "../whatsapp/createWhatsAppLink";
 import { sendMail } from "./sendMail";
+import {
+  formatRestaurantDate,
+  formatRestaurantDateTime,
+} from "@/lib/helpers/timeHelpers";
 
 type FullInquiry = Inquiry & {
   tableInquiry?: TableInquiry | null;
@@ -18,29 +22,20 @@ type FullInquiry = Inquiry & {
 export async function sendInquiryDecision(opts: {
   inquiry: FullInquiry;
   brand: BrandConfig;
-
-  // WhatsApp business number (your restaurant number)
   whatsappBusinessPhoneE164?: string;
-
-  // optional: link on your site to show inquiry detail
   manageLink?: string;
 }) {
   const { inquiry, brand } = opts;
 
-  if (!inquiry.email) return; // nothing to email
+  if (!inquiry.email) return;
 
   const whenText =
     inquiry.type === "TABLE"
       ? inquiry.tableInquiry?.bookingAt
-        ? inquiry.tableInquiry.bookingAt.toLocaleString("en-IN", {
-            dateStyle: "medium",
-            timeStyle: "short",
-          })
+        ? formatRestaurantDateTime(inquiry.tableInquiry.bookingAt)
         : "-"
       : inquiry.eventInquiry?.eventDate
-        ? inquiry.eventInquiry.eventDate.toLocaleDateString("en-IN", {
-            dateStyle: "medium",
-          })
+        ? formatRestaurantDate(inquiry.eventInquiry.eventDate)
         : "-";
 
   const whatsappLink = opts.whatsappBusinessPhoneE164
@@ -70,8 +65,6 @@ export async function sendInquiryDecision(opts: {
     contentType: string;
   }> = [];
 
-  let icalEvent: { method: "request"; content: string } | undefined;
-  // Attach ICS only for TABLE + ACCEPTED
   if (
     inquiry.status === "ACCEPTED" &&
     inquiry.type === "TABLE" &&
@@ -82,15 +75,13 @@ export async function sendInquiryDecision(opts: {
       restaurantName: brand.restaurantName,
       restaurantAddress: brand.addressLine,
       customerName: inquiry.name,
-      customerEmail: inquiry.email, // ✅
-      organizerEmail: process.env.MAIL_FROM_EMAIL!, // ✅ set this
+      customerEmail: inquiry.email,
+      organizerEmail: process.env.MAIL_FROM_EMAIL!,
       bookingAt: inquiry.tableInquiry.bookingAt,
       durationMinutes: 90,
       inquiryId: inquiry.id,
       notes: inquiry.notes ?? undefined,
     });
-
-    icalEvent = { method: "request", content: ics };
 
     attachments.push({
       filename: `${brand.restaurantName.replace(/\s+/g, "-").toLowerCase()}-booking.ics`,

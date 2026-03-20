@@ -1,11 +1,16 @@
 "use client";
 
-import { Menu, Stars, Waves, X } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { FC } from "react";
-import { IconRipple } from "@tabler/icons-react";
+import {
+  IconLayoutDashboard,
+  IconRipple,
+  IconShoppingCart,
+  IconUserCircle,
+} from "@tabler/icons-react";
 import { Button, buttonVariants } from "../ui/button";
 import {
   Sheet,
@@ -23,6 +28,7 @@ import { User } from "better-auth";
 import { cn } from "@/lib/utils";
 import { authClient } from "@/lib/auth/authClient";
 import { useRouter } from "next/navigation";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 interface NavbarProps {
   restaurantDetails: {
@@ -41,6 +47,7 @@ const nav = [
   { label: "About", href: "/about" },
   { label: "Contact", href: "/contact" },
 ];
+
 const mobileNav = [
   { label: "Menu", href: "/menu" },
   { label: "Events", href: "/events" },
@@ -57,30 +64,52 @@ const Navbar: FC<NavbarProps> = ({
 }) => {
   const router = useRouter();
   const [isScrolled, setIsScrolled] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 100);
     };
+
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  const initials =
+    user?.name
+      ?.split(" ")
+      .map((x) => x[0])
+      .slice(0, 2)
+      .join("")
+      .toUpperCase() ?? "U";
+
   async function onLogout() {
-    // ✅ Better Auth sign out
-    await authClient.signOut();
-    router.refresh();
-    router.replace("/");
+    try {
+      const res = await authClient.signOut();
+
+      if (res?.error) {
+        console.error("Logout failed:", res.error);
+        return;
+      }
+
+      setMobileOpen(false);
+      router.replace("/");
+      router.refresh();
+    } catch (error) {
+      console.error("Logout error:", error);
+    }
   }
+
   return (
-    <header className="sticky  top-0 z-50   ">
+    <header className="sticky top-0 z-50">
       <div
-        className={` h-20 md:h-20 pt-1 transition-all duration-500 ${isScrolled ? "bg-white/80 backdrop-blur-md" : "bg-transparent"}`}>
-        <div
-          className={`mx-auto max-w-[92%]  h-full  flex items-center justify-between gap-3  `}>
-          {/* Left: Brand */}
+        className={cn(
+          "h-20 pt-1 transition-all duration-500",
+          isScrolled ? "bg-white/80 backdrop-blur-md" : "bg-transparent",
+        )}>
+        <div className="mx-auto max-w-[92%] h-full flex items-center justify-between gap-3">
           <Link href="/" className="flex items-center gap-2 min-w-0">
-            <div className="relative size-14 md:size-14 lg:size-16 shrink-0 ">
+            <div className="relative size-14 md:size-14 lg:size-16 shrink-0">
               <Image
                 src={restaurantDetails.logoUrl ?? "/logonew.svg"}
                 alt={restaurantDetails.name}
@@ -91,7 +120,7 @@ const Navbar: FC<NavbarProps> = ({
             </div>
 
             <div className="min-w-0 leading-tight -ml-4">
-              <p className="font-serif tracking-tight  text-xl sm:text-xl md:text-2xl lg:text-[30px] truncate">
+              <p className="font-serif tracking-tight text-xl sm:text-xl md:text-2xl lg:text-[30px] truncate">
                 {restaurantDetails.name}
               </p>
 
@@ -104,7 +133,6 @@ const Navbar: FC<NavbarProps> = ({
             </div>
           </Link>
 
-          {/* Center: Desktop Nav */}
           <nav className="hidden md:flex items-center gap-1 lg:gap-2 text-sm text-foreground/70">
             {nav.map((i) => (
               <Link
@@ -116,21 +144,18 @@ const Navbar: FC<NavbarProps> = ({
             ))}
           </nav>
 
-          {/* Right: Actions */}
           <div className="flex items-center gap-2 shrink-0">
-            {/* Desktop CTA */}
             <div className="hidden md:flex gap-4">
               <BookTableButton variant="elegant" />
-
-              <CartSheet></CartSheet>
-
+              <CartSheet />
               {user ? (
                 <HomeUserNavClient
                   canAccessDashboard={allowedDashboard}
-                  user={user}></HomeUserNavClient>
+                  user={user}
+                />
               ) : (
                 <Link
-                  href={"/auth/login"}
+                  href="/auth/login"
                   className={cn(
                     buttonVariants({ variant: "outline" }),
                     "h-10",
@@ -140,9 +165,8 @@ const Navbar: FC<NavbarProps> = ({
               )}
             </div>
 
-            {/* Mobile menu */}
             <div className="md:hidden">
-              <Sheet>
+              <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
                 <SheetTrigger asChild>
                   <Button variant="outline" size="icon" className="shrink-0">
                     <Menu className="h-5 w-5" />
@@ -152,11 +176,18 @@ const Navbar: FC<NavbarProps> = ({
                 <SheetContent
                   showCloseButton={false}
                   side="right"
-                  className="w-[88%] max-w-sm bg-background border-l p-0">
+                  className="w-[88%] max-w-sm bg-background border-l p-0 flex flex-col">
                   <SheetHeader className="h-16 px-4 flex-row items-center justify-between border-b">
-                    <SheetTitle className="font-serif text-lg font-normal">
-                      {restaurantDetails.name}
-                    </SheetTitle>
+                    <div className="min-w-0 text-left">
+                      <SheetTitle className="font-serif text-lg font-normal truncate">
+                        {restaurantDetails.name}
+                      </SheetTitle>
+                      {restaurantDetails.tagline ? (
+                        <p className="text-xs text-muted-foreground truncate mt-0.5">
+                          {restaurantDetails.tagline}
+                        </p>
+                      ) : null}
+                    </div>
 
                     <SheetClose asChild>
                       <Button variant="outline" size="icon">
@@ -165,44 +196,118 @@ const Navbar: FC<NavbarProps> = ({
                     </SheetClose>
                   </SheetHeader>
 
-                  <nav className="grid">
-                    {mobileNav.map((l) => (
-                      <SheetClose asChild key={l.href}>
-                        <Link
-                          href={l.href}
-                          className="px-4 py-3 border-b hover:bg-primary/20 transition uppercase tracking-wider text-sm">
-                          {l.label}
-                        </Link>
-                      </SheetClose>
-                    ))}
-                  </nav>
-
-                  <div className="p-4 space-y-2">
-                    <Separator className="mb-4" />
-                    <BookTableButton
-                      trigger={
-                        <Button variant={"outline"} className="w-full">
-                          Book a Table
-                        </Button>
-                      }></BookTableButton>
-                    <CartSheet className="w-full"></CartSheet>
+                  <div className="flex-1 overflow-y-auto">
                     {user ? (
-                      <Button
-                        variant={"outline"}
-                        className="w-full"
-                        onClick={onLogout}>
-                        Logout{" "}
-                      </Button>
-                    ) : (
-                      <Link
-                        href={"/auth/login"}
-                        className={cn(
-                          buttonVariants({ variant: "outline" }),
-                          "h-10",
-                        )}>
-                        Log In
-                      </Link>
-                    )}
+                      <div className="px-4 py-4 border-b">
+                        <div className="flex items-center gap-3">
+                          <Avatar className="h-10 w-10 rounded-lg">
+                            <AvatarImage
+                              src={user.image ?? ""}
+                              alt={user.name}
+                            />
+                            <AvatarFallback className="rounded-lg">
+                              {initials}
+                            </AvatarFallback>
+                          </Avatar>
+
+                          <div className="min-w-0">
+                            <p className="text-sm font-medium truncate">
+                              {user.name}
+                            </p>
+                            <p className="text-xs text-muted-foreground truncate">
+                              {user.email}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    ) : null}
+
+                    <nav className="grid">
+                      {mobileNav.map((l) => (
+                        <SheetClose asChild key={l.href}>
+                          <Link
+                            href={l.href}
+                            className="px-4 py-3 border-b hover:bg-primary/20 transition uppercase tracking-wider text-sm">
+                            {l.label}
+                          </Link>
+                        </SheetClose>
+                      ))}
+                    </nav>
+
+                    <div className="p-4 space-y-3">
+                      <Separator className="mb-1" />
+
+                      <BookTableButton
+                        trigger={
+                          <Button variant="outline" className="w-full">
+                            Book a Table
+                          </Button>
+                        }
+                      />
+
+                      <CartSheet className="w-full" />
+
+                      {user ? (
+                        <>
+                          <SheetClose asChild>
+                            <Link
+                              href="/orders"
+                              className={cn(
+                                buttonVariants({ variant: "outline" }),
+                                "w-full justify-start",
+                              )}>
+                              <IconShoppingCart className="mr-2 size-4" />
+                              Orders
+                            </Link>
+                          </SheetClose>
+
+                          <SheetClose asChild>
+                            <Link
+                              href="/booking"
+                              className={cn(
+                                buttonVariants({ variant: "outline" }),
+                                "w-full justify-start",
+                              )}>
+                              <IconUserCircle className="mr-2 size-4" />
+                              My Bookings
+                            </Link>
+                          </SheetClose>
+
+                          {allowedDashboard ? (
+                            <SheetClose asChild>
+                              <Link
+                                href="/dashboard"
+                                className={cn(
+                                  buttonVariants({ variant: "outline" }),
+                                  "w-full justify-start",
+                                )}>
+                                <IconLayoutDashboard className="mr-2 size-4" />
+                                Dashboard
+                              </Link>
+                            </SheetClose>
+                          ) : null}
+
+                          <Button
+                            type="button"
+                            variant="outline"
+                            className="w-full"
+                            onClick={() => void onLogout()}>
+                            Logout
+                          </Button>
+                        </>
+                      ) : (
+                        <SheetClose asChild>
+                          <Link
+                            href="/auth/login"
+                            className={cn(
+                              buttonVariants({ variant: "outline" }),
+                              "h-10 w-full",
+                            )}>
+                            Log In
+                          </Link>
+                        </SheetClose>
+                      )}
+                    </div>
                   </div>
                 </SheetContent>
               </Sheet>
@@ -215,72 +320,3 @@ const Navbar: FC<NavbarProps> = ({
 };
 
 export default Navbar;
-
-{
-  /* 
-     
-      <Sheet>
-            <SheetTrigger asChild>
-              <Button
-                variant="outline"
-                size="icon"
-                className="md:hidden border-ivory/20 bg-ivory/5 hover:bg-ivory/10 text-ivory">
-                <Menu className="h-5 w-5" />
-              </Button>
-            </SheetTrigger>
-
-            <SheetContent
-              showCloseButton={false}
-              side="right"
-              className="w-[86%] max-w-sm bg-background text-ivory border-l border-ivory/10 p-0">
-              <SheetHeader className="h-16 px-4 flex-row items-center justify-between border-b border-ivory/10">
-                <SheetTitle className="text-ivory font-sans tracking-[0.18em]">
-                 The Crown Inn
-                </SheetTitle>
-
-                <SheetClose asChild>
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    className="border-ivory/20 bg-ivory/5 hover:bg-ivory/10 text-ivory">
-                    <X className="h-5 w-5" />
-                  </Button>
-                </SheetClose>
-              </SheetHeader>
-
-              <div className="px-4 py-5">
-                <div className="flex items-center justify-between mb-4">
-                  <Stars />
-                  <span className="text-ivory/60 text-xs tracking-wider">
-                    EST. 2010
-                  </span>
-                </div>
-
-                <Separator className="bg-ivory/10 mb-4" />
-
-                <nav className="grid gap-2">
-                  {nav.map((l) => (
-                    <SheetClose asChild key={l.href}>
-                      <Link
-                        href={l.href}
-                        className="rounded-xl px-4 py-3 border border-ivory/15 bg-ivory/5 hover:bg-ivory/10 transition uppercase tracking-wider text-sm">
-                        {l.label}
-                      </Link>
-                    </SheetClose>
-                  ))}
-                </nav>
-
-                <div className="mt-6">
-                  <Separator className="bg-ivory/10 mb-4" />
-                  <div className="text-xs text-ivory/60 leading-relaxed">
-                    <Button variant={"elegant"} className="">
-                      Book a Table
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            </SheetContent>
-          </Sheet>
-      
-      */
-}

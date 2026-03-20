@@ -6,11 +6,15 @@ import { Separator } from "@/components/ui/separator";
 import { ChevronRight, Mail, Phone, Users, CalendarDays } from "lucide-react";
 import type { Inquiry, TableInquiry } from "@prisma/client";
 import type { BookingsView } from "@/lib/actions/dashboard/bookings/listBookings";
+import {
+  formatRestaurantDateTime,
+  formatRestaurantTime,
+} from "@/lib/helpers/timeHelpers";
 
 type BookingRow = Inquiry & { tableInquiry?: TableInquiry | null };
 
-function timeHHMM(d: Date) {
-  return d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+function timeHHMM(d: Date | string) {
+  return formatRestaurantTime(d);
 }
 
 function statusVariant(status: string) {
@@ -42,10 +46,8 @@ export default function BookingsList(props: {
   return (
     <div className="space-y-2">
       {bookings.map((b) => {
-        const created = new Date(b.createdAt);
-        const bookingAt = b.tableInquiry?.bookingAt
-          ? new Date(b.tableInquiry.bookingAt)
-          : null;
+        const created = b.createdAt;
+        const bookingAt = b.tableInquiry?.bookingAt ?? null;
 
         return (
           <Link
@@ -100,12 +102,7 @@ export default function BookingsList(props: {
                     <div className="mt-1 flex flex-wrap items-center gap-3 text-sm">
                       <span className="inline-flex items-center gap-1">
                         <CalendarDays className="h-4 w-4" />
-                        {bookingAt
-                          ? bookingAt.toLocaleString("en-IN", {
-                              dateStyle: "medium",
-                              timeStyle: "short",
-                            })
-                          : "—"}
+                        {bookingAt ? formatRestaurantDateTime(bookingAt) : "—"}
                       </span>
                       <span className="inline-flex items-center gap-1 text-muted-foreground">
                         <Users className="h-4 w-4" />
@@ -135,22 +132,11 @@ export default function BookingsList(props: {
             </div>
 
             <Separator className="my-3" />
+
             <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-muted-foreground">
+              <div>Created: {formatRestaurantDateTime(b.createdAt)}</div>
               <div>
-                Created:{" "}
-                {new Date(b.createdAt).toLocaleString("en-IN", {
-                  dateStyle: "medium",
-                  timeStyle: "short",
-                })}
-              </div>
-              <div>
-                Booking:{" "}
-                {bookingAt
-                  ? bookingAt.toLocaleString("en-IN", {
-                      dateStyle: "medium",
-                      timeStyle: "short",
-                    })
-                  : "—"}
+                Booking: {bookingAt ? formatRestaurantDateTime(bookingAt) : "—"}
               </div>
             </div>
           </Link>

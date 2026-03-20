@@ -21,7 +21,7 @@ export const addUserToDashboard = async (value: AllowedUserSchemaRequest) => {
   const data = parsed.data;
   const created = await prisma.allowedUser.upsert({
     where: { email: data.email },
-    create: { email: data.email, isActive: true },
+    create: { email: data.email, isActive: true, role: "ADMIN" },
     update: { isActive: true }, // re-activate if existed
   });
 

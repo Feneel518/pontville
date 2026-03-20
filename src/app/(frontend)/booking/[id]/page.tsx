@@ -23,6 +23,10 @@ import {
   Wallet,
 } from "lucide-react";
 import { getPublicBooking } from "@/lib/actions/frontend/booking/getPublicBooking";
+import {
+  formatRestaurantDate,
+  formatRestaurantDateTime,
+} from "@/lib/helpers/timeHelpers";
 
 function statusUI(status: string) {
   if (status === "ACCEPTED")
@@ -69,17 +73,14 @@ function statusUI(status: string) {
   };
 }
 
-function formatDT(d?: Date | null) {
+function formatDT(d?: Date | string | null) {
   if (!d) return "—";
-  return new Date(d).toLocaleString("en-IN", {
-    dateStyle: "medium",
-    timeStyle: "short",
-  });
+  return formatRestaurantDateTime(d);
 }
 
-function formatD(d?: Date | null) {
+function formatD(d?: Date | string | null) {
   if (!d) return "—";
-  return new Date(d).toLocaleDateString("en-IN", { dateStyle: "medium" });
+  return formatRestaurantDate(d);
 }
 
 export default async function BookingPublicPage({
@@ -109,7 +110,6 @@ export default async function BookingPublicPage({
       )}`
     : undefined;
 
-  // Calendar download for TABLE accepted (and EVENT accepted too)
   const canDownloadICS =
     inquiry.status === "ACCEPTED" &&
     ((isTable && inquiry.tableInquiry?.bookingAt) ||
@@ -117,11 +117,9 @@ export default async function BookingPublicPage({
 
   const icsHref = canDownloadICS ? `/api/booking/${inquiry.id}/ics` : undefined;
 
-  // Details for table
   const bookingAt = isTable ? (inquiry.tableInquiry?.bookingAt ?? null) : null;
   const guests = isTable ? (inquiry.tableInquiry?.guests ?? null) : null;
 
-  // Details for event
   const eventType = isEvent ? (inquiry.eventInquiry?.eventType ?? null) : null;
   const eventDate = isEvent ? (inquiry.eventInquiry?.eventDate ?? null) : null;
   const expectedGuests = isEvent
@@ -131,7 +129,6 @@ export default async function BookingPublicPage({
 
   return (
     <div className="mx-auto w-full max-w-5xl px-4 py-10 md:py-14">
-      {/* Hero */}
       <div
         className={cn(
           "relative overflow-hidden rounded-3xl border bg-background p-6 md:p-10",
@@ -171,7 +168,6 @@ export default async function BookingPublicPage({
             </div>
           </div>
 
-          {/* Restaurant identity */}
           <div className="flex items-center gap-3 md:justify-end">
             {r?.logoUrl ? (
               <div className="relative h-11 w-11 overflow-hidden rounded-2xl border bg-muted">
@@ -195,9 +191,7 @@ export default async function BookingPublicPage({
         </div>
       </div>
 
-      {/* Content */}
       <div className="mt-6 grid gap-4 lg:grid-cols-3">
-        {/* Left: Details */}
         <Card className="rounded-3xl lg:col-span-2">
           <CardContent className="p-5 md:p-6 space-y-5">
             <div className="flex items-center justify-between">
@@ -209,7 +203,6 @@ export default async function BookingPublicPage({
 
             <Separator />
 
-            {/* Request summary cards */}
             {isTable ? (
               <div className="grid gap-3 md:grid-cols-2">
                 <div className="rounded-2xl border bg-muted/20 p-4">
@@ -221,7 +214,7 @@ export default async function BookingPublicPage({
                     {formatDT(bookingAt)}
                   </div>
                   <div className="mt-1 text-xs text-muted-foreground">
-                    Arrive 5–10 mins early
+                    All times shown in Hobart, Tasmania
                   </div>
                 </div>
 
@@ -262,7 +255,7 @@ export default async function BookingPublicPage({
                     {formatD(eventDate)}
                   </div>
                   <div className="mt-1 text-xs text-muted-foreground">
-                    Timing will be coordinated
+                    All dates shown in Hobart, Tasmania
                   </div>
                 </div>
 
@@ -314,7 +307,6 @@ export default async function BookingPublicPage({
               </div>
             ) : null}
 
-            {/* Timeline */}
             <div className="rounded-2xl border bg-muted/10 p-4">
               <div className="text-sm font-semibold">Status timeline</div>
               <div className="mt-3 space-y-2 text-sm">
@@ -337,7 +329,6 @@ export default async function BookingPublicPage({
           </CardContent>
         </Card>
 
-        {/* Right: Actions */}
         <Card className="rounded-3xl">
           <CardContent className="p-5 md:p-6 space-y-4">
             <div className="text-sm font-semibold">Need help?</div>
