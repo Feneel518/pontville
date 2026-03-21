@@ -69,7 +69,7 @@ const WeeklyEvents: FC<WeeklyEventsProps> = ({ promos }) => {
 
   const onPointerLeave = () => setCursor({ label: null, type: "default" });
   return (
-    <SectionComponent>
+    <SectionComponent className="mb-20">
       <Heading label="Weekly Lineups"></Heading>
       <div className="grid md:grid-cols-4 gap-8 relative ">
         <div
@@ -168,7 +168,7 @@ const WeeklyEvents: FC<WeeklyEventsProps> = ({ promos }) => {
           <BookTableButton
             type="EVENT"
             trigger={
-              <div className="group flex cursor-pointer items-center z-40 gap-2 md:p-2 md:pl-0 max-md:-ml-2">
+              <div className="group flex cursor-pointer items-center z-40 gap-2 md:p-2 md:pl-0 ">
                 <div
                   className={`relative h-4 w-[200px] shrink-0 inline-block translate-x-0 transition-transform duration-300 group-hover:-translate-x-2" `}>
                   <Image
