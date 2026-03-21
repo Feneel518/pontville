@@ -17,7 +17,7 @@ export const aboutAccordion = [
     value: "concept",
     title: "Our Concept",
     description:
-      "At Crown Inn, our concept is rooted in genuine country hospitality. We blend historic charm with a relaxed, welcoming atmosphere where guests can unwind, connect, and celebrate. Whether it's a casual lunch, a family dinner, or an evening with friends, every experience is designed to feel effortless and memorable.",
+      "At Pontville Pub, our concept is rooted in genuine country hospitality. We blend historic charm with a relaxed, welcoming atmosphere where guests can unwind, connect, and celebrate. Whether it's a casual lunch, a family dinner, or an evening with friends, every experience is designed to feel effortless and memorable.",
   },
   {
     value: "cuisine",

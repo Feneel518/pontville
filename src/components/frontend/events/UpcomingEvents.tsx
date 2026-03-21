@@ -169,7 +169,7 @@ const UpcomingEvents: FC<UpcomingEventsProps> = ({ event }) => {
                       alt="Event Image"
                       src={ev.image ?? "/Book.jpg"}
                       fill
-                      className="object-cover group-hover:scale-105 transition-all duration-300 ease-in-out"></Image>
+                      className="object-cover group-hover:scale-105 transition-all duration-500 ease-in-out"></Image>
                   </div>
 
                   <CardTitle className="text-xl">{ev.title}</CardTitle>
