@@ -50,7 +50,7 @@ const MenuItemsList: FC<MenuItemsListProps> = ({
     initialAvailability: initialOpen,
   });
 
-  console.log(availability);
+
 
   return (
     <div>

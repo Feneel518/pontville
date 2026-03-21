@@ -25,12 +25,12 @@ export function useMenuOpenStatus({
 }: UseMenuOpenStatusArgs) {
   const [status, setStatus] = useState<MenuAvailabilityState>(initialStatus);
 
-  // console.log(openingHours);
+
 
   const nextChangeMs = useMemo(() => {
     if (!status.nextChangeAt) return null;
     const next = new Date(status.nextChangeAt).getTime();
-    console.log(new Date(status.nextChangeAt));
+
     const now = Date.now();
     const diff = next - now;
     return diff > 0 ? diff : 0;

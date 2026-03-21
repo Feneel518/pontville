@@ -66,9 +66,7 @@ export const ourFileRouter = {
     .middleware(async ({ req }) => {
       return { userId: "user_id" };
     })
-    .onUploadComplete(async ({ metadata, file }) => {
-      console.log("Upload complete:", file.url);
-    }),
+    .onUploadComplete(async ({ metadata, file }) => {}),
 } satisfies FileRouter;
 
 export type OurFileRouter = typeof ourFileRouter;

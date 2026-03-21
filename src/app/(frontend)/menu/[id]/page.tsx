@@ -143,8 +143,6 @@ const Page: FC<PageProps> = async ({ params, searchParams }) => {
     "Australia/Hobart",
   );
 
-  // console.log({ initialOpen, availabiltiy });
-
   return (
     <SectionComponent>
       <MenuCategoriesPublicToolbar

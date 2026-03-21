@@ -132,7 +132,7 @@ export function FileUpload(props: SingleProps | MultiProps) {
             endpoint={props.endpoint}
             onUploadBegin={() => setBusy(true)}
             onClientUploadComplete={(res) => {
-              console.log({ res });
+      
               const urls = (res as UploadResItem[] | undefined)
                 ?.map((x) => x.ufsUrl ?? x.url)
                 .filter(Boolean) as string[] | undefined;

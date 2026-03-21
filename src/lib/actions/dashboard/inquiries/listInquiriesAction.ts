@@ -79,7 +79,7 @@ export async function listInquiriesForDate(opts: {
     },
   });
 
-  console.log(where);
+
 
   const items = await prisma.inquiry.findMany({
     where,
@@ -93,7 +93,7 @@ export async function listInquiriesForDate(opts: {
   const slice = hasMore ? items.slice(0, pageSize) : items;
   const nextCursor = hasMore ? (slice[slice.length - 1]?.id ?? null) : null;
 
-  console.log(items);
+
 
   return {
     inquiries: slice,

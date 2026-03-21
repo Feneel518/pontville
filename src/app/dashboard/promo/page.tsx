@@ -8,7 +8,6 @@ export default async function PromotionsPage() {
   await requireUser("promotions");
   const banners = await listPromoBannersAction();
 
-  console.log(banners);
 
   return (
     <div className="space-y-6">

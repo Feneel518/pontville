@@ -301,7 +301,7 @@ export function DateTimePicker({
             type="button"
             variant="outline"
             className={cn(
-              "w-full justify-start text-left font-normal sm:w-[220px]",
+              "w-full justify-start text-left font-normal sm:w-[220px] border-input",
               !selectedDateTime && "text-muted-foreground",
             )}>
             <CalendarIcon className="mr-2 h-4 w-4" />

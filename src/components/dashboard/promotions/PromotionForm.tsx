@@ -63,7 +63,7 @@ const PromotionForm: FC<PromotionFormProps> = ({
 }) => {
   const [isPending, startTransition] = React.useTransition();
 
-  console.log(banner);
+
 
   const form = useForm<PromoBannerUpsertInput>({
     resolver: zodResolver(promoBannerUpsertSchema) as any,

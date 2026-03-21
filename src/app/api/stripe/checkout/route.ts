@@ -152,8 +152,6 @@ export async function POST(req: Request) {
       const vid = ci.variantId ?? null;
       const v = mi.variants.find((v) => v.id === vid);
 
-      // console.log(vid);
-
       if (!v) {
         return NextResponse.json(
           { error: `Variant required/invalid for ${mi.name}` },

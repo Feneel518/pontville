@@ -70,7 +70,7 @@ export const updateEventAction = async (values: EventFormValues) => {
       data: response,
     };
   } catch (error: any) {
-    console.log(error);
+
 
     return { ok: false, message: error.message, data: null };
   }

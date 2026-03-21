@@ -67,7 +67,7 @@ export async function updatePromoBannerAction(input: PromoBannerUpsertInput) {
     },
   });
 
-  console.log(updated, input);
+
 
   revalidatePath("/");
   revalidatePath("/menu");

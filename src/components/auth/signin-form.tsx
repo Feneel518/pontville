@@ -30,7 +30,7 @@ interface SigninFormProps {
 }
 
 const SigninForm: FC<SigninFormProps> = ({ next }) => {
-  console.log({ next });
+
 
   const [isPending, setIsPending] = React.useState(false);
 

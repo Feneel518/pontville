@@ -4,13 +4,10 @@ import { stripe } from "@/lib/stripe/server";
 import { prisma } from "@/lib/prisma/db";
 
 export async function POST(req: Request) {
-  console.log("✅ webhook hit");
-
   const body = await req.text(); // ✅ raw text required
   const sig = req.headers.get("stripe-signature");
 
   if (!sig) {
-    console.log("❌ missing stripe-signature");
     return NextResponse.json(
       { error: "Missing stripe-signature" },
       { status: 400 },
