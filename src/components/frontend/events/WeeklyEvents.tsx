@@ -69,7 +69,7 @@ const WeeklyEvents: FC<WeeklyEventsProps> = ({ promos }) => {
 
   const onPointerLeave = () => setCursor({ label: null, type: "default" });
   return (
-    <SectionComponent className="mb-20">
+    <SectionComponent className="max-md:mb-20">
       <Heading label="Weekly Lineups"></Heading>
       <div className="grid md:grid-cols-4 gap-8 relative ">
         <div
