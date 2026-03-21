@@ -167,7 +167,7 @@ const UpcomingEvents: FC<UpcomingEventsProps> = ({ event }) => {
                   <div className="w-full h-64 overflow-hidden relative">
                     <Image
                       alt="Event Image"
-                      src={"/Book.jpg"}
+                      src={ev.image ?? "/Book.jpg"}
                       fill
                       className="object-cover group-hover:scale-105 transition-all duration-300 ease-in-out"></Image>
                   </div>

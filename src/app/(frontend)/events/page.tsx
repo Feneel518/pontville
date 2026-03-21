@@ -158,6 +158,8 @@ export default async function EventsPage() {
     },
   });
 
+  console.log(events);
+
   const promos = await prisma.promoBanner.findMany({
     where: {
       isActive: true,
