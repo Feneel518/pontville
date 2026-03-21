@@ -2,16 +2,15 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSessionCookie } from "better-auth/cookies";
 
 const protectedRouters = ["/dashboard", "/superadmin"];
+
 export async function middleware(req: NextRequest) {
   const { nextUrl } = req;
-
   const sessionCookie = getSessionCookie(req);
-
-  const res = NextResponse.next();
-
   const isLoggedIn = !!sessionCookie;
 
-  const isOnProtectedRoute = protectedRouters.includes(nextUrl.pathname);
+  const isOnProtectedRoute = protectedRouters.some((route) =>
+    nextUrl.pathname.startsWith(route),
+  );
 
   const isOnAuthRoute = nextUrl.pathname.startsWith("/auth");
 
@@ -23,7 +22,7 @@ export async function middleware(req: NextRequest) {
     return NextResponse.redirect(new URL("/dashboard", req.url));
   }
 
-  return res;
+  return NextResponse.next();
 }
 
 export const config = {
