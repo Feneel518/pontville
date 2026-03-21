@@ -11,6 +11,7 @@ import InquiriesList from "@/components/dashboard/inquiries/InquiryDetailsSheet"
 import { getRestaurantTodayISO } from "@/lib/helpers/timeHelpers";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import { getPendingInquiryDates } from "@/lib/actions/dashboard/inquiries/getPendingInquiryDates";
 
 type SP = {
   date?: string;
@@ -57,6 +58,8 @@ export default async function InquiriesPage({
     excludeDate: true, // 👈 we'll add this
   });
 
+  const pendingDates = await getPendingInquiryDates(restaurantId);
+
   return (
     <div className="space-y-4">
       <div className="flex w-full justify-between">
@@ -71,6 +74,7 @@ export default async function InquiriesPage({
         pendingCount={res.pendingCount}
         acceptedCount={res.acceptedCount}
         rejectedCount={res.rejectedCount}
+        pendingDates={pendingDates}
       />
 
       <Card className="rounded-2xl">

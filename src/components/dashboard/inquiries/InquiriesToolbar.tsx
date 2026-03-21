@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { format } from "date-fns";
+import { format, isValid, parse } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
@@ -41,9 +41,18 @@ export default function InquiriesToolbar(props: {
   pendingCount: number;
   acceptedCount: number;
   rejectedCount: number;
+  pendingDates: string[];
 }) {
-  const { date, view, q, type, pendingCount, acceptedCount, rejectedCount } =
-    props;
+  const {
+    date,
+    view,
+    q,
+    type,
+    pendingCount,
+    acceptedCount,
+    rejectedCount,
+    pendingDates,
+  } = props;
 
   const router = useRouter();
   const sp = useSearchParams();
@@ -61,6 +70,23 @@ export default function InquiriesToolbar(props: {
     const iso = format(d, "yyyy-MM-dd");
     push(setParam(sp, "date", iso));
   };
+
+  const formattedDates = pendingDates.map((dateStr) => {
+    const parsed = parse(dateStr, "dd MMM yyyy", new Date());
+
+    if (!isValid(parsed)) return null; // or throw error
+
+    return format(parsed, "yyyy-MM-dd");
+  });
+
+  const pendingDateSet = React.useMemo(() => {
+    return new Set(formattedDates);
+  }, [pendingDates]);
+
+  console.log(pendingDateSet);
+
+  // const pendingDateSet = new Set(["2026-03-20"]);
+  //
 
   return (
     <div className="space-y-4">
@@ -153,7 +179,7 @@ export default function InquiriesToolbar(props: {
               <Button
                 variant="outline"
                 className={cn(
-                  "w-[220px] justify-start text-left font-normal rounded-xl",
+                  "w-[220px] justify-start text-left font-normal rounded-xl border-input",
                   !selectedDate && "text-muted-foreground",
                 )}>
                 <CalendarIcon className="mr-2 h-4 w-4" />
@@ -166,6 +192,10 @@ export default function InquiriesToolbar(props: {
                 selected={selectedDate}
                 onSelect={onSelectDate}
                 initialFocus
+                modifiers={{
+                  pending: (day) =>
+                    pendingDateSet.has(format(day, "yyyy-MM-dd")),
+                }}
               />
             </PopoverContent>
           </Popover>
