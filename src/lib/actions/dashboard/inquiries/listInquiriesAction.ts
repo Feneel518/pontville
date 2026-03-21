@@ -7,16 +7,24 @@ export type InquiriesView = "pending" | "accepted" | "rejected" | "all";
 
 export async function listInquiriesForDate(opts: {
   restaurantId: string;
-  dateStr: string; // YYYY-MM-DD (filter by bookingAt/eventDate OR createdAt fallback)
+  dateStr: string;
   view: InquiriesView;
   pageSize: number;
   cursor?: string;
-
-  // optional search (name/email/phone)
+  excludeDate?: boolean;
   q?: string;
-  type?: "TABLE" | "EVENT"; // optional filter
+  type?: "TABLE" | "EVENT";
 }) {
-  const { restaurantId, dateStr, view, pageSize, cursor, q, type } = opts;
+  const {
+    restaurantId,
+    dateStr,
+    view,
+    pageSize,
+    cursor,
+    q,
+    type,
+    excludeDate,
+  } = opts;
 
   const { startUtc, endUtc } = getRestaurantDayUtcRange(dateStr);
 
@@ -29,13 +37,18 @@ export async function listInquiriesForDate(opts: {
           ? { status: "REJECTED" as const }
           : {};
 
-  // Date filter:
-  // - TABLE: tableInquiry.bookingAt in day
-  // - EVENT: eventInquiry.eventDate in day
-  // - If eventDate is null (some events may not pick a date), we fallback to createdAt filter
-  const dateWhere = {
-    createdAt: { gte: startUtc, lt: new Date(endUtc.getTime() + 1) },
-  };
+  const dateWhere = excludeDate
+    ? {
+        createdAt: {
+          lt: startUtc,
+        },
+      }
+    : {
+        createdAt: {
+          gte: startUtc,
+          lt: new Date(endUtc.getTime() + 1),
+        },
+      };
 
   const searchWhere = q?.trim()
     ? {
@@ -48,7 +61,15 @@ export async function listInquiriesForDate(opts: {
     : {};
 
   const where = {
+    restaurantId,
     ...statusWhere,
+    ...(type ? { type } : {}),
+    ...dateWhere,
+    ...searchWhere,
+  };
+
+  const countWhere = {
+    restaurantId,
     ...(type ? { type } : {}),
     ...dateWhere,
     ...searchWhere,
@@ -56,34 +77,31 @@ export async function listInquiriesForDate(opts: {
 
   const pendingCount = await prisma.inquiry.count({
     where: {
+      ...countWhere,
       status: "PENDING",
-      ...dateWhere,
-      ...(type ? { type } : {}),
-      ...searchWhere,
     },
   });
+
   const acceptedCount = await prisma.inquiry.count({
     where: {
+      ...countWhere,
       status: "ACCEPTED",
-      ...dateWhere,
-      ...(type ? { type } : {}),
-      ...searchWhere,
     },
   });
+
   const rejectedCount = await prisma.inquiry.count({
     where: {
+      ...countWhere,
       status: "REJECTED",
-      ...dateWhere,
-      ...(type ? { type } : {}),
-      ...searchWhere,
     },
   });
-
-
 
   const items = await prisma.inquiry.findMany({
     where,
-    include: { tableInquiry: true, eventInquiry: true },
+    include: {
+      tableInquiry: true,
+      eventInquiry: true,
+    },
     orderBy: { createdAt: "desc" },
     take: pageSize + 1,
     ...(cursor ? { cursor: { id: cursor }, skip: 1 } : {}),
@@ -92,8 +110,6 @@ export async function listInquiriesForDate(opts: {
   const hasMore = items.length > pageSize;
   const slice = hasMore ? items.slice(0, pageSize) : items;
   const nextCursor = hasMore ? (slice[slice.length - 1]?.id ?? null) : null;
-
-
 
   return {
     inquiries: slice,

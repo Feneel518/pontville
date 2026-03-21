@@ -11,12 +11,7 @@ import type { Metadata } from "next";
 import { Amarante, Inter } from "next/font/google";
 import { headers } from "next/headers";
 import { Toaster } from "sonner";
-const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
-const amarante = Amarante({
-  subsets: ["latin"],
-  weight: "400",
-  variable: "--font-serif",
-});
+import "mapbox-gl/dist/mapbox-gl.css";
 
 export const metadata: Metadata = baseMetadata();
 

@@ -41,7 +41,7 @@ const OurLocation: FC<OurLocationProps> = ({
       <Heading label="Our location"></Heading>
       <div className="grid gap-12 md:grid-cols-3 md:items-start">
         <aside className="md:col-span-2">
-          <MapboxMap lat={Mlat} lng={Mlng} markerLabel="The Crown Inn" />
+          <MapboxMap lat={Mlat} lng={Mlng} markerLabel="The Pontville Pub" />
         </aside>
         <aside className="flex items-start flex-col gap-12 h-full w-full font-mono md:justify-between ">
           <div className=" space-y-4  text-base  ">

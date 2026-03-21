@@ -9,8 +9,8 @@ import {
 } from "@/lib/actions/dashboard/inquiries/listInquiriesAction";
 import InquiriesList from "@/components/dashboard/inquiries/InquiryDetailsSheet";
 import { getRestaurantTodayISO } from "@/lib/helpers/timeHelpers";
-
-
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
 
 type SP = {
   date?: string;
@@ -46,6 +46,17 @@ export default async function InquiriesPage({
     type: sp.type,
   });
 
+  const pendingOther = await listInquiriesForDate({
+    restaurantId,
+    dateStr: date,
+    view: "pending",
+    pageSize: 50,
+    cursor: undefined,
+    q: sp.q,
+    type: sp.type,
+    excludeDate: true, // 👈 we'll add this
+  });
+
   return (
     <div className="space-y-4">
       <div className="flex w-full justify-between">
@@ -64,6 +75,15 @@ export default async function InquiriesPage({
 
       <Card className="rounded-2xl">
         <CardContent className="p-3 md:p-4">
+          <div className="mb-3 flex items-center justify-between">
+            <div className="text-sm font-semibold text-muted-foreground">
+              PendingToday
+            </div>
+
+            <Badge variant="secondary" className="rounded-full">
+              {res.inquiries.length}
+            </Badge>
+          </div>
           <InquiriesList
             inquiries={res.inquiries as any}
             nextCursor={res.nextCursor}
@@ -75,6 +95,35 @@ export default async function InquiriesPage({
           />
         </CardContent>
       </Card>
+
+      <Separator className="my-10"></Separator>
+
+      {/* PENDING OTHER DAYS */}
+      {pendingOther.inquiries.length > 0 && (
+        <Card className="rounded-2xl">
+          <CardContent className="p-3 md:p-4">
+            <div className="mb-3 flex items-center justify-between">
+              <div className="text-sm font-semibold text-muted-foreground">
+                Pending from other days
+              </div>
+
+              <Badge variant="secondary" className="rounded-full">
+                {pendingOther.inquiries.length}
+              </Badge>
+            </div>
+
+            <InquiriesList
+              inquiries={pendingOther.inquiries as any}
+              nextCursor={null} // no pagination needed here
+              date={date}
+              view="pending"
+              pageSize={pageSize}
+              q={sp.q ?? ""}
+              type={sp.type ?? ""}
+            />
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }
