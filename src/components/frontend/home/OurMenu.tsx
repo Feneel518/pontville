@@ -27,7 +27,7 @@ const OurMenu: FC<OurMenuProps> = async () => {
             className="md:col-span-10"
             title={menu[0].name}
             img={menu[0].imageUrl ?? "/placeholder.png"}
-            href={`/menu/${menu[0].id}`}
+            href={`/menu/${menu[0].slug}`}
           />
         )}
 
@@ -37,14 +37,14 @@ const OurMenu: FC<OurMenuProps> = async () => {
               className="md:col-span-6"
               title={menu[0].name}
               img={menu[0].imageUrl ?? "/placeholder.png"}
-              href={`/menu/${menu[0].id}`}
+              href={`/menu/${menu[0].slug}`}
             />
             <MenuCard
               className="md:col-span-4"
               title={menu[1].name}
               img={menu[1].imageUrl ?? "/placeholder.png"}
               small
-              href={`/menu/${menu[1].id}`}
+              href={`/menu/${menu[1].slug}`}
             />
           </>
         )}
@@ -55,21 +55,21 @@ const OurMenu: FC<OurMenuProps> = async () => {
               className="md:col-span-4"
               title={menu[0].name}
               img={menu[0].imageUrl ?? "/placeholder.png"}
-              href={`/menu/${menu[0].id}`}
+              href={`/menu/${menu[0].slug}`}
             />
             <MenuCard
               className="md:col-span-3"
               title={menu[1].name}
               img={menu[1].imageUrl ?? "/placeholder.png"}
               small
-              href={`/menu/${menu[1].id}`}
+              href={`/menu/${menu[1].slug}`}
             />
             <MenuCard
               className="md:col-span-3"
               title={menu[2].name}
               img={menu[2].imageUrl ?? "/placeholder.png"}
               small
-              href={`/menu/${menu[2].id}`}
+              href={`/menu/${menu[2].slug}`}
             />
           </>
         )}

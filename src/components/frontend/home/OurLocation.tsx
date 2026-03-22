@@ -36,6 +36,18 @@ const OurLocation: FC<OurLocationProps> = ({
       ? `googlegmail://co?to=${encodeURIComponent(email ?? CONTACTEMAIL.recepient)}&su=${encodeURIComponent(CONTACTEMAIL.subject)}&body=${encodeURIComponent(CONTACTEMAIL.body)}`
       : `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(CONTACTEMAIL.recepient)}&su=${encodeURIComponent(CONTACTEMAIL.subject)}&body=${encodeURIComponent(CONTACTEMAIL.body)}`;
 
+  const orderedEntries = Object.entries(hours!)
+    .filter(([_, value]) => value && value.length > 0)
+    .sort(([a], [b]) => {
+      if (a === "tea") return -1;
+      if (b === "tea") return 1;
+
+      if (a === "sunday") return 1;
+      if (b === "sunday") return -1;
+
+      return 0; // keep original order for others
+    });
+
   return (
     <SectionComponent className=" py-20">
       <Heading label="Our location"></Heading>
@@ -45,21 +57,14 @@ const OurLocation: FC<OurLocationProps> = ({
         </aside>
         <aside className="flex items-start flex-col gap-12 h-full w-full font-mono md:justify-between ">
           <div className=" space-y-4  text-base  ">
-            {Object.entries(hours!).map(([key, value]) => {
-              // @ts-ignore
-              if (value && value.length > 0) {
-                return (
-                  <div key={key} className="flex justify-between text-sm">
-                    <span className="font-medium capitalize">
-                      {key.replace(/([A-Z])/g, " $1")}
-                    </span>
-                    <span className="text-muted-foreground">
-                      {value as string}
-                    </span>
-                  </div>
-                );
-              } else null;
-            })}
+            {orderedEntries.map(([key, value]) => (
+              <div key={key} className="flex justify-between text-sm">
+                <span className="font-medium capitalize">
+                  {key.replace(/([A-Z])/g, " $1")}
+                </span>
+                <span className="text-muted-foreground">{value as string}</span>
+              </div>
+            ))}
             <p>
               <span className="font-semibold">ADDRESS: </span>
               <Link

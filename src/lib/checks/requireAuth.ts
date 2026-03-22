@@ -12,7 +12,7 @@ export const requireAuth = async () => {
     redirect("/");
   }
 
-  if (session.user.email === "feneelp@gmail.com") {
+  if (session.user.email === "developer.merrymatrix@gmail.com") {
     const userAllowCheck = await prisma.allowedUser.findUnique({
       where: { email: session.user.email },
     });

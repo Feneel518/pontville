@@ -60,6 +60,8 @@ export function HoursForm({
   });
 
   const onSubmit = (values: HoursEditorInput) => {
+    console.log(values);
+
     startTransition(async () => {
       const res = await updateHoursAction(values);
       if (!res.ok) {
@@ -104,6 +106,12 @@ export function HoursForm({
             <Row
               label="Tea"
               name="tea"
+              placeholder="10:00 - 21:00"
+              control={form.control}
+            />
+            <Row
+              label="Sunday"
+              name="sunday"
               placeholder="10:00 - 21:00"
               control={form.control}
             />
@@ -191,13 +199,7 @@ function Row({
   control,
 }: {
   label: string;
-  name:
-    | "bar"
-    | "bistroLunch"
-    | "bistroDinner"
-    | "pizzaLunch"
-    | "pizzaDinner"
-    | "tea";
+  name: "bar" | "bistroLunch" | "bistroDinner" | "sunday" | "tea";
   placeholder: string;
   control: any;
 }) {
