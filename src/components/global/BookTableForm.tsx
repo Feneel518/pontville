@@ -33,17 +33,7 @@ import {
   SelectValue,
 } from "../ui/select";
 import { DateTimePicker } from "../ui/DateTimePicker";
-
-type FormValues = z.infer<typeof createTableInquirySchema>;
-
-function toDateOrThrow(v: unknown) {
-  // from <input type="datetime-local"> you get a string "YYYY-MM-DDTHH:mm"
-  if (typeof v !== "string" || !v.trim())
-    throw new Error("Please choose date & time");
-  const d = new Date(v);
-  if (Number.isNaN(d.getTime())) throw new Error("Invalid date/time");
-  return d;
-}
+import { useSession } from "@/lib/auth/authClient";
 
 export function BookTableForm({
   onSuccess,
@@ -52,14 +42,15 @@ export function BookTableForm({
   onSuccess?: () => void;
   eventType?: "EVENT" | "TABLE";
 }) {
+  const session = useSession();
   const [loading, setLoading] = React.useState(false);
 
   const form = useForm<CreateInquiryInput>({
     resolver: zodResolver(createInquirySchema) as any,
     defaultValues: {
       type: eventType,
-      name: "",
-      email: "",
+      name: session.data?.user.name ?? "",
+      email: session.data?.user.email ?? "",
       phone: "",
       notes: "",
       // TABLE
@@ -150,7 +141,7 @@ export function BookTableForm({
             name="email"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Email (optional)</FormLabel>
+                <FormLabel>Email</FormLabel>
                 <FormControl>
                   <Input type="email" placeholder="name@email.com" {...field} />
                 </FormControl>

@@ -71,7 +71,7 @@ export async function createInquiryAction(raw: CreateInquiryInput) {
     include: { tableInquiry: true, eventInquiry: true },
   });
 
-  const appUrl = process.env.PUBLIC_APP_URL!;
+  const appUrl = process.env.NEXT_PUBLIC_API_URL!;
   const expiresAt = Date.now() + 1000 * 60 * 60 * 24; // 24h
 
   const acceptToken = createInquiryActionToken({

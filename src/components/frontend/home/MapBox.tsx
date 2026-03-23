@@ -63,7 +63,6 @@ export default function MapboxMap({
 
     const token = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
     if (!token) {
-      console.error("Missing NEXT_PUBLIC_MAPBOX_TOKEN");
       return;
     }
 
@@ -305,7 +304,7 @@ export default function MapboxMap({
 
 //     const token = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
 //     if (!token) {
-//       console.error("Missing NEXT_PUBLIC_MAPBOX_TOKEN");
+//
 //       return;
 //     }
 

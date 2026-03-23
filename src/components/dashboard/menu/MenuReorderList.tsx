@@ -135,16 +135,15 @@ export default function MenuReorderList({ items }: MenuReorderListProps) {
 
     setMenus(next);
 
-   const changed = getChangedItems(previousMenus, next);
+    const changed = getChangedItems(previousMenus, next);
 
-   startTransition(async () => {
-     try {
-       await reorderMenusAction(changed);
-     } catch (error) {
-       console.error(error);
-       setMenus(previousMenus); // rollback UI if save fails
-     }
-   });
+    startTransition(async () => {
+      try {
+        await reorderMenusAction(changed);
+      } catch (error) {
+        setMenus(previousMenus); // rollback UI if save fails
+      }
+    });
   }
 
   return (

@@ -83,8 +83,6 @@ export default function InquiriesToolbar(props: {
     return new Set(formattedDates);
   }, [pendingDates]);
 
-  console.log(pendingDateSet);
-
   // const pendingDateSet = new Set(["2026-03-20"]);
   //
 

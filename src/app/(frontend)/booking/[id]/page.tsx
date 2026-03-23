@@ -90,7 +90,7 @@ export default async function BookingPublicPage({
 }) {
   const { id } = await params;
   const inquiry = await getPublicBooking({ id });
-  console.log(id);
+
   if (!inquiry) notFound();
 
   const r = inquiry.restaurant;

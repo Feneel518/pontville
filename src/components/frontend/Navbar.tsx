@@ -88,16 +88,13 @@ const Navbar: FC<NavbarProps> = ({
       const res = await authClient.signOut();
 
       if (res?.error) {
-        console.error("Logout failed:", res.error);
         return;
       }
 
       setMobileOpen(false);
       router.replace("/");
       router.refresh();
-    } catch (error) {
-      console.error("Logout error:", error);
-    }
+    } catch (error) {}
   }
 
   return (

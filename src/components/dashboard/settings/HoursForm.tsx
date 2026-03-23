@@ -60,8 +60,6 @@ export function HoursForm({
   });
 
   const onSubmit = (values: HoursEditorInput) => {
-    console.log(values);
-
     startTransition(async () => {
       const res = await updateHoursAction(values);
       if (!res.ok) {

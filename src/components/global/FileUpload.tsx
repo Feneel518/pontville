@@ -132,7 +132,6 @@ export function FileUpload(props: SingleProps | MultiProps) {
             endpoint={props.endpoint}
             onUploadBegin={() => setBusy(true)}
             onClientUploadComplete={(res) => {
-      
               const urls = (res as UploadResItem[] | undefined)
                 ?.map((x) => x.ufsUrl ?? x.url)
                 .filter(Boolean) as string[] | undefined;
@@ -146,7 +145,6 @@ export function FileUpload(props: SingleProps | MultiProps) {
               setBusy(false);
             }}
             onUploadError={(err) => {
-              console.error("UPLOADTHING ERROR:", err);
               setBusy(false);
             }}
             className="ut-allowed-content:hidden ut-label:text-sm ut-button:rounded-xl ut-button:h-10"

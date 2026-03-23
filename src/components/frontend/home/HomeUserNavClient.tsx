@@ -49,15 +49,12 @@ export default function HomeUserNavClient({
       const res = await authClient.signOut();
 
       if (res?.error) {
-        console.error("Logout failed:", res.error);
         return;
       }
 
       router.replace("/");
       router.refresh();
-    } catch (error) {
-      console.error("Logout error:", error);
-    }
+    } catch (error) {}
   }
 
   if (!currentUser) return null;

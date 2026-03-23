@@ -31,7 +31,7 @@
 //       const json = (await res.json()) as MenuAvailabilityState;
 //       setState(json);
 //     } catch (error) {
-//       console.error("Failed to refresh menu availability", error);
+
 //     }
 //   }, [menuId]);
 

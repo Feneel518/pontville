@@ -32,7 +32,6 @@ export async function GET(
       },
     });
   } catch (error) {
-    console.error("menu status route error", error);
     return NextResponse.json(
       { error: "Failed to get menu status" },
       { status: 500 },
