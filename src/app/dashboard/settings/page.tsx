@@ -67,6 +67,7 @@ const page: FC<pageProps> = async ({ searchParams }) => {
             bistroDinner: hours.bistroDinner ?? "",
             bistroLunch: hours.bistroLunch ?? "",
             tea: hours.tea ?? "",
+            sunday: hours.sunday ?? "",
             weeklyHolidays: settings.weeklyHolidays ?? [],
             notes: hours.notes ?? "",
           }}
