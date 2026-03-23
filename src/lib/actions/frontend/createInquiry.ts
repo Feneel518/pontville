@@ -14,6 +14,7 @@ import {
 } from "@/lib/email/emailTemplates/inquiryEmailTemplate";
 import { createWhatsAppLink } from "@/lib/whatsapp/createWhatsAppLink";
 import { sendMail } from "@/lib/email/sendMail";
+import { createInquiryActionToken } from "./inquiryActionToken";
 
 export async function createInquiryAction(raw: CreateInquiryInput) {
   const parsed = createInquirySchema.safeParse(raw);
@@ -70,6 +71,25 @@ export async function createInquiryAction(raw: CreateInquiryInput) {
     include: { tableInquiry: true, eventInquiry: true },
   });
 
+  const appUrl = process.env.PUBLIC_APP_URL!;
+  const expiresAt = Date.now() + 1000 * 60 * 60 * 24; // 24h
+
+  const acceptToken = createInquiryActionToken({
+    inquiryId: inquiry.id,
+    action: "ACCEPTED",
+    expiresAt,
+  });
+
+  const rejectToken = createInquiryActionToken({
+    inquiryId: inquiry.id,
+    action: "REJECTED",
+    expiresAt,
+  });
+
+  const acceptLink = `${appUrl}/api/inquiry/action?i=${inquiry.id}&a=accept&e=${expiresAt}&t=${acceptToken}`;
+
+  const rejectLink = `${appUrl}/api/inquiry/action?i=${inquiry.id}&a=reject&e=${expiresAt}&t=${rejectToken}`;
+
   if (process.env.RESTAURANT_INBOX_EMAIL) {
     const adminTemplate = adminInquiryReceivedEmail(
       inquiry,
@@ -84,6 +104,8 @@ export async function createInquiryAction(raw: CreateInquiryInput) {
       },
       {
         dashboardLink: `${process.env.NEXT_PUBLIC_API_URL}/dashboard/inquiries`,
+        acceptLink,
+        rejectLink,
       },
     );
 

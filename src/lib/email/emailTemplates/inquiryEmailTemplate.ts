@@ -382,6 +382,8 @@ export function adminInquiryReceivedEmail(
   brand: BrandConfig,
   opts?: {
     dashboardLink?: string;
+    acceptLink?: string;
+    rejectLink?: string;
   },
 ) {
   const isTable = inquiry.type === "TABLE";
@@ -413,7 +415,7 @@ export function adminInquiryReceivedEmail(
       </div>
 
       <div style="margin-top:6px; font-size:13px; color:#475569;">
-        Please review and accept or reject this request in the dashboard.
+        You can accept or reject this request directly from this email, or open the dashboard.
       </div>
     </div>
   `;
@@ -423,13 +425,18 @@ export function adminInquiryReceivedEmail(
     html: baseLayout({
       brand,
       title: "New Inquiry Received",
-      subtitle: "Review and take action from your dashboard.",
+      subtitle: "Review and take action.",
       badgeText: "ADMIN ALERT",
       badgeColor: "#0f172a",
       bodyHtml: body,
-      ctaPrimary: opts?.dashboardLink
-        ? { label: "Open Dashboard", href: opts.dashboardLink }
+      ctaPrimary: opts?.acceptLink
+        ? { label: "Accept", href: opts.acceptLink }
         : undefined,
+      ctaSecondary: opts?.rejectLink
+        ? { label: "Reject", href: opts.rejectLink }
+        : opts?.dashboardLink
+          ? { label: "Open Dashboard", href: opts.dashboardLink }
+          : undefined,
       footerNote:
         "This is an automated notification from your booking system. All times are shown in Hobart, Tasmania.",
     }),

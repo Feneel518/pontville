@@ -37,6 +37,7 @@ const OurLocation: FC<OurLocationProps> = ({
       : `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(CONTACTEMAIL.recepient)}&su=${encodeURIComponent(CONTACTEMAIL.subject)}&body=${encodeURIComponent(CONTACTEMAIL.body)}`;
 
   const orderedEntries = Object.entries(hours!)
+  // @ts-ignore
     .filter(([_, value]) => value && value.length > 0)
     .sort(([a], [b]) => {
       if (a === "tea") return -1;
