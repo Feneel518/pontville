@@ -388,6 +388,8 @@ export default function EventForm({
                       type="time"
                       id="time-picker-optional"
                       step="1"
+                      value={field.value ?? ""}
+                      onChange={(e) => field.onChange(e.target.value || null)}
                       defaultValue="10:30:00"
                       className="bg-background h-12 appearance-none [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
                     />
