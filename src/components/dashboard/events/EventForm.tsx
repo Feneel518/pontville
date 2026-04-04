@@ -82,10 +82,10 @@ export default function EventForm({
       status: (initial?.status as any) ?? "DRAFT",
 
       startDate: initial?.startDate ?? new Date(),
-      startTime: initial?.startTime ?? "19:00",
+      startTime: initial?.startTime?.slice(0, 5) ?? "19:00",
 
       endDate: initial?.endDate ?? null,
-      endTime: initial?.endTime ?? null,
+      endTime: initial?.endTime?.slice(0, 5) ?? null,
 
       description: initial?.description ?? "",
       highlight: initial?.highlight ?? null,
@@ -386,11 +386,13 @@ export default function EventForm({
                   <FormControl>
                     <Input
                       type="time"
-                      id="time-picker-optional"
-                      step="1"
+                      step={60}
                       value={field.value ?? ""}
-                      onChange={(e) => field.onChange(e.target.value || null)}
-                      defaultValue="10:30:00"
+                      onChange={(e) =>
+                        field.onChange(
+                          e.target.value ? e.target.value.slice(0, 5) : "",
+                        )
+                      }
                       className="bg-background h-12 appearance-none [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
                     />
                   </FormControl>
@@ -469,12 +471,14 @@ export default function EventForm({
                       /> */}
                       <Input
                         type="time"
-                        id="time-picker-optional"
-                        step="1"
-                        // defaultValue="10:30:00"
+                        step={60}
                         value={field.value ?? ""}
                         disabled={!endDate}
-                        onChange={(e) => field.onChange(e.target.value || null)}
+                        onChange={(e) =>
+                          field.onChange(
+                            e.target.value ? e.target.value.slice(0, 5) : null,
+                          )
+                        }
                         className="bg-background h-12 appearance-none [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
                       />
                     </FormControl>
